@@ -6,6 +6,7 @@ import {
   type InstantTimeStandard,
 } from 'mingyu-core/instant';
 import { DropdownSelect, type DropdownSelectOption } from '@/components/DropdownSelect';
+import { InkMotif } from '@/components/ink/InkArt';
 import {
   QuestionInspirationModal,
   type QuestionInspirationSection,
@@ -441,6 +442,19 @@ export function HomePage() {
             </a>
           ) : null}
         </header>
+
+        <div className="workspace-home-ink-scene" aria-hidden="true">
+          <span className="workspace-home-ink-verse workspace-home-ink-verse-left">
+            观象
+          </span>
+          <div className="ink-home-motif ink-home-motif--compass">
+            <InkMotif name="compass" />
+          </div>
+          <span className="workspace-home-ink-verse workspace-home-ink-verse-right">
+            知命
+          </span>
+          <span className="workspace-home-ink-seal">玄览</span>
+        </div>
 
         <div className="workspace-home-mode-switch" role="tablist" aria-label="首页模式">
           {homeModes.map((mode) => (

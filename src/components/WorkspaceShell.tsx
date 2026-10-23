@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AiSettingsModal } from '@/components/AiSettingsModal';
 import { AndroidAppUpdateDialog } from '@/components/AndroidAppUpdateDialog';
 import { WorkspaceSettingsModal } from '@/components/WorkspaceSettingsModal';
+import { InkTopBar } from '@/components/ink/InkTopBar';
 import { TermExplanationProvider } from '@/components/TermExplanationModal';
 import { useActivePersonalCase } from '@/hooks/useActivePersonalCase';
 import { useAndroidAppUpdate } from '@/hooks/useAndroidAppUpdate';
@@ -24,6 +25,8 @@ import {
   WORKSPACE_PREFERENCES_EVENT,
   applyWorkspaceTheme,
   buildWorkspaceFeaturePath,
+  FEATURED_FEATURE_IDS,
+  WORKSPACE_FEATURES,
   getWorkspaceFeature,
   isChartWorkspaceId,
   isDivinationWorkspaceId,
@@ -110,6 +113,7 @@ export function WorkspaceShell() {
   });
   const [historySearch, setHistorySearch] = useState('');
   const [isMoreDivinationOpen, setIsMoreDivinationOpen] = useState(false);
+  const [isAllToolsOpen, setIsAllToolsOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [settingsModal, setSettingsModal] = useState<'workspace' | 'ai' | null>(null);
   const [historyRevision, setHistoryRevision] = useState(0);
@@ -307,6 +311,34 @@ export function WorkspaceShell() {
     scrollHideTimersRef.current.set(target, nextTimer);
   }
 
+  // 招牌与「全部工具」共用同一个按钮渲染，避免两处漂移
+  const renderFeatureButton = (feature: (typeof WORKSPACE_FEATURES)[number]) => (
+    <button
+      type="button"
+      key={feature.id}
+      className={activeFeature === feature.id ? 'is-active' : ''}
+      onClick={() => {
+        setSidebarView('tools');
+        setIsDrawerOpen(false);
+        const targetPath =
+          isChartWorkspaceId(feature.id) && activeCase
+            ? buildChartFeaturePathForCase(activeCase, feature.id)
+            : buildWorkspaceFeaturePath(feature.id);
+        if (targetPath !== `${location.pathname}${location.search}`) {
+          navigate(targetPath, { state: { workspaceNew: true } });
+        }
+      }}
+      aria-current={activeFeature === feature.id ? 'page' : undefined}
+    >
+      <span className={`workspace-nav-mark workspace-nav-mark-${feature.group}`} aria-hidden="true">
+        {feature.mark}
+      </span>
+      <span className="workspace-nav-copy">
+        <strong>{feature.label}</strong>
+      </span>
+    </button>
+  );
+
   const navigation = (
     <>
       <div className="workspace-brand-row">
@@ -401,43 +433,38 @@ export function WorkspaceShell() {
               </span>
             </button>
           </div>
-          {WORKSPACE_FEATURE_GROUPS.map((group) => {
-            const features = orderedFeatures.filter((feature) => feature.group === group.id);
+          <section className="workspace-tool-section workspace-featured" key="featured">
+            <div className="workspace-nav-label">招牌</div>
+            <div className="workspace-nav-list">
+              {FEATURED_FEATURE_IDS.map((id) => renderFeatureButton(getWorkspaceFeature(id)))}
+            </div>
+            <button
+              type="button"
+              className="workspace-more-tools"
+              aria-expanded={isAllToolsOpen}
+              onClick={() => setIsAllToolsOpen((value) => !value)}
+            >
+              <span className="workspace-more-tools-mark" aria-hidden="true">
+                {isAllToolsOpen ? '−' : '＋'}
+              </span>
+              <span>
+                {isAllToolsOpen ? '收起全部工具' : `全部工具（${orderedFeatures.length - FEATURED_FEATURE_IDS.length}）`}
+              </span>
+            </button>
+          </section>
+
+          {isAllToolsOpen
+            ? WORKSPACE_FEATURE_GROUPS.map((group) => {
+            const features = orderedFeatures.filter(
+              (feature) => feature.group === group.id && !FEATURED_FEATURE_IDS.includes(feature.id),
+            );
             const visibleFeatures =
               group.id === 'divination' && !isMoreDivinationOpen ? features.slice(0, 5) : features;
             return (
               <section className="workspace-tool-section" key={group.id}>
                 <div className="workspace-nav-label">{group.label}</div>
                 <div className="workspace-nav-list">
-                  {visibleFeatures.map((feature) => (
-                    <button
-                      type="button"
-                      key={feature.id}
-                      className={activeFeature === feature.id ? 'is-active' : ''}
-                      onClick={() => {
-                        setSidebarView('tools');
-                        setIsDrawerOpen(false);
-                        const targetPath =
-                          isChartWorkspaceId(feature.id) && activeCase
-                            ? buildChartFeaturePathForCase(activeCase, feature.id)
-                            : buildWorkspaceFeaturePath(feature.id);
-                        if (targetPath !== `${location.pathname}${location.search}`) {
-                          navigate(targetPath, { state: { workspaceNew: true } });
-                        }
-                      }}
-                      aria-current={activeFeature === feature.id ? 'page' : undefined}
-                    >
-                      <span
-                        className={`workspace-nav-mark workspace-nav-mark-${feature.group}`}
-                        aria-hidden="true"
-                      >
-                        {feature.mark}
-                      </span>
-                      <span className="workspace-nav-copy">
-                        <strong>{feature.label}</strong>
-                      </span>
-                    </button>
-                  ))}
+                  {visibleFeatures.map((feature) => renderFeatureButton(feature))}
                   {group.id === 'divination' && features.length > 5 ? (
                     <button
                       type="button"
@@ -457,7 +484,8 @@ export function WorkspaceShell() {
                 </div>
               </section>
             );
-          })}
+              })
+            : null}
         </nav>
       ) : (
         <section className="workspace-case-browser" aria-label="占问历史">
@@ -534,6 +562,16 @@ export function WorkspaceShell() {
       <div className="workspace-sidebar-footer">
         <button
           type="button"
+          className={location.pathname === '/account' ? 'is-active' : ''}
+          onClick={() => {
+            navigate('/account');
+            setIsDrawerOpen(false);
+          }}
+        >
+          我的
+        </button>
+        <button
+          type="button"
           className={location.pathname === '/tutorial' ? 'is-active' : ''}
           onClick={() => {
             navigate('/tutorial');
@@ -558,6 +596,13 @@ export function WorkspaceShell() {
   return (
     <TermExplanationProvider>
       <div className="workspace-shell" onScrollCapture={handleWorkspaceScroll}>
+        {/* 顶栏取代常驻侧栏；工具全集仍在抽屉里（下面的 workspace-mobile-drawer） */}
+        <InkTopBar
+          onOpenTools={() => {
+            setSidebarView('tools');
+            setIsDrawerOpen(true);
+          }}
+        />
         <aside className="workspace-sidebar">{navigation}</aside>
         <header className="workspace-mobile-header">
           {isResultAssistant ? (

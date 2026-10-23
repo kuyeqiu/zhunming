@@ -68,7 +68,10 @@
     "mcp:check": "tsc --project mcp/tsconfig.json --noEmit",
     "core:build": "pnpm --filter mingyu-core build",
     "core:test": "pnpm test:core",
-    "android:sync": "pnpm build && cap sync android"
+    "android:sync": "pnpm build && cap sync android",
+    "typecheck:server": "tsc --project tsconfig.server.json --noEmit",
+    "app:seed": "node --import=tsx server/app/seed.ts",
+    "start:app": "node --env-file-if-exists=.env.local --import=tsx server/docker-server.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.5.0",

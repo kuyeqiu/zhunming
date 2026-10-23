@@ -116,6 +116,45 @@ html {
   }
 }
 
+/* 水墨：宣纸底 + 焦墨字 + 朱砂唯一点缀。
+   surface 一律向纸靠拢，避免纯白卡片把版面割裂成「后台表格」。 */
+:root[data-accent-theme='ink'] {
+  --text-primary: #2e2c28;
+  --text-strong: #181715;
+  --text-secondary: #4a4843;
+  --text-muted: #8c887f;
+  --text-soft: #b4b0a6;
+  --danger-text: #9e2a2b;
+  --success-text: #3f6b4f;
+  --accent: #9e2a2b;
+  --accent-strong: #8b2425;
+  --accent-deep: #6d1c1d;
+  --accent-soft: rgba(158, 42, 43, 0.1);
+  --accent-soft-strong: rgba(158, 42, 43, 0.16);
+  --accent-surface: rgba(247, 244, 236, 0.9);
+  --accent-surface-solid: #f7f4ec;
+  --secondary: #6d6a62;
+  --secondary-strong: #4a4843;
+  --secondary-soft: rgba(74, 72, 67, 0.12);
+  --secondary-soft-strong: rgba(74, 72, 67, 0.18);
+  --highlight-soft: rgba(234, 230, 220, 0.6);
+  --surface-page: #f4f2ec;
+  --surface-page-end: #efebe1;
+  --surface-base: #fbfaf6;
+  --surface-base-rgb: 251 250 246;
+  --surface-panel: rgba(249, 247, 241, 0.9);
+  --surface-elevated: rgba(251, 250, 246, 0.96);
+  --surface-elevated-strong: rgba(253, 252, 249, 0.98);
+  --surface-soft: rgba(246, 243, 236, 0.94);
+  --surface-soft-solid: #f6f3ec;
+  --surface-muted: rgba(240, 236, 226, 0.96);
+  --surface-muted-solid: #f0ece2;
+  --surface-overlay: rgba(251, 250, 246, 0.84);
+  --border-soft: rgba(74, 72, 67, 0.14);
+  --border-strong: rgba(74, 72, 67, 0.22);
+  --border-contrast: rgba(158, 42, 43, 0.22);
+}
+
 :root[data-accent-theme='violet'] {
   --accent: #8269b0;
   --accent-strong: #715aa2;

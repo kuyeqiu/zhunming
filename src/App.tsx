@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { InkFilters, PaperGrain } from './components/ink/InkArt';
 import { WorkspaceShell } from './components/WorkspaceShell';
 import { loadDivinationHistory, loadPersonalHistory } from './lib/history-records';
 import { readActiveCaseId } from './lib/active-case';
@@ -14,6 +15,16 @@ import {
 const InputPage = lazy(async () => {
   const module = await import('./pages/InputPage');
   return { default: module.InputPage };
+});
+
+const AdminPage = lazy(async () => {
+  const module = await import('./pages/admin/AdminPage');
+  return { default: module.AdminPage };
+});
+
+const AccountPage = lazy(async () => {
+  const module = await import('./pages/AccountPage');
+  return { default: module.AccountPage };
 });
 
 const RecordsPage = lazy(async () => {
@@ -101,7 +112,11 @@ function DefaultEntryRoute() {
 
 export default function App() {
   return (
-    <Suspense
+    <>
+      {/* 水墨：滤镜定义只需挂一次；纸纹层固定在最上层，不吃事件 */}
+      <InkFilters />
+      <PaperGrain />
+      <Suspense
       fallback={
         <div className="route-loading" aria-hidden="true">
           <div className="route-loading-skeleton">
@@ -119,6 +134,8 @@ export default function App() {
     >
       <ErrorBoundary>
         <Routes>
+          {/* 后台独立于 C 端 Shell：自己的布局、自己的 admin-* 样式命名空间 */}
+          <Route path="/admin" element={<AdminPage />} />
           <Route element={<WorkspaceShell />}>
             <Route path="/" element={<DefaultEntryRoute />} />
             <Route path="/home" element={<DefaultEntryRoute />} />
@@ -134,12 +151,14 @@ export default function App() {
             <Route path="/culture-tools" element={<CultureToolsPage />} />
             <Route path="/cases" element={<CasePage />} />
             <Route path="/records" element={<RecordsPage />} />
+            <Route path="/account" element={<AccountPage />} />
             <Route path="/result" element={<ResultPage />} />
             <Route path="/result/assistant" element={<ResultPage assistantOnly />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ErrorBoundary>
-    </Suspense>
+      </Suspense>
+    </>
   );
 }

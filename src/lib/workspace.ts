@@ -18,13 +18,14 @@ export type DivinationWorkspaceId = Exclude<DivinationMethodId, 'astrolabe' | 'r
 export type WorkspaceFeatureId = ChartWorkspaceId | DivinationWorkspaceId | CalendarWorkspaceId;
 export type WorkspaceFeatureGroup = 'chart' | 'divination' | 'timing';
 export type HomeModeId = 'chart' | 'divination' | 'instant';
-export type WorkspaceThemeId = 'blossom' | 'violet' | 'indigo' | 'jade' | 'amber';
+export type WorkspaceThemeId = 'ink' | 'blossom' | 'violet' | 'indigo' | 'jade' | 'amber';
 
 export const WORKSPACE_THEME_DEFINITIONS: ReadonlyArray<{
   id: WorkspaceThemeId;
   label: string;
   swatches: readonly [string, string, string];
 }> = [
+  { id: 'ink', label: '水墨', swatches: ['#9e2a2b', '#4a4843', '#f4f2ec'] },
   { id: 'blossom', label: '海棠', swatches: ['#cb4f97', '#b8a7ea', '#f7e7f1'] },
   { id: 'violet', label: '紫藤', swatches: ['#715aa2', '#a88bc2', '#eee9f5'] },
   { id: 'indigo', label: '青黛', swatches: ['#3e6d91', '#7e9db7', '#e7eff5'] },
@@ -173,6 +174,22 @@ const calendarFeatures: WorkspaceFeature[] = [
   },
 ];
 
+/**
+ * 招牌工具：首屏只陈列这几个，其余收进「全部工具」。
+ *
+ * 取舍依据不是功能强弱，而是「用户第一次来最可能点的那几个」：
+ * 命盘看八字/紫微/星盘，关系看合盘，问事看六爻，择日看干支日历。
+ * 冷门但硬核的（太乙、皇极经世、五运六气、七政、玄空）保留入口，只是降级为次级。
+ */
+export const FEATURED_FEATURE_IDS: readonly WorkspaceFeatureId[] = [
+  'bazi',
+  'ziwei',
+  'astrolabe',
+  'compatibility',
+  'liuyao',
+  'calendar',
+];
+
 export const WORKSPACE_FEATURES: WorkspaceFeature[] = [
   ...chartFeatures,
   ...divinationFeatures,
@@ -199,7 +216,7 @@ export type WorkspacePreferences = {
 };
 
 export const DEFAULT_WORKSPACE_PREFERENCES: WorkspacePreferences = {
-  theme: 'blossom',
+  theme: 'ink',
   defaultChartFeature: 'bazi',
   defaultDivinationFeature: 'liuyao',
   defaultInstantType: 'bazi',

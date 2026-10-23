@@ -1,0 +1,1814 @@
+/* ===========================================================================
+   ink-tokens.css — 水墨极简设计基座
+   ---------------------------------------------------------------------------
+   与既有主题体系的关系：
+   - 既有 styles.css 用 --accent* 驱动 5 套配色（海棠/紫藤/青黛/松青/琥珀）。
+   - 本文件只新增 --paper-* / --ink-* / --cinnabar 与 .ink-* 组件类，
+     不改写也不覆盖任何既有变量，属于纯增量层，可逐页迁移。
+   - 命名空间：所有类名以 ink- 开头，避免与既有 workspace-* 冲突。
+   =========================================================================== */
+
+/* ===========================================================================
+   自托管衬线：思源宋体子集（Noto Serif SC），只含界面用字，约 300KB/字重。
+   不引 Google Fonts CDN —— 大陆访问不可靠，且首屏不该依赖外部域名。
+   长正文另用系统宋体栈，避免子集外生僻字在段内跳字体。
+   =========================================================================== */
+@font-face {
+  font-family: 'Mingyu Serif';
+  src: url('/fonts/mingyu-serif-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mingyu Serif';
+  src: url('/fonts/mingyu-serif-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---- 纸 ---- */
+  --paper-bg: #f4f2ec; /* 生宣米白 */
+  --paper-sub: #eae6dc; /* 浅墨分隔 */
+  --paper-raised: #fbfaf6; /* 浮起（卡片） */
+  --paper-sunk: #efebe1; /* 下沉（输入槽） */
+
+  /* ---- 墨阶 ---- */
+  --ink-deep: #181715; /* 焦墨 */
+  --ink-strong: #2e2c28;
+  --ink-medium: #4a4843; /* 重墨 */
+  --ink-light: #8c887f; /* 淡墨 */
+  --ink-faint: #b4b0a6; /* 清墨 */
+
+  /* ---- 唯一点缀色 ---- */
+  --cinnabar: #9e2a2b; /* 朱砂印泥 */
+  --cinnabar-soft: rgba(158, 42, 43, 0.12);
+  --cinnabar-line: rgba(158, 42, 43, 0.42);
+
+  /* ---- 字体：全部本地字体栈，不请求外部 CDN（大陆可达性） ---- */
+  --ink-font-serif: 'Mingyu Serif', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STSong',
+    'SimSun', serif;
+  /* 长正文：只用系统宋体，不掺子集字体，避免段内跳字体 */
+  --ink-font-reading: 'Songti SC', 'STSong', 'SimSun', 'Source Han Serif SC', serif;
+  --ink-font-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui,
+    sans-serif;
+  --ink-font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+
+  /* ---- 字阶：正文 17px 起，行高 1.85 保证长文可读 ---- */
+  --ink-text-xs: 0.75rem;
+  --ink-text-sm: 0.85rem;
+  --ink-text-base: 1.0625rem;
+  --ink-text-md: 1.15rem;
+  --ink-text-lg: 1.55rem;
+  --ink-text-xl: 2.1rem;
+  --ink-text-hero: clamp(2.4rem, 7vw, 4.2rem);
+
+  /* ---- 字距：中文标题靠字距出气韵 ---- */
+  --ink-track-tight: 0.08em;
+  --ink-track-normal: 0.18em;
+  --ink-track-wide: 0.32em;
+  --ink-track-wider: 0.45em;
+
+  /* ---- 节奏 ---- */
+  --ink-space-1: 4px;
+  --ink-space-2: 8px;
+  --ink-space-3: 12px;
+  --ink-space-4: 18px;
+  --ink-space-5: 26px;
+  --ink-space-6: 38px;
+  --ink-space-7: 56px;
+  --ink-space-8: 84px;
+  --ink-gutter: 28px;
+  --ink-measure: 780px; /* 阅读正文宽度 */
+  --ink-measure-narrow: 540px;
+
+  /* ---- 线 ---- */
+  --ink-hairline: 1px solid var(--paper-sub);
+  --ink-rule: 1px solid var(--ink-deep);
+  --ink-dash: 1px dashed var(--paper-sub);
+
+  /* ---- 动效：一律「落笔」感，250–700ms，ease-out ---- */
+  --ink-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ink-ease-ink: cubic-bezier(0.16, 1, 0.3, 1);
+  --ink-dur-fast: 220ms;
+  --ink-dur-base: 420ms;
+  --ink-dur-slow: 700ms;
+
+  /* ---- 层 ---- */
+  --ink-z-grain: 60;
+  --ink-z-nav: 70;
+}
+
+/* 夜墨：暗底变体。只由 data-ink-mode 驱动，绝不跟随 prefers-color-scheme。 */
+[data-ink-mode='dark'] {
+  --paper-bg: #14130f;
+  --paper-sub: #2a2823;
+  --paper-raised: #1c1a16;
+  --paper-sunk: #100f0c;
+  --ink-deep: #f2efe6;
+  --ink-strong: #ddd8cc;
+  --ink-medium: #b3ada0;
+  --ink-light: #8a857a;
+  --ink-faint: #5f5b53;
+  --cinnabar: #c4493f;
+  --cinnabar-soft: rgba(196, 73, 63, 0.16);
+  --cinnabar-line: rgba(196, 73, 63, 0.46);
+}
+
+/* ===========================================================================
+   宣纸肌理层：极轻的网点，模拟纸纤维。固定定位，不参与交互。
+   =========================================================================== */
+.ink-grain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--ink-z-grain);
+  pointer-events: none;
+  opacity: 0.32;
+  background-image: radial-gradient(rgba(24, 23, 21, 0.06) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+[data-ink-mode='dark'] .ink-grain {
+  opacity: 0.2;
+  background-image: radial-gradient(rgba(242, 239, 230, 0.06) 1px, transparent 0);
+}
+
+/* ===========================================================================
+   页面骨架
+   =========================================================================== */
+.ink-page {
+  position: relative;
+  min-height: 100%;
+  background: var(--paper-bg);
+  color: var(--ink-deep);
+  font-family: var(--ink-font-serif);
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.ink-wrap {
+  width: 100%;
+  max-width: var(--ink-measure);
+  margin: 0 auto;
+  padding: 0 var(--ink-gutter);
+}
+
+.ink-wrap--narrow {
+  max-width: var(--ink-measure-narrow);
+}
+
+/* ===========================================================================
+   首屏：留白 + 竖排题字 + 主视觉 + 书法大字
+   =========================================================================== */
+.ink-hero {
+  position: relative;
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ink-space-8) 0 var(--ink-space-6);
+  overflow: hidden;
+}
+
+/* 极淡的墨晕，两团，制造纸面呼吸（纯渐变，无滤镜，移动端零成本） */
+.ink-hero::before,
+.ink-hero::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(28px);
+}
+
+.ink-hero::before {
+  width: 46vw;
+  height: 46vw;
+  top: -14vw;
+  right: -10vw;
+  background: radial-gradient(circle, rgba(24, 23, 21, 0.07), transparent 68%);
+}
+
+.ink-hero::after {
+  width: 38vw;
+  height: 38vw;
+  bottom: -12vw;
+  left: -12vw;
+  background: radial-gradient(circle, rgba(158, 42, 43, 0.06), transparent 70%);
+}
+
+[data-ink-mode='dark'] .ink-hero::before {
+  background: radial-gradient(circle, rgba(242, 239, 230, 0.08), transparent 68%);
+}
+
+.ink-hero__canvas {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  min-height: 430px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 竖排题字 */
+.ink-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  user-select: none;
+}
+
+.ink-hero__title {
+  position: absolute;
+  top: 10px;
+  left: 4%;
+  font-size: var(--ink-text-lg);
+  font-weight: 600;
+  letter-spacing: var(--ink-track-wider);
+  color: var(--ink-deep);
+}
+
+.ink-hero__poem {
+  position: absolute;
+  bottom: 14px;
+  left: 9%;
+  font-size: var(--ink-text-sm);
+  letter-spacing: var(--ink-track-wide);
+  color: var(--ink-medium);
+  line-height: 2.1;
+}
+
+.ink-hero__calligraphy {
+  position: absolute;
+  right: 4%;
+  top: 16%;
+  font-size: var(--ink-text-xl);
+  font-weight: 700;
+  letter-spacing: 0.55em;
+  color: var(--ink-deep);
+  filter: url(#ink-dry-brush);
+}
+
+/* 主视觉容器 */
+.ink-artwork {
+  width: 320px;
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ink-artwork svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: var(--ink-deep);
+}
+
+/* 主视觉切换：交叉淡入，不用位移，避免「翻页感」 */
+.ink-artwork-stack {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.ink-artwork-stack > * {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--ink-dur-slow) var(--ink-ease),
+    transform var(--ink-dur-slow) var(--ink-ease);
+}
+
+.ink-artwork-stack > [data-active='false'] {
+  opacity: 0;
+  transform: scale(0.985);
+  pointer-events: none;
+}
+
+/* 首个渲染：墨迹由淡到显 */
+.ink-ink-in {
+  animation: ink-reveal var(--ink-dur-slow) var(--ink-ease-ink) both;
+}
+
+@keyframes ink-reveal {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* 向下引导 */
+.ink-scroll-hint {
+  margin-top: var(--ink-space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ink-space-3);
+  font-size: var(--ink-text-xs);
+  letter-spacing: var(--ink-track-wider);
+  color: var(--ink-light);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color var(--ink-dur-base) var(--ink-ease);
+}
+
+.ink-scroll-hint:hover {
+  color: var(--ink-deep);
+}
+
+.ink-scroll-hint__line {
+  width: 1px;
+  height: 42px;
+  background: linear-gradient(to bottom, var(--ink-medium), transparent);
+}
+
+/* 主视觉切换器 */
+.ink-motif-switch {
+  display: flex;
+  align-items: center;
+  gap: var(--ink-space-3);
+  font-size: var(--ink-text-xs);
+  letter-spacing: var(--ink-track-normal);
+  color: var(--ink-light);
+}
+
+.ink-motif-switch button {
+  background: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: 4px 0;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: all var(--ink-dur-base) var(--ink-ease);
+}
+
+.ink-motif-switch button[aria-pressed='true'] {
+  color: var(--ink-deep);
+  border-bottom-color: var(--ink-deep);
+}
+
+/* ===========================================================================
+   朱砂闲章
+   =========================================================================== */
+.ink-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--cinnabar);
+  color: var(--cinnabar);
+  font-size: 0.68rem;
+  line-height: 1;
+  letter-spacing: 0;
+  font-weight: 600;
+  opacity: 0.9;
+  filter: url(#ink-bleed);
+}
+
+.ink-seal--lg {
+  width: 38px;
+  height: 38px;
+  font-size: 0.8rem;
+}
+
+/* 章节分隔 */
+.ink-divider {
+  text-align: center;
+  margin: var(--ink-space-7) 0 var(--ink-space-6);
+}
+
+.ink-divider h2 {
+  margin: 0 0 var(--ink-space-2);
+  font-size: var(--ink-text-md);
+  font-weight: 400;
+  letter-spacing: var(--ink-track-wider);
+  color: var(--ink-deep);
+}
+
+.ink-divider p {
+  margin: 0;
+  font-size: var(--ink-text-xs);
+  letter-spacing: var(--ink-track-normal);
+  color: var(--ink-light);
+}
+
+/* ===========================================================================
+   表单：如宣纸上提笔填空，只留一条底线
+   =========================================================================== */
+.ink-field {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  align-items: baseline;
+  gap: var(--ink-space-3);
+  padding-bottom: var(--ink-space-3);
+  border-bottom: var(--ink-hairline);
+  transition: border-color var(--ink-dur-base) var(--ink-ease);
+}
+
+.ink-field:focus-within {
+  border-bottom-color: var(--ink-deep);
+}
+
+.ink-field__label {
+  font-size: var(--ink-text-sm);
+  letter-spacing: 0.25em;
+  color: var(--ink-light);
+}
+
+.ink-field input,
+.ink-field select,
+.ink-field textarea {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-family: inherit;
+  font-size: var(--ink-text-base);
+  letter-spacing: var(--ink-track-tight);
+  color: var(--ink-deep);
+  padding: 4px 0;
+}
+
+.ink-field input::placeholder,
+.ink-field textarea::placeholder {
+  color: var(--ink-faint);
+  letter-spacing: var(--ink-track-tight);
+}
+
+/* 主按钮：空心 → 实心，唯一允许的「重」元素 */
+.ink-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ink-space-2);
+  background: transparent;
+  border: 1px solid var(--ink-deep);
+  color: var(--ink-deep);
+  font-family: inherit;
+  font-size: var(--ink-text-sm);
+  letter-spacing: var(--ink-track-wider);
+  padding: 14px 40px;
+  cursor: pointer;
+  transition: all var(--ink-dur-base) var(--ink-ease);
+}
+
+.ink-btn:hover {
+  background: var(--ink-deep);
+  color: var(--paper-bg);
+}
+
+.ink-btn--ghost {
+  border-color: var(--paper-sub);
+  color: var(--ink-medium);
+}
+
+.ink-btn--ghost:hover {
+  border-color: var(--ink-deep);
+  background: transparent;
+  color: var(--ink-deep);
+}
+
+.ink-btn--seal {
+  border-color: var(--cinnabar);
+  color: var(--cinnabar);
+}
+
+.ink-btn--seal:hover {
+  background: var(--cinnabar);
+  color: var(--paper-bg);
+}
+
+.ink-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ===========================================================================
+   四柱：竖排碑帖式
+   =========================================================================== */
+.ink-pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 460px;
+  margin: 0 auto var(--ink-space-7);
+  padding: var(--ink-space-5) 0;
+  text-align: center;
+  border-top: var(--ink-rule);
+  border-bottom: var(--ink-rule);
+}
+
+.ink-pillar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ink-space-2);
+  border-right: var(--ink-dash);
+}
+
+.ink-pillar:last-child {
+  border-right: 0;
+}
+
+.ink-pillar__name {
+  font-size: var(--ink-text-xs);
+  letter-spacing: 0.25em;
+  color: var(--ink-light);
+}
+
+.ink-pillar__god {
+  font-size: var(--ink-text-xs);
+  letter-spacing: 0.15em;
+  color: var(--ink-medium);
+}
+
+.ink-pillar__chars {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  margin: 6px 0;
+  color: var(--ink-deep);
+  filter: url(#ink-bleed);
+}
+
+.ink-pillar__nayin {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-light);
+}
+
+/* ===========================================================================
+   批注：左侧一道墨线
+   =========================================================================== */
+.ink-note {
+  position: relative;
+  padding-left: var(--ink-space-5);
+  border-left: 2px solid var(--ink-deep);
+}
+
+.ink-note__title {
+  display: flex;
+  align-items: center;
+  gap: var(--ink-space-3);
+  margin-bottom: var(--ink-space-3);
+  font-size: var(--ink-text-sm);
+  letter-spacing: 0.3em;
+  color: var(--ink-light);
+}
+
+.ink-note__body {
+  font-size: var(--ink-text-base);
+  letter-spacing: var(--ink-track-tight);
+  color: var(--ink-deep);
+  text-align: justify;
+}
+
+.ink-note__quote {
+  margin-top: var(--ink-space-3);
+  font-size: var(--ink-text-sm);
+  letter-spacing: 0.12em;
+  color: var(--ink-medium);
+}
+
+/* ===========================================================================
+   首页主视觉：与上游 .workspace-home-ink-scene 的结构对接
+   =========================================================================== */
+.ink-home-motif {
+  width: clamp(260px, 30vw, 420px);
+  aspect-ratio: 340 / 200;
+  display: grid;
+  place-items: center;
+  color: var(--ink-deep);
+}
+
+.ink-home-motif svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* 上游把题字与印章写成 rgba 硬编码，换主题不跟随；统一到 ink token */
+.workspace-home-ink-verse {
+  color: var(--ink-medium);
+  font-family: var(--ink-font-serif);
+  font-weight: 600;
+}
+
+.workspace-home-ink-scene .workspace-home-ink-seal {
+  border-color: var(--cinnabar);
+  color: var(--cinnabar);
+  font-family: var(--ink-font-serif);
+  filter: url(#ink-bleed);
+  transform: rotate(5deg);
+}
+
+/* 瞳仁极缓自转：不是装饰，是让「注视」有呼吸 */
+.ink-iris {
+  transform-origin: 170px 98px;
+  animation: ink-iris-turn 90s linear infinite;
+}
+
+@keyframes ink-iris-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===========================================================================
+   首页问答区：纸面直写
+   只在 ink 主题下生效 —— 其他配色保持上游的卡片形态，避免互相干扰。
+   =========================================================================== */
+:root[data-accent-theme='ink'] .workspace-home-composer {
+  overflow: visible;
+  border: 0;
+  border-top: 1px solid rgba(74, 72, 67, 0.18);
+  border-bottom: 1px solid rgba(74, 72, 67, 0.18);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-composer:focus-within {
+  border-color: rgba(74, 72, 67, 0.32);
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-question {
+  padding: 18px 2px 10px;
+  font-family: var(--ink-font-serif);
+  font-size: var(--ink-text-base);
+  line-height: 1.9;
+  letter-spacing: var(--ink-track-tight);
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .workspace-home-question::placeholder {
+  color: var(--ink-faint);
+  opacity: 1;
+  letter-spacing: var(--ink-track-tight);
+}
+
+:root[data-accent-theme='ink'] .workspace-home-question-tools {
+  padding: 0 2px 10px;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-question-tools button {
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink-light);
+  font-family: var(--ink-font-serif);
+  font-size: var(--ink-text-xs);
+  letter-spacing: var(--ink-track-normal);
+}
+
+:root[data-accent-theme='ink'] .workspace-home-question-tools button:hover,
+:root[data-accent-theme='ink'] .workspace-home-question-tools button.is-active {
+  color: var(--cinnabar);
+}
+
+:root[data-accent-theme='ink'] .workspace-home-composer-footer {
+  border-top: 1px dashed rgba(74, 72, 67, 0.16);
+  background: transparent;
+}
+
+/* ===========================================================================
+   首页标题层：衬线 + 宽字距，中文标题靠字距出气韵
+   =========================================================================== */
+:root[data-accent-theme='ink'] .workspace-home-copy h1 {
+  font-family: var(--ink-font-serif);
+  font-size: clamp(1.85rem, 3.2vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  /* 末字后的字距会把整行推左，用等效缩进补回来 */
+  text-indent: 0.2em;
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .workspace-home-copy p {
+  font-family: var(--ink-font-serif);
+  font-size: var(--ink-text-xs);
+  letter-spacing: var(--ink-track-wide);
+  color: var(--ink-light);
+}
+
+/* 底部 chips：去掉胶囊底色，改成虚线小签 */
+:root[data-accent-theme='ink'] .workspace-home-algorithm,
+:root[data-accent-theme='ink'] .workspace-home-case-select {
+  background: transparent;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-algorithm > *,
+:root[data-accent-theme='ink'] .workspace-home-case-select > * {
+  border-radius: 0;
+  background: transparent;
+  border: 1px dashed rgba(74, 72, 67, 0.22);
+  color: var(--ink-medium);
+  font-family: var(--ink-font-serif);
+  letter-spacing: 0.08em;
+}
+
+/* ===========================================================================
+   无障碍：尊重系统降低动效
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .ink-ink-in,
+  .ink-artwork-stack > *,
+  .ink-iris {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .ink-hero__calligraphy,
+  .ink-pillar__chars,
+  .ink-seal {
+    filter: none;
+  }
+}
+
+/* 移动端：缩窄栏宽与字号，竖排题字贴边 */
+@media (max-width: 600px) {
+  :root {
+    --ink-gutter: 20px;
+  }
+
+  .ink-hero__title {
+    left: 2%;
+    font-size: 1.3rem;
+  }
+
+  .ink-hero__calligraphy {
+    right: 2%;
+    font-size: 1.6rem;
+  }
+
+  .ink-hero__poem {
+    left: 4%;
+    font-size: 0.8rem;
+  }
+
+  .ink-artwork {
+    width: 260px;
+    height: 330px;
+  }
+
+  .ink-field {
+    grid-template-columns: 76px 1fr;
+  }
+}
+
+/* ===========================================================================
+   侧栏：去掉分段胶囊与灰底图标，回到「书目」质感
+   =========================================================================== */
+:root[data-accent-theme='ink'] .workspace-sidebar {
+  background: transparent;
+  border-right: 1px solid rgba(74, 72, 67, 0.14);
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-sidebar-switch {
+  grid-template-columns: auto auto;
+  justify-content: start;
+  gap: 20px;
+  padding: 0 0 9px;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(74, 72, 67, 0.16);
+  background: transparent;
+}
+
+:root[data-accent-theme='ink'] .workspace-sidebar-switch button {
+  min-height: 26px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-light);
+  font-family: var(--ink-font-serif);
+  font-size: var(--ink-text-sm);
+  font-weight: 400;
+  letter-spacing: var(--ink-track-normal);
+}
+
+:root[data-accent-theme='ink'] .workspace-sidebar-switch button.is-active {
+  background: transparent;
+  color: var(--ink-deep);
+  box-shadow: inset 0 -1px 0 var(--cinnabar);
+}
+
+:root[data-accent-theme='ink'] .workspace-nav-label {
+  padding: 0;
+  margin: 10px 0 2px;
+  color: var(--ink-faint);
+  font-family: var(--ink-font-serif);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: var(--ink-track-wider);
+}
+
+:root[data-accent-theme='ink'] .workspace-nav-list button {
+  min-height: 32px;
+  padding: 3px 6px 3px 0;
+  border-radius: 0;
+  color: var(--ink-medium);
+  font-family: var(--ink-font-serif);
+  letter-spacing: 0.1em;
+}
+
+:root[data-accent-theme='ink'] .workspace-nav-list button:hover {
+  background: transparent;
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .workspace-nav-list button.is-active {
+  background: transparent;
+  color: var(--ink-deep);
+  font-weight: 600;
+}
+
+:root[data-accent-theme='ink'] .workspace-nav-list button.is-active .workspace-nav-mark {
+  background: transparent;
+  color: var(--cinnabar);
+  border-color: var(--cinnabar);
+}
+
+:root[data-accent-theme='ink'] .workspace-nav-mark,
+:root[data-accent-theme='ink'] .workspace-case-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 0;
+  border: 1px solid rgba(74, 72, 67, 0.2);
+  background: transparent;
+  color: var(--ink-light);
+  font-family: var(--ink-font-serif);
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+:root[data-accent-theme='ink'] .workspace-nav-mark-divination,
+:root[data-accent-theme='ink'] .workspace-nav-mark-timing {
+  background: transparent;
+  color: var(--ink-light);
+}
+
+:root[data-accent-theme='ink'] .workspace-brand-seal {
+  border-radius: 0;
+  background: var(--cinnabar);
+  color: #f7f4ec;
+  filter: url(#ink-bleed);
+}
+
+:root[data-accent-theme='ink'] .workspace-sidebar-footer {
+  border-top: 1px solid rgba(74, 72, 67, 0.14);
+}
+/* ===========================================================================
+   与上游局部水墨变量对接
+   上游 .workspace-home-page 自带一套 --home-* 硬编码色（未提交的本地改动），
+   这里把它们接到统一 token —— 不删那 412 行，但让全站只有一个色值来源。
+   =========================================================================== */
+:root[data-accent-theme='ink'] .workspace-home-page {
+  --home-paper: var(--paper-bg);
+  --home-paper-deep: var(--paper-sub);
+  --home-ink: var(--ink-deep);
+  --home-ink-soft: var(--ink-medium);
+  --home-cinnabar: var(--cinnabar);
+}
+
+/* ===========================================================================
+   通用表单控件：去框，留一条底线（输入页 / 弹窗 / 设置页共用 .workspace-ui-control）
+   =========================================================================== */
+:root[data-accent-theme='ink'] .workspace-ui-control {
+  min-height: 40px;
+  padding: 8px 2px;
+  border: 0;
+  border-bottom: 1px solid rgba(74, 72, 67, 0.22);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-deep);
+  font-family: var(--ink-font-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-control::placeholder {
+  color: var(--ink-faint);
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-control:focus,
+:root[data-accent-theme='ink'] .workspace-ui-control:focus-visible {
+  border-bottom-color: var(--cinnabar);
+  background: transparent;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] select.workspace-ui-control {
+  padding-right: 26px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6.5 8 10l4-3.5' stroke='%234a4843' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  background-size: 14px;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-field > label {
+  font-family: var(--ink-font-serif);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  color: var(--ink-light);
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-field-hint {
+  color: var(--ink-faint);
+  font-family: var(--ink-font-serif);
+  letter-spacing: 0.08em;
+}
+
+/* 按钮：主按钮空心→实心，其余一律细线墨字 */
+:root[data-accent-theme='ink'] .workspace-ui-button {
+  border-radius: 0;
+  border: 1px solid rgba(74, 72, 67, 0.28);
+  background: transparent;
+  color: var(--ink-medium);
+  font-family: var(--ink-font-serif);
+  font-weight: 400;
+  letter-spacing: var(--ink-track-normal);
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-button:hover:not(:disabled) {
+  border-color: var(--ink-deep);
+  background: transparent;
+  color: var(--ink-deep);
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-button.is-primary {
+  border-color: var(--ink-deep);
+  background: transparent;
+  color: var(--ink-deep);
+  font-weight: 600;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-button.is-primary:hover:not(:disabled) {
+  background: var(--ink-deep);
+  color: var(--paper-bg);
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-button.is-secondary,
+:root[data-accent-theme='ink'] .workspace-ui-button.is-ghost {
+  border-color: transparent;
+  color: var(--ink-light);
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-button.is-secondary:hover:not(:disabled),
+:root[data-accent-theme='ink'] .workspace-ui-button.is-ghost:hover:not(:disabled) {
+  color: var(--cinnabar);
+  background: transparent;
+}
+/* ===========================================================================
+   输入页：卡片变纸面，分段控件变「文字 + 朱砂下划线」
+   =========================================================================== */
+:root[data-accent-theme='ink'] .workspace-ui-form-surface {
+  padding-inline: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-form-heading {
+  font-family: var(--ink-font-serif);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-form-body {
+  gap: 26px;
+}
+
+/* 分段控件：隐藏滑块指示器，改成字下朱砂一笔 */
+:root[data-accent-theme='ink'] .workspace-ui-segmented {
+  display: flex;
+  gap: 24px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: inset 0 -1px 0 rgba(74, 72, 67, 0.16);
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-segmented-indicator {
+  display: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-segmented-item {
+  flex: 0 0 auto;
+  padding: 7px 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-light);
+  font-family: var(--ink-font-serif);
+  font-size: 0.92rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  transition: color var(--ink-dur-base) var(--ink-ease);
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-segmented-item:hover {
+  color: var(--ink-medium);
+  background: transparent;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-segmented-item.is-active {
+  color: var(--ink-deep);
+  font-weight: 600;
+  background: transparent;
+  box-shadow: inset 0 -1px 0 var(--cinnabar);
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-date-row {
+  gap: 22px;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-checkbox {
+  color: var(--ink-medium);
+  font-family: var(--ink-font-serif);
+  letter-spacing: 0.08em;
+}
+/* 下拉选择器（时辰/地点）：与输入框同一套底线语言 */
+:root[data-accent-theme='ink'] .workspace-ui-dropdown-trigger,
+:root[data-accent-theme='ink'] .workspace-ui-dropdown-trigger.is-field {
+  min-height: 40px;
+  padding: 8px 2px;
+  border: 0;
+  border-bottom: 1px solid rgba(74, 72, 67, 0.22);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-deep);
+  font-family: var(--ink-font-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-dropdown-trigger:hover,
+:root[data-accent-theme='ink'] .workspace-ui-dropdown-trigger[aria-expanded='true'] {
+  border-bottom-color: var(--cinnabar);
+  background: transparent;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-dropdown-value {
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-dropdown-menu {
+  border-radius: 0;
+  border: 1px solid rgba(74, 72, 67, 0.18);
+  background: var(--paper-raised);
+  box-shadow: 0 18px 40px rgba(24, 23, 21, 0.08);
+  font-family: var(--ink-font-serif);
+}
+
+:root[data-accent-theme='ink'] .workspace-ui-dropdown-option:hover,
+:root[data-accent-theme='ink'] .workspace-ui-dropdown-option.is-active {
+  border-radius: 0;
+  background: rgba(158, 42, 43, 0.08);
+  color: var(--ink-deep);
+}
+/* 顶部案例标签条：粉底胶囊 → 细线小签 */
+:root[data-accent-theme='ink'] .workspace-case-tabbar {
+  background: transparent;
+  border-bottom: 1px solid rgba(74, 72, 67, 0.14);
+}
+
+:root[data-accent-theme='ink'] .workspace-case-tab {
+  border-radius: 0;
+  border: 1px solid rgba(74, 72, 67, 0.2);
+  background: transparent;
+  color: var(--ink-medium);
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-case-tab.is-active,
+:root[data-accent-theme='ink'] .workspace-case-tab[aria-current='true'] {
+  border-color: var(--cinnabar);
+  background: transparent;
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .workspace-case-tab-icon {
+  border-radius: 0;
+  background: transparent;
+  color: var(--cinnabar);
+  font-family: var(--ink-font-serif);
+}
+
+:root[data-accent-theme='ink'] .workspace-case-tab-copy strong {
+  font-family: var(--ink-font-serif);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+:root[data-accent-theme='ink'] .workspace-case-tab-copy small {
+  color: var(--ink-faint);
+  letter-spacing: 0.08em;
+}
+
+:root[data-accent-theme='ink'] .workspace-case-tab-manage,
+:root[data-accent-theme='ink'] .workspace-case-tab-new {
+  border-radius: 0;
+  border: 1px solid rgba(74, 72, 67, 0.2);
+  background: transparent;
+  color: var(--ink-medium);
+  font-family: var(--ink-font-serif);
+  letter-spacing: 0.1em;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-case-tab-manage:hover,
+:root[data-accent-theme='ink'] .workspace-case-tab-new:hover {
+  border-color: var(--ink-deep);
+  color: var(--ink-deep);
+  background: transparent;
+}
+/* ===========================================================================
+   结果页·四柱：表格 → 碑帖
+   上游用 grid + 每格边框 + 斑马底色，读起来像后台报表。
+   这里只改「纸、线、字」，不改结构，所以十神/藏干/纳音的层级关系照旧。
+   =========================================================================== */
+:root[data-accent-theme='ink'] .bazi-pillars-table {
+  border: 0;
+  border-radius: 0;
+  border-top: 1px solid var(--ink-deep);
+  border-bottom: 1px solid var(--ink-deep);
+  grid-template-columns: 62px repeat(4, minmax(0, 1fr));
+  overflow: visible;
+}
+
+:root[data-accent-theme='ink'] .bazi-pillars-cell {
+  padding: 7px 4px;
+  border-right: 0;
+  border-bottom: 1px dashed rgba(74, 72, 67, 0.14);
+  background: transparent;
+  color: var(--ink-deep);
+  font-family: var(--ink-font-serif);
+  font-size: 0.84rem;
+  letter-spacing: 0.04em;
+}
+
+:root[data-accent-theme='ink'] .bazi-pillars-cell.is-head,
+:root[data-accent-theme='ink'] .bazi-pillars-cell.is-label {
+  background: transparent;
+  border-bottom: 1px solid rgba(74, 72, 67, 0.22);
+  color: var(--ink-light);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+}
+
+/* 日主一列：只留一道朱砂细框，代替整块底色 */
+:root[data-accent-theme='ink'] .bazi-pillars-cell.is-day-master {
+  background: rgba(158, 42, 43, 0.04);
+  box-shadow: inset 1px 0 0 var(--cinnabar-line), inset -1px 0 0 var(--cinnabar-line);
+}
+
+:root[data-accent-theme='ink'] .bazi-pillars-cell.is-stem .bazi-ganzhi-symbol,
+:root[data-accent-theme='ink'] .bazi-pillars-cell.is-branch .bazi-ganzhi-symbol {
+  font-family: var(--ink-font-serif);
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .bazi-pillars-cell.is-hidden-stems,
+:root[data-accent-theme='ink'] .bazi-pillars-cell.is-shensha {
+  color: var(--ink-medium);
+  font-size: 0.74rem;
+}
+
+:root[data-accent-theme='ink'] .bazi-wuxing-label {
+  font-family: var(--ink-font-serif);
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* ===========================================================================
+   结果页·岁运：卡片网格 → 细线时间轴
+   =========================================================================== */
+:root[data-accent-theme='ink'] .fortune-selector-card,
+:root[data-accent-theme='ink'] .result-side-card {
+  border: 1px solid rgba(74, 72, 67, 0.14);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .fortune-item {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-medium);
+  font-family: var(--ink-font-serif);
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .fortune-item:hover {
+  background: transparent;
+  color: var(--ink-deep);
+}
+
+/* 当前运/年：朱砂底线，不用填充色 */
+:root[data-accent-theme='ink'] .fortune-item.active {
+  background: transparent;
+  color: var(--ink-deep);
+  font-weight: 600;
+  box-shadow: inset 0 -1px 0 var(--cinnabar);
+}
+
+:root[data-accent-theme='ink'] .fortune-year,
+:root[data-accent-theme='ink'] .fortune-age {
+  color: var(--ink-faint);
+  font-family: var(--ink-font-serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+}
+
+:root[data-accent-theme='ink'] .fortune-text-value {
+  color: var(--ink-deep);
+  font-family: var(--ink-font-serif);
+}
+
+:root[data-accent-theme='ink'] .fortune-grid,
+:root[data-accent-theme='ink'] .fortune-row,
+:root[data-accent-theme='ink'] .fortune-container {
+  border-color: rgba(74, 72, 67, 0.12);
+  background: transparent;
+}
+
+/* ===========================================================================
+   结果页·顶部概要：色块 → 左侧一道墨线的批注
+   =========================================================================== */
+:root[data-accent-theme='ink'] .result-summary-grid > * {
+  border: 0;
+  border-left: 2px solid var(--ink-deep);
+  border-radius: 0;
+  background: transparent;
+  padding-left: 16px;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .bazi-interaction-card {
+  border: 0;
+  border-left: 1px solid rgba(74, 72, 67, 0.24);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .bazi-shensha-tag,
+:root[data-accent-theme='ink'] .bazi-interaction-badge {
+  border-radius: 0;
+  background: transparent;
+  border: 1px solid rgba(74, 72, 67, 0.18);
+  font-family: var(--ink-font-serif);
+  font-weight: 400;
+}
+/* ===========================================================================
+   五行着色：水墨版一律收墨
+   上游给干支按五行上色（棕/蓝/绿/红/黄）。五种饱和色同屏，纸面立刻碎掉。
+   水墨方案：全部转焦墨，只用「浓淡」区分，朱砂只留给日主。
+   =========================================================================== */
+:root[data-accent-theme='ink'] [data-wuxing] {
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .bazi-wuxing-label[data-wuxing] {
+  color: var(--ink-light);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* 藏干里的十神与五行：淡墨，让它退到第二层 */
+:root[data-accent-theme='ink'] .bazi-hidden-stem-list strong[data-wuxing],
+:root[data-accent-theme='ink'] .bazi-hidden-stem-list span {
+  color: var(--ink-medium);
+  font-weight: 400;
+}
+
+/* 日主那一列的干支：朱砂，全盘唯一的重音 */
+:root[data-accent-theme='ink'] .bazi-pillars-cell.is-day-master .bazi-ganzhi-symbol,
+:root[data-accent-theme='ink'] .bazi-pillars-cell.is-day-master .bazi-ganzhi-symbol[data-wuxing] {
+  color: var(--cinnabar);
+}
+
+/* 神煞与空亡：极小字，淡到几乎只是纸纹 */
+:root[data-accent-theme='ink'] .bazi-shensha-tag,
+:root[data-accent-theme='ink'] .bazi-pillars-cell.is-shensha {
+  color: var(--ink-light);
+  border-color: transparent;
+  background: transparent;
+  font-size: 0.7rem;
+}
+
+/* 顶部说明条（旺衰、格局与取用依据）：灰底圆角 → 一道细线 */
+:root[data-accent-theme='ink'] .bazi-context-grid > * {
+  border: 0;
+  border-left: 1px solid rgba(74, 72, 67, 0.24);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+/* ===========================================================================
+   账户页 / 管理后台共用的排版原子
+   =========================================================================== */
+.ink-acct-shell {
+  min-height: 100%;
+  padding: 48px 0 96px;
+}
+
+.ink-acct {
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ink-acct--wide {
+  max-width: var(--ink-measure);
+  text-align: left;
+}
+
+.ink-acct__mark {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--cinnabar);
+  color: var(--cinnabar);
+  font-size: 1.1rem;
+  filter: url(#ink-bleed);
+}
+
+.ink-acct__title {
+  margin: 0;
+  font-family: var(--ink-font-serif);
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: var(--ink-deep);
+}
+
+.ink-acct__title--left {
+  text-indent: 0;
+  letter-spacing: 0.12em;
+  font-size: 1.5rem;
+}
+
+.ink-acct__lead,
+.ink-acct__sub {
+  margin: 10px 0 0;
+  font-size: var(--ink-text-xs);
+  letter-spacing: 0.12em;
+  color: var(--ink-light);
+}
+
+.ink-acct__tabs {
+  justify-content: center;
+  margin: 28px 0 8px;
+}
+
+.ink-acct__form {
+  display: grid;
+  gap: 22px;
+  margin-top: 22px;
+  text-align: left;
+}
+
+.ink-acct__actions {
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
+}
+
+.ink-acct__error {
+  margin: 0;
+  color: var(--cinnabar);
+  font-size: var(--ink-text-sm);
+  letter-spacing: 0.06em;
+}
+
+.ink-acct__ok {
+  margin: 8px 0 0;
+  color: var(--ink-deep);
+  font-size: var(--ink-text-sm);
+  letter-spacing: 0.06em;
+}
+
+.ink-acct__empty {
+  margin: 12px 0;
+  color: var(--ink-faint);
+  font-size: var(--ink-text-sm);
+  letter-spacing: 0.08em;
+}
+
+.ink-acct__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(74, 72, 67, 0.16);
+}
+
+.ink-acct__head-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.ink-acct__head-actions .ink-btn {
+  padding: 8px 18px;
+  font-size: var(--ink-text-xs);
+}
+
+/* 数字用衬线大字，像碑上的计数 */
+.ink-acct__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 1px;
+  margin: 26px 0 8px;
+  background: rgba(74, 72, 67, 0.14);
+}
+
+.ink-acct__stats > div {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  background: var(--paper-bg);
+}
+
+.ink-acct__stat-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--ink-faint);
+}
+
+.ink-acct__stat-value {
+  font-family: var(--ink-font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink-deep);
+}
+
+.ink-acct__redeem {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 18px;
+  margin: 8px 0 4px;
+}
+
+.ink-acct__redeem .ink-btn {
+  padding: 10px 26px;
+}
+
+.ink-acct__list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ink-acct__list > li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px dashed rgba(74, 72, 67, 0.14);
+  font-size: var(--ink-text-sm);
+}
+
+.ink-acct__list > li.is-muted {
+  opacity: 0.45;
+}
+
+.ink-acct__list-name {
+  color: var(--ink-deep);
+  letter-spacing: 0.06em;
+}
+
+.ink-acct__list-meta {
+  color: var(--ink-light);
+  font-size: var(--ink-text-xs);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* 左对齐章节标题 */
+.ink-divider--left {
+  text-align: left;
+  margin: 42px 0 10px;
+}
+
+.ink-divider--left h2 {
+  font-size: 0.95rem;
+  letter-spacing: 0.4em;
+}
+
+@media (max-width: 600px) {
+  .ink-acct__stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ink-acct__stats > div {
+    padding: 12px 10px;
+  }
+
+  .ink-acct__redeem {
+    grid-template-columns: 1fr;
+  }
+
+  .ink-acct__head {
+    flex-direction: column;
+  }
+}
+/* 侧栏页脚（我的 / 使用说明 / 设置）：去掉胶囊底，选中只留朱砂下划线 */
+:root[data-accent-theme='ink'] .workspace-sidebar-footer button {
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-light);
+  font-family: var(--ink-font-serif);
+  font-size: var(--ink-text-xs);
+  letter-spacing: var(--ink-track-normal);
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-sidebar-footer button:hover {
+  background: transparent;
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .workspace-sidebar-footer button.is-active {
+  background: transparent;
+  color: var(--ink-deep);
+  font-weight: 600;
+  box-shadow: inset 0 -1px 0 var(--cinnabar);
+}
+/* 「全部工具」折叠行：去掉按钮框，回到书目里的一条细行 */
+:root[data-accent-theme='ink'] .workspace-more-tools {
+  width: 100%;
+  margin-top: 4px;
+  padding: 7px 0 7px 2px;
+  border: 0;
+  border-top: 1px dashed rgba(74, 72, 67, 0.16);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-light);
+  font-family: var(--ink-font-serif);
+  font-size: var(--ink-text-xs);
+  letter-spacing: var(--ink-track-normal);
+  text-align: left;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-more-tools:hover {
+  background: transparent;
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .workspace-more-tools-mark {
+  border-radius: 0;
+  background: transparent;
+  color: var(--cinnabar);
+  font-size: 0.9rem;
+}
+
+/* 招牌段与后续分组之间留一道空白节奏 */
+:root[data-accent-theme='ink'] .workspace-featured {
+  padding-bottom: 10px;
+}
+
+/* ===========================================================================
+   顶部导航 + 去侧栏
+   ---------------------------------------------------------------------------
+   上游外壳是「248px 固定侧栏 + margin-left 主区」。这里在 ink 主题下改为一列：
+   侧栏隐藏、主区回零边距、给固定顶栏让出 64px。
+   =========================================================================== */
+:root[data-accent-theme='ink'] .workspace-sidebar,
+:root[data-accent-theme='ink'] .workspace-mobile-header {
+  display: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-main {
+  margin-left: 0;
+  padding-top: var(--ink-topbar-height, 64px);
+}
+
+:root[data-accent-theme='ink'] .workspace-case-tabbar {
+  top: var(--ink-topbar-height, 64px);
+}
+
+.ink-topbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 120;
+  height: var(--ink-topbar-height, 64px);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 0 clamp(16px, 4vw, 40px);
+  border-bottom: 1px solid rgba(74, 72, 67, 0.14);
+  background: color-mix(in srgb, var(--paper-bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  font-family: var(--ink-font-serif);
+}
+
+.ink-topbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: var(--ink-deep);
+}
+
+.ink-topbar__seal {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  background: var(--cinnabar);
+  color: #f7f4ec;
+  font-size: 0.8rem;
+  font-weight: 600;
+  filter: url(#ink-bleed);
+}
+
+.ink-topbar__name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+}
+
+.ink-topbar__nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2.4vw, 30px);
+  margin-left: clamp(8px, 3vw, 40px);
+}
+
+.ink-topbar__nav a {
+  position: relative;
+  padding: 6px 0;
+  color: var(--ink-medium);
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-decoration: none;
+  transition: color var(--ink-dur-base) var(--ink-ease);
+}
+
+.ink-topbar__nav a:hover {
+  color: var(--ink-deep);
+}
+
+.ink-topbar__nav a.is-active {
+  color: var(--ink-deep);
+  font-weight: 600;
+  box-shadow: inset 0 -1px 0 var(--cinnabar);
+}
+
+.ink-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.ink-topbar__actions button {
+  padding: 5px 2px;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-light);
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  transition: all var(--ink-dur-base) var(--ink-ease);
+}
+
+.ink-topbar__actions button:hover {
+  color: var(--cinnabar);
+  border-bottom-color: var(--cinnabar-line);
+}
+
+/* 窄屏：导航项压缩，避免与品牌挤在一起 */
+@media (max-width: 720px) {
+  .ink-topbar {
+    gap: 12px;
+    padding: 0 14px;
+  }
+
+  .ink-topbar__name {
+    display: none;
+  }
+
+  .ink-topbar__nav {
+    gap: 12px;
+    margin-left: 0;
+  }
+
+  .ink-topbar__nav a {
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+
+/* 首页罗盘：比原来的眼睛大一圈，并吃掉多余的上下留白 */
+.ink-home-motif--compass {
+  width: clamp(280px, 30vw, 400px);
+  aspect-ratio: 1 / 1;
+}
+
+/* 顶栏已有品牌章，页面内重复的那一方「命」去掉 */
+:root[data-accent-theme='ink'] .workspace-home-brand {
+  display: none;
+}
+
+/* 功德箱：方框按钮改细线小签 */
+:root[data-accent-theme='ink'] .workspace-home-donation {
+  padding: 5px 12px;
+  border: 1px solid rgba(74, 72, 67, 0.2);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-light);
+  font-family: var(--ink-font-serif);
+  font-size: var(--ink-text-xs);
+  letter-spacing: var(--ink-track-normal);
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-donation:hover {
+  border-color: var(--cinnabar-line);
+  color: var(--cinnabar);
+}
+
+
+/* 首页标题层：品牌块隐藏后，标题要回到中轴；功德箱浮到右上角 */
+:root[data-accent-theme='ink'] .workspace-home-heading {
+  /* 上游遗留块把它改成了 grid 1fr auto 1fr：品牌隐藏后标题会掉进左列 */
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+  padding-bottom: 4px;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-copy {
+  text-align: center;
+  align-items: center;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-copy h1,
+:root[data-accent-theme='ink'] .workspace-home-copy p {
+  text-align: center;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-donation {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/* 竖排题字往中宫收，避免贴着屏幕边缘 */
+:root[data-accent-theme='ink'] .workspace-home-ink-verse-left {
+  left: 15%;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-ink-verse-right {
+  right: 15%;
+}
+
+/* 罗盘再大一号，成为真正的视觉锚点 */
+.ink-home-motif--compass {
+  width: clamp(300px, 32vw, 430px);
+}

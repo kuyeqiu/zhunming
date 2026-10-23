@@ -1,0 +1,413 @@
+/* ===========================================================================
+   admin.css — 管理后台样式
+   ---------------------------------------------------------------------------
+   刻意与 C 端分家：
+   - 前缀一律 admin-，不继承 .ink-* 与 .workspace-*，避免两套视觉互相污染；
+   - 语言是「密、平、快」：紧行距、等宽数字、1px 边框、无圆角无阴影；
+   - 纸色作为背景，但内容区是白色面板——后台的对比度服务于扫读，不服务于诗意。
+   =========================================================================== */
+
+.admin-shell {
+  --admin-bg: #f6f5f1;
+  --admin-panel: #ffffff;
+  --admin-line: #e3e0d8;
+  --admin-line-strong: #c9c5ba;
+  --admin-text: #1d1c19;
+  --admin-text-soft: #6b675f;
+  --admin-text-faint: #98938a;
+  --admin-accent: #9e2a2b;
+  --admin-ok: #2f6b46;
+  --admin-warn: #8a6a1f;
+  --admin-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+
+  display: grid;
+  grid-template-columns: 224px minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.admin-shell--denied {
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.admin-shell--denied h1 {
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  color: var(--admin-text-faint);
+}
+
+/* ---------- 侧栏 ---------- */
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px 14px;
+  border-right: 1px solid var(--admin-line);
+  background: var(--admin-panel);
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 4px 16px;
+  border-bottom: 1px solid var(--admin-line);
+}
+
+.admin-brand__mark {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: var(--admin-accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-brand__text {
+  display: grid;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.admin-brand__text small {
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--admin-text-faint);
+}
+
+.admin-nav nav {
+  display: grid;
+  gap: 1px;
+}
+
+.admin-nav nav button {
+  display: grid;
+  gap: 1px;
+  padding: 8px 10px;
+  border: 0;
+  border-left: 2px solid transparent;
+  background: transparent;
+  color: var(--admin-text-soft);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-nav nav button small {
+  font-size: 10px;
+  color: var(--admin-text-faint);
+}
+
+.admin-nav nav button:hover {
+  background: #faf9f6;
+  color: var(--admin-text);
+}
+
+.admin-nav nav button.is-active {
+  border-left-color: var(--admin-accent);
+  background: #fbf7f6;
+  color: var(--admin-text);
+  font-weight: 600;
+}
+
+.admin-nav__back {
+  margin-top: auto;
+  padding: 8px 10px;
+  color: var(--admin-text-soft);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.admin-nav__back:hover {
+  color: var(--admin-accent);
+}
+
+/* ---------- 主区 ---------- */
+.admin-main {
+  min-width: 0;
+  padding: 20px 24px 60px;
+}
+
+.admin-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--admin-line-strong);
+}
+
+.admin-head h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.admin-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-head button,
+.admin-toolbar button,
+.admin-form button,
+.admin-row-actions button {
+  padding: 5px 12px;
+  border: 1px solid var(--admin-line-strong);
+  background: var(--admin-panel);
+  color: var(--admin-text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.admin-head button:hover,
+.admin-toolbar button:hover,
+.admin-form button:hover,
+.admin-row-actions button:hover {
+  border-color: var(--admin-accent);
+  color: var(--admin-accent);
+}
+
+.admin-head button:disabled {
+  color: var(--admin-text-faint);
+  cursor: default;
+}
+
+.admin-notice {
+  color: var(--admin-ok);
+  font-size: 12px;
+}
+
+.admin-error {
+  margin: 12px 0 0;
+  padding: 8px 10px;
+  border-left: 2px solid var(--admin-accent);
+  background: #fdf6f5;
+  color: var(--admin-accent);
+  font-size: 12px;
+}
+
+/* ---------- 概览 ---------- */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  gap: 1px;
+  margin-top: 18px;
+  border: 1px solid var(--admin-line);
+  background: var(--admin-line);
+}
+
+.admin-stat {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  background: var(--admin-panel);
+}
+
+.admin-stat span {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--admin-text-faint);
+}
+
+.admin-stat strong {
+  font-family: var(--admin-mono);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- 表格 ---------- */
+.admin-table {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+  background: var(--admin-panel);
+  border: 1px solid var(--admin-line);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--admin-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-table th {
+  position: sticky;
+  top: 0;
+  background: #faf9f6;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--admin-text-soft);
+  white-space: nowrap;
+}
+
+.admin-table tbody tr:hover {
+  background: #fcfbf8;
+}
+
+.admin-table .num {
+  font-family: var(--admin-mono);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.admin-table code,
+.admin-payload {
+  font-family: var(--admin-mono);
+  font-size: 11px;
+  color: var(--admin-text-soft);
+  word-break: break-all;
+}
+
+.admin-payload {
+  max-width: 420px;
+}
+
+.admin-empty {
+  padding: 22px 10px;
+  text-align: center;
+  color: var(--admin-text-faint);
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.admin-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--admin-line-strong);
+  font-family: var(--admin-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--admin-text-soft);
+}
+
+.admin-tag--admin {
+  border-color: var(--admin-accent);
+  color: var(--admin-accent);
+}
+
+.admin-tag--paid,
+.admin-tag--active {
+  border-color: var(--admin-ok);
+  color: var(--admin-ok);
+}
+
+.admin-tag--disabled {
+  border-color: var(--admin-line-strong);
+  color: var(--admin-text-faint);
+}
+
+/* ---------- 工具条与表单 ---------- */
+.admin-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.admin-toolbar input {
+  flex: 1 1 auto;
+  max-width: 320px;
+  padding: 6px 10px;
+  border: 1px solid var(--admin-line-strong);
+  background: var(--admin-panel);
+  font: inherit;
+  font-size: 12px;
+}
+
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px 14px;
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--admin-line);
+  background: var(--admin-panel);
+}
+
+.admin-form h2 {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--admin-text-soft);
+}
+
+.admin-form label {
+  display: grid;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--admin-text-faint);
+}
+
+.admin-form input,
+.admin-form select {
+  padding: 6px 8px;
+  border: 1px solid var(--admin-line-strong);
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  color: var(--admin-text);
+}
+
+.admin-form button {
+  align-self: end;
+  justify-self: start;
+  padding: 7px 18px;
+}
+
+.admin-codes {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px dashed var(--admin-line-strong);
+  background: var(--admin-panel);
+  font-family: var(--admin-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--admin-text);
+  user-select: all;
+}
+
+@media (max-width: 900px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-nav {
+    border-right: 0;
+    border-bottom: 1px solid var(--admin-line);
+  }
+
+  .admin-nav nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .admin-main {
+    padding: 16px 14px 40px;
+  }
+}

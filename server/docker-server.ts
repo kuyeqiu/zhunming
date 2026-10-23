@@ -6,6 +6,8 @@ import { Readable } from 'node:stream';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { handlePublicApiRequest, isPublicApiRequestPath } from '../src/lib/public-api/handler';
 import { handleMcpRequest } from '../src/lib/mcp/handler';
+import { handleAppRequest } from './app/index';
+import { checkAiAccess } from './app/gate';
 import { onRequest as handleLegacySseRequest } from '../functions/sse';
 import { getPublicApiManifestForRequest } from '../src/lib/public-api/metadata';
 import type { AiEnv } from '../src/lib/ai/proxy';
@@ -106,6 +108,24 @@ function sendJson(response: ServerResponse, statusCode: number, body: unknown) {
 }
 
 async function handleApiRequest(request: IncomingMessage, response: ServerResponse, url: URL) {
+  // 付费墙：只锁内置 AI 解读，排盘与盘面全免费
+  if (url.pathname.startsWith('/api/v1/ai/analyze')) {
+    const verdict = checkAiAccess(request);
+    if (!verdict.allowed) {
+      sendJson(response, 402, {
+        ok: false,
+        error: {
+          code: 'PAYWALL',
+          message: verdict.message,
+          used: verdict.used,
+          limit: verdict.limit,
+          upgradeUrl: '/account',
+        },
+      });
+      return;
+    }
+  }
+
   let body: Buffer | undefined;
   try {
     body =
@@ -417,6 +437,12 @@ export function createDockerServer(staticRoot = distDir) {
       if (url.pathname === '/mcp') {
         await handleMcpServerRequest(request, response, url);
         return;
+      }
+
+      // 业务后端（账号/订单/权益）优先于静态分发；未命中返回 false 继续往下
+      if (url.pathname.startsWith('/api/app/')) {
+        const handled = await handleAppRequest(request, response, url);
+        if (handled) return;
       }
 
       if (isPublicApiRequestPath(url.pathname)) {
