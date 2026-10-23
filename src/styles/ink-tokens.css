@@ -1823,3 +1823,133 @@
 .ink-home-motif--compass {
   width: clamp(300px, 32vw, 430px);
 }
+
+/* ===========================================================================
+   首页改版：主视觉压小，首屏让给工具矩阵
+   ---------------------------------------------------------------------------
+   罗盘此前占 330–490px 高，视口低于约 990px 时提问框就被挤出首屏，而 24 个工具
+   全部藏在抽屉里，用户找不到。现在罗盘缩成一行小章，工具按「排盘/合盘/占卜/择日」
+   四组页签 + 卡片直接陈列在首页。
+   =========================================================================== */
+.ink-home-motif--compass {
+  width: clamp(104px, 11vw, 140px);
+}
+
+:root[data-accent-theme='ink'] .workspace-home-stage {
+  padding-top: 10px;
+  gap: 12px;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-ink-scene {
+  height: auto;
+  margin: -2px auto 0;
+}
+
+/* 罗盘缩小后，两侧竖排题字与印章失去构图依托，一并收起 */
+:root[data-accent-theme='ink'] .workspace-home-ink-verse-left,
+:root[data-accent-theme='ink'] .workspace-home-ink-verse-right,
+:root[data-accent-theme='ink'] .workspace-home-ink-scene .workspace-home-ink-seal {
+  display: none;
+}
+
+.workspace-home-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.workspace-home-tools-tabs {
+  display: flex;
+  justify-content: center;
+  gap: clamp(16px, 3vw, 30px);
+}
+
+.workspace-home-tools-tabs button {
+  padding: 4px 2px;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--ink-font-serif);
+  font-size: 0.92rem;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  transition:
+    color var(--ink-dur-base) var(--ink-ease),
+    border-color var(--ink-dur-base) var(--ink-ease);
+}
+
+.workspace-home-tools-tabs button:hover {
+  color: var(--ink-deep);
+}
+
+.workspace-home-tools-tabs button.is-active {
+  color: var(--cinnabar);
+  border-bottom-color: var(--cinnabar);
+}
+
+.workspace-home-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+  gap: 10px;
+}
+
+.workspace-home-tool-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 12px 13px;
+  border: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--ink-dur-base) var(--ink-ease);
+}
+
+.workspace-home-tool-card:hover {
+  border-color: var(--cinnabar-line);
+}
+
+.workspace-home-tool-mark {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  border: 1px solid var(--border-strong);
+  color: var(--ink-medium);
+  font-family: var(--ink-font-serif);
+  font-size: 0.82rem;
+  transition:
+    color var(--ink-dur-base) var(--ink-ease),
+    border-color var(--ink-dur-base) var(--ink-ease);
+}
+
+.workspace-home-tool-card:hover .workspace-home-tool-mark {
+  border-color: var(--cinnabar);
+  color: var(--cinnabar);
+}
+
+.workspace-home-tool-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.workspace-home-tool-copy strong {
+  color: var(--text-strong);
+  font-family: var(--ink-font-serif);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+.workspace-home-tool-copy small {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}

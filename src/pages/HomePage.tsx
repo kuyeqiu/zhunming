@@ -43,6 +43,7 @@ import {
   type ChartWorkspaceId,
   type DivinationWorkspaceId,
   type HomeModeId,
+  type WorkspaceFeatureId,
 } from '@/lib/workspace';
 import { BirthPlaceModal } from './InputPage.BirthPlaceModal';
 import { HomeSelectionDialog, type HomeSelectionOption } from './HomePage.SelectionDialog';
@@ -65,6 +66,45 @@ const modeCopy: Record<HomeModeId, { heading: string; placeholder: string }> = {
 const instantTimeOptions: DropdownSelectOption<InstantTimeStandard>[] = [
   { value: 'beijing', label: '北京时间', triggerLabel: '北京' },
   { value: 'true-solar', label: '真太阳时', triggerLabel: '真太阳' },
+];
+
+/**
+ * 首页工具矩阵的分组。按用户习惯分四类（排盘/合盘/占卜/择日），而不是侧栏的
+ * 命盘/占问/择时三组——合参、合盘从命盘里单拎出来，黄历归入择日。
+ * 顺序即卡片顺序，点击卡片直接进入对应工具页。
+ */
+const HOME_TOOL_GROUPS: ReadonlyArray<{
+  id: string;
+  label: string;
+  featureIds: readonly WorkspaceFeatureId[];
+}> = [
+  {
+    id: 'chart',
+    label: '排盘',
+    featureIds: ['bazi', 'ziwei', 'qimen-lifetime', 'astrolabe', 'qizheng', 'bazhai'],
+  },
+  { id: 'synastry', label: '合盘', featureIds: ['bazi-ziwei', 'compatibility'] },
+  {
+    id: 'divination',
+    label: '占卜',
+    featureIds: [
+      'liuyao',
+      'meihua',
+      'qimen',
+      'liuren',
+      'xiaoliuren',
+      'jinkoujue',
+      'taiyi',
+      'huangji',
+      'wuyun',
+      'ssgw',
+      'zhuge',
+      'kongming',
+      'tarot',
+      'lenormand',
+    ],
+  },
+  { id: 'timing', label: '择日', featureIds: ['almanac', 'calendar'] },
 ];
 
 const TEMPORARY_CASE_VALUE = '__temporary_case__';
@@ -103,6 +143,7 @@ export function HomePage() {
     supplementaryInfo: string;
   } | null>(null);
   const [currentTime, setCurrentTime] = useState(() => new Date());
+  const [activeToolGroup, setActiveToolGroup] = useState(HOME_TOOL_GROUPS[0].id);
   const instantBirthPlace = useBirthPlace({ form: instantPlaceForm, setForm: setInstantPlaceForm });
   const requestedMode = searchParams.get('section');
   const defaultMode = preferences.homeModeOrder[0] ?? 'divination';
@@ -130,6 +171,16 @@ export function HomePage() {
     () => orderedFeatures.filter((feature) => isDivinationWorkspaceId(feature.id)),
     [orderedFeatures],
   );
+  const toolGroups = useMemo(
+    () =>
+      HOME_TOOL_GROUPS.map((group) => ({
+        ...group,
+        features: group.featureIds.map(getWorkspaceFeature),
+      })),
+    [],
+  );
+  const activeToolGroupFeatures =
+    toolGroups.find((group) => group.id === activeToolGroup)?.features ?? [];
   const chartOptions = useMemo<HomeSelectionOption[]>(
     () =>
       chartFeatures.map((feature) => ({
@@ -590,6 +641,41 @@ export function HomePage() {
             </div>
           </form>
         </div>
+
+        <section className="workspace-home-tools" aria-label="全部工具">
+          <div className="workspace-home-tools-tabs" role="tablist" aria-label="工具分组">
+            {toolGroups.map((group) => (
+              <button
+                type="button"
+                role="tab"
+                key={group.id}
+                className={activeToolGroup === group.id ? 'is-active' : ''}
+                aria-selected={activeToolGroup === group.id}
+                onClick={() => setActiveToolGroup(group.id)}
+              >
+                {group.label}
+              </button>
+            ))}
+          </div>
+          <div className="workspace-home-tools-grid" role="tabpanel">
+            {activeToolGroupFeatures.map((feature) => (
+              <button
+                type="button"
+                key={feature.id}
+                className="workspace-home-tool-card"
+                onClick={() => navigate(buildWorkspaceFeaturePath(feature.id))}
+              >
+                <span className="workspace-home-tool-mark" aria-hidden="true">
+                  {feature.mark}
+                </span>
+                <span className="workspace-home-tool-copy">
+                  <strong>{feature.label}</strong>
+                  <small>{feature.description}</small>
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
       </div>
       {selectionDialog ? (
         <HomeSelectionDialog
