@@ -1,6 +1,5 @@
 type DismissLayerHandler = () => boolean | void;
 
-const ANDROID_BACK_EVENT = 'mingyu:android-back';
 const handlers: Array<{ id: symbol; handler: DismissLayerHandler }> = [];
 
 function dismissTopLayer() {
@@ -12,10 +11,6 @@ function dismissTopLayer() {
   return false;
 }
 
-function handleAndroidBack(event: Event) {
-  if (dismissTopLayer()) event.preventDefault();
-}
-
 function handleEscape(event: KeyboardEvent) {
   if (event.key !== 'Escape' || event.defaultPrevented) return;
   if (!dismissTopLayer()) return;
@@ -25,13 +20,11 @@ function handleEscape(event: KeyboardEvent) {
 
 function attachListeners() {
   if (handlers.length !== 1) return;
-  window.addEventListener(ANDROID_BACK_EVENT, handleAndroidBack);
   window.addEventListener('keydown', handleEscape);
 }
 
 function detachListeners() {
   if (handlers.length !== 0) return;
-  window.removeEventListener(ANDROID_BACK_EVENT, handleAndroidBack);
   window.removeEventListener('keydown', handleEscape);
 }
 

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
 import { shareText } from '@/utils/share-text';
-import { readPreferredAndroidAiApp } from '@/lib/android-ai-app';
 
 export interface ChartShareModalProps {
   chartTitle: string;
@@ -24,8 +23,6 @@ export function ChartShareModal({
 }: ChartShareModalProps) {
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [shareMsg, setShareMsg] = useState<string>('');
-
-  const preferredApp = readPreferredAndroidAiApp();
 
   async function handleCopy() {
     if (!chartText) return;
@@ -54,9 +51,7 @@ export function ChartShareModal({
     if (!chartText) return;
     try {
       const result = await shareText(chartText);
-      if (result.type === 'app') {
-        setShareMsg(`已发送至 ${result.label}`);
-      } else if (result.type === 'system') {
+      if (result.type === 'system') {
         setShareMsg('已调起系统分享');
       } else {
         await navigator.clipboard.writeText(chartText);
@@ -147,7 +142,7 @@ export function ChartShareModal({
           onClick={handleSystemShare}
           className="chart-share-secondary-btn"
         >
-          {preferredApp ? `发送至 ${preferredApp.label}` : '分享排盘'}
+          分享排盘
         </WorkspaceButton>
       </footer>
     </WorkspaceDialog>

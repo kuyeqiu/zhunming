@@ -61,5 +61,3 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
       - run: pnpm run build:pages-functions
-      - run: node scripts/run-vite-build.mjs --server
-      - run: pnpm run test:docker-runtime

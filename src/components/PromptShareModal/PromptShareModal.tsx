@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
 import { shareText } from '@/utils/share-text';
-import { readPreferredAndroidAiApp } from '@/lib/android-ai-app';
 
 export interface PromptShareModalProps {
   promptText: string;
@@ -32,7 +31,6 @@ export function PromptShareModal({
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [shareMsg, setShareMsg] = useState<string>('');
 
-  const preferredApp = readPreferredAndroidAiApp();
   const formattedTime = formatDisplayTime(timeLabel);
 
   async function handleCopy() {
@@ -65,9 +63,7 @@ export function PromptShareModal({
     if (!promptText) return;
     try {
       const result = await shareText(promptText);
-      if (result.type === 'app') {
-        setShareMsg(`已发送至 ${result.label}`);
-      } else if (result.type === 'system') {
+      if (result.type === 'system') {
         setShareMsg('已调起系统分享');
       } else {
         await navigator.clipboard.writeText(promptText);
@@ -169,7 +165,7 @@ export function PromptShareModal({
             onClick={handleSystemShare}
             className="prompt-share-secondary-btn"
           >
-            {preferredApp ? `发送至 ${preferredApp.label}` : '系统分享'}
+            系统分享
           </WorkspaceButton>
         ) : null}
       </footer>

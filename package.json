@@ -24,8 +24,6 @@
     "dev": "vite",
     "build": "pnpm skill:sync && pnpm --filter mingyu-core build && node scripts/run-vite-build.mjs && pnpm build:pages-discovery",
     "build:pages-discovery": "tsx --tsconfig tsconfig.app.json scripts/generate-pages-discovery.ts",
-    "build:mcp": "pnpm skill:sync && pnpm --filter mingyu-core build && vite build --config vite.mcp.config.ts",
-    "build:server": "pnpm skill:sync && pnpm --filter mingyu-core build && node scripts/run-vite-build.mjs --server",
     "build:pages-functions": "pnpm dlx wrangler@3.114.17 pages functions build functions --outdir .local/pages-functions-build && pnpm check:pages-functions-size",
     "check:pages-functions-size": "node scripts/check-pages-functions-size.mjs",
     "preview": "vite preview",
@@ -49,7 +47,6 @@
     "test:ci:run": "tsx --tsconfig tsconfig.app.json --test --test-concurrency=2 \"tests/*.test.ts\" \"tests/*.test.tsx\" \"tests/integration/*.test.ts\" \"tests/api/*.test.ts\" \"tests/mcp/*.test.ts\"",
     "test:all": "pnpm test:ci && pnpm test:exhaustive:run",
     "test:browser-contract": "pnpm --filter mingyu-core build && node scripts/test-browser-contracts.mjs",
-    "test:docker-runtime": "node scripts/verify-docker-runtime.mjs",
     "package:check": "pnpm --filter mingyu-core build && node scripts/test-package-tarballs.mjs",
     "lint": "eslint src packages/core/src mcp/src --max-warnings 999",
     "skill:check": "tsx --tsconfig tsconfig.app.json scripts/evaluate-skill.ts",
@@ -63,7 +60,6 @@
     "prompt:audit": "pnpm --filter mingyu-core build && pnpm prompt:audit:run",
     "prompt:audit:run": "tsx --tsconfig tsconfig.app.json scripts/generate-prompt-audit.ts && tsx --tsconfig tsconfig.app.json scripts/generate-culture-prompt-audit.ts",
     "prompt:audit:all": "pnpm prompt:audit",
-    "contest:evaluate": "node scripts/evaluate-fortune-contest-model.js",
     "mcp": "tsx --tsconfig mcp/tsconfig.json mcp/src/server.ts",
     "mcp:check": "tsc --project mcp/tsconfig.json --noEmit",
     "core:build": "pnpm --filter mingyu-core build",
@@ -73,7 +69,6 @@
     "start:app": "node --env-file-if-exists=.env.local --import=tsx server/docker-server.ts"
   },
   "dependencies": {
-    "@capacitor/core": "8.5.0",
     "caelus": "0.24.1",
     "iztro": "^2.5.8",
     "marked": "^16.4.2",

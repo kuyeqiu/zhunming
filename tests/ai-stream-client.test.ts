@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { streamAiChat } from '@/lib/ai/stream-client';
+import { getAiApiEndpoint, streamAiChat } from '@/lib/ai/stream-client';
+
+test('网页环境 AI 接口保持同源相对路径', () => {
+  assert.equal(getAiApiEndpoint('/api/v1/ai/analyze'), '/api/v1/ai/analyze');
+  assert.equal(getAiApiEndpoint('/api/v1/ai/models'), '/api/v1/ai/models');
+});
 
 test('AI 流式请求正常结束但没有内容时应显示错误', async (t) => {
   const originalFetch = globalThis.fetch;

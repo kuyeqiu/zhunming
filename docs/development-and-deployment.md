@@ -233,4 +233,3 @@ AI_RATE_LIMIT_WINDOW_SECONDS=600
 - [公开 API](api.md)
 - [MCP Server](../mcp/README.md)
 - [`mingyu-core`](../packages/core/README.md)
-- [模型评测](model-evaluation.md)

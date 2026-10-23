@@ -8,7 +8,6 @@ import {
   isServerBuiltinAiEnabled,
   type AiSettings,
 } from '@/lib/ai/settings';
-import { isAndroidApp } from '@/lib/android-ai-app';
 
 interface AiSettingsModalProps {
   settings: AiSettings;
@@ -22,7 +21,6 @@ export function AiSettingsModal({ settings, onApply, onClose }: AiSettingsModalP
   const [models, setModels] = useState<string[]>([]);
   const builtinEnabled = isServerBuiltinAiEnabled();
   const builtinLabel = getServerBuiltinAiLabel();
-  const androidApp = isAndroidApp();
   const canFetchModels =
     draft.mode === 'builtin' || Boolean(draft.apiKey.trim() && draft.baseUrl.trim());
 
@@ -96,8 +94,7 @@ export function AiSettingsModal({ settings, onApply, onClose }: AiSettingsModalP
           </label>
 
           <p className="workspace-setting-note">
-            发送 AI 解读会将当前排盘资料和问题提供给所选 AI
-            服务；网页上的自定义接口经命语服务转发，安卓版自定义接口由当前设备直连。
+            发送 AI 解读会将当前排盘资料和问题提供给所选 AI 服务；自定义接口经命语服务转发。
           </p>
 
           {builtinEnabled ? (
@@ -159,12 +156,6 @@ export function AiSettingsModal({ settings, onApply, onClose }: AiSettingsModalP
                 }
               />
             </label>
-
-            {androidApp ? (
-              <p className="workspace-setting-note">
-                安卓版会从当前设备直连该接口，API Key 不经过命语服务器。
-              </p>
-            ) : null}
 
             <label className="workspace-ui-field">
               <span>模型</span>

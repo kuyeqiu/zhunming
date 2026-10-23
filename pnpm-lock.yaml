@@ -14,9 +14,6 @@ importers:
 
   .:
     dependencies:
-      '@capacitor/core':
-        specifier: 8.5.0
-        version: 8.5.0
       caelus:
         specifier: 0.24.1
         version: 0.24.1
@@ -125,8 +122,6 @@ importers:
         specifier: ^2.5.8
         version: 2.5.8(patch_hash=d4da79df57c8d8342a164147fc2e639a6cefa6a07e0007cc8ddf2f07e9d463f1)
 
-  packages/mcp: {}
-
 packages:
 
   '@babel/code-frame@7.29.7':
@@ -215,9 +210,6 @@ packages:
   '@babel/types@7.29.7':
     resolution: {integrity: sha512-4zBIxpPzowiZpusoFkyGVwakdRJUyuH5PxQ/PrqghfdFWWasvnCdPfQXHrenDai+gyLARulZjZowCOj6fjT4pA==}
     engines: {node: '>=6.9.0'}
-
-  '@capacitor/core@8.5.0':
-    resolution: {integrity: sha512-Ca4krtqH1hothjtBIwf2J2TW7IhYq1ujp8QeItTiJohNsqij8ja2DYYH3DU0l8RmxCWaBAFTGA2TgOgOMCSNsQ==}
 
   '@discoveryjs/json-ext@0.6.1':
     resolution: {integrity: sha512-boghen8F0Q8D+0/Q1/1r6DUEieUJ8w2a1gIknExMSHBsJFOr2+0KUfHiVYBvucPwl3+RU5PFBK833FjFCh3BhA==}
@@ -1792,9 +1784,6 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
-  tslib@2.8.1:
-    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
-
   tsx@4.22.4:
     resolution: {integrity: sha512-X8EX+XV4QR5xCsrgxaED954zTDfY8KqlDtskKEL0cHhyS/P8b4IFOvGDQpsC9Q1XnLq915wEfwwY/zzskCtmhg==}
     engines: {node: '>=18.0.0'}
@@ -2073,10 +2062,6 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
-
-  '@capacitor/core@8.5.0':
-    dependencies:
-      tslib: 2.8.1
 
   '@discoveryjs/json-ext@0.6.1': {}
 
@@ -3528,8 +3513,6 @@ snapshots:
   ts-api-utils@2.5.0(typescript@5.9.3):
     dependencies:
       typescript: 5.9.3
-
-  tslib@2.8.1: {}
 
   tsx@4.22.4:
     dependencies:
