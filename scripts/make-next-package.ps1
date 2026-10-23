@@ -18,7 +18,6 @@ try {
     'src',
     'functions',
     'public',
-    'rag',
     'patches',
     'mcp',
     'package.json',
