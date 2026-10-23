@@ -79,7 +79,7 @@ export const MingluTenGodsSection: React.FC<Props> = ({
                 {ch.from}
               </span>
               <span className="minglu-flow-arrow">→ ({ch.flowType}) →</span>
-              <span className="font-bold text-sm text-amber-700 dark:text-amber-400">{ch.to}</span>
+              <span className="font-bold text-sm">{ch.to}</span>
               <span className="text-xs text-slate-500 block mt-1">{ch.desc}</span>
             </div>
           ))}
@@ -95,7 +95,7 @@ export const MingluTenGodsSection: React.FC<Props> = ({
               <div className="font-bold text-base text-slate-900 dark:text-slate-100 mb-1">
                 {hk.pillarLabel}
               </div>
-              <div className="text-xs text-amber-600 font-semibold mb-2">{hk.ageRange}</div>
+              <div className="text-xs font-semibold mb-2">{hk.ageRange}</div>
               {hk.actualTenGods.length > 0 && (
                 <div className="text-xs text-slate-600 dark:text-slate-300 mb-2">
                   <span className="font-semibold">实际十神：</span>

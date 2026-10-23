@@ -18,20 +18,13 @@ export type DivinationWorkspaceId = Exclude<DivinationMethodId, 'astrolabe' | 'r
 export type WorkspaceFeatureId = ChartWorkspaceId | DivinationWorkspaceId | CalendarWorkspaceId;
 export type WorkspaceFeatureGroup = 'chart' | 'divination' | 'timing';
 export type HomeModeId = 'chart' | 'divination' | 'instant';
-export type WorkspaceThemeId = 'ink' | 'blossom' | 'violet' | 'indigo' | 'jade' | 'amber';
+export type WorkspaceThemeId = 'ink';
 
 export const WORKSPACE_THEME_DEFINITIONS: ReadonlyArray<{
   id: WorkspaceThemeId;
   label: string;
   swatches: readonly [string, string, string];
-}> = [
-  { id: 'ink', label: '水墨', swatches: ['#9e2a2b', '#4a4843', '#f4f2ec'] },
-  { id: 'blossom', label: '海棠', swatches: ['#cb4f97', '#b8a7ea', '#f7e7f1'] },
-  { id: 'violet', label: '紫藤', swatches: ['#715aa2', '#a88bc2', '#eee9f5'] },
-  { id: 'indigo', label: '青黛', swatches: ['#3e6d91', '#7e9db7', '#e7eff5'] },
-  { id: 'jade', label: '松青', swatches: ['#347969', '#80a994', '#e6f1ed'] },
-  { id: 'amber', label: '琥珀', swatches: ['#9b6628', '#c09a61', '#f5ecdf'] },
-];
+}> = [{ id: 'ink', label: '水墨', swatches: ['#9e2a2b', '#4a4843', '#f4f2ec'] }];
 export const WORKSPACE_THEME_IDS = WORKSPACE_THEME_DEFINITIONS.map((item) => item.id);
 
 export const HOME_MODE_DEFINITIONS: ReadonlyArray<{

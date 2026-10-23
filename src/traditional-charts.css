@@ -556,53 +556,6 @@
   color: #2f6f9f;
 }
 
-@media (prefers-color-scheme: dark) {
-  .bazi-showcase-card .bazi-ganzhi-symbol[data-wuxing='木'],
-  .bazi-showcase-card .bazi-hidden-stem-list strong[data-wuxing='木'] {
-    color: #62a878;
-  }
-
-  .bazi-showcase-card .bazi-ganzhi-symbol[data-wuxing='火'],
-  .bazi-showcase-card .bazi-hidden-stem-list strong[data-wuxing='火'] {
-    color: #d87373;
-  }
-
-  .bazi-showcase-card .bazi-ganzhi-symbol[data-wuxing='土'],
-  .bazi-showcase-card .bazi-hidden-stem-list strong[data-wuxing='土'] {
-    color: #c09a4e;
-  }
-
-  .bazi-showcase-card .bazi-ganzhi-symbol[data-wuxing='金'],
-  .bazi-showcase-card .bazi-hidden-stem-list strong[data-wuxing='金'] {
-    color: #f2c94c;
-  }
-
-  .bazi-showcase-card .bazi-ganzhi-symbol[data-wuxing='水'],
-  .bazi-showcase-card .bazi-hidden-stem-list strong[data-wuxing='水'] {
-    color: #6f9fca;
-  }
-
-  .bazi-showcase-card .bazi-fortune-board .wuxing-mu {
-    color: #62a878;
-  }
-
-  .bazi-showcase-card .bazi-fortune-board .wuxing-huo {
-    color: #d87373;
-  }
-
-  .bazi-showcase-card .bazi-fortune-board .wuxing-tu {
-    color: #c09a4e;
-  }
-
-  .bazi-showcase-card .bazi-fortune-board .wuxing-jin {
-    color: #f2c94c;
-  }
-
-  .bazi-showcase-card .bazi-fortune-board .wuxing-shui {
-    color: #6f9fca;
-  }
-}
-
 /* 紫微：宫位保持连续盘格，重点宫位只用低饱和描边与底色。 */
 .ziwei-showcase-card .ziwei-layout,
 .ziwei-showcase-card .ziwei-board-stack,

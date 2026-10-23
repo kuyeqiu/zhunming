@@ -89,7 +89,7 @@ export const MingluFiveElementsSection: React.FC<Props> = ({ data }) => {
         <div className="minglu-strength-dashboard">
           <div className="minglu-strength-main-card">
             <div className="text-sm font-semibold text-slate-500 mb-1">综合旺衰评定</div>
-            <div className="text-3xl font-black text-amber-600 dark:text-amber-400 mb-2">
+            <div className="text-3xl font-black mb-2">
               【{dayMasterStrength.status}】
             </div>
             <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">

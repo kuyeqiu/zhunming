@@ -49,7 +49,7 @@ export const MingluAstrolabeSection: React.FC<Props> = ({ data }) => {
                       {p.label} ({p.name})
                     </MingluLink>
                   </td>
-                  <td className="font-medium text-amber-700 dark:text-amber-400">{p.sign}</td>
+                  <td className="font-medium">{p.sign}</td>
                   <td className="font-mono text-sm">{p.formatted}</td>
                   <td>{p.house === undefined ? '未定' : `第 ${p.house} 宫`}</td>
                   <td>{p.isRetrograde === undefined ? '—' : p.isRetrograde ? '逆行 ℞' : '顺行'}</td>
@@ -62,7 +62,7 @@ export const MingluAstrolabeSection: React.FC<Props> = ({ data }) => {
                       {p.label} ({p.name})
                     </MingluLink>
                   </td>
-                  <td className="font-medium text-amber-700 dark:text-amber-400">{p.sign}</td>
+                  <td className="font-medium">{p.sign}</td>
                   <td className="font-mono text-sm">{p.formatted}</td>
                   <td>四轴</td>
                   <td>—</td>

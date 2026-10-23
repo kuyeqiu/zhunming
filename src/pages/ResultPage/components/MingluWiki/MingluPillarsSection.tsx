@@ -84,7 +84,7 @@ export const MingluPillarsSection: React.FC<Props> = ({
               {data.columns.map((col) => (
                 <td
                   key={col.key}
-                  className="minglu-td-cell font-medium text-amber-700 dark:text-amber-300"
+                  className="minglu-td-cell font-medium"
                 >
                   {col.isDayMaster ? (
                     <span className="minglu-pill is-primary">{col.ganTenGod}</span>
@@ -101,7 +101,7 @@ export const MingluPillarsSection: React.FC<Props> = ({
               {data.columns.map((col) => (
                 <td
                   key={col.key}
-                  className={`minglu-td-cell font-bolder text-xl ${col.isDayMaster ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600' : ''}`}
+                  className="minglu-td-cell font-bolder text-xl"
                 >
                   {glossaryByTerm.get(`${col.gan}${col.ganWuxing}`) ? (
                     <MingluLink
@@ -283,7 +283,7 @@ export const MingluPillarsSection: React.FC<Props> = ({
                     {dir.type}
                   </span>
                 </div>
-                <div className="text-sm font-semibold text-amber-700 dark:text-amber-400 mb-1">
+                <div className="text-sm font-semibold mb-1">
                   方位：{dir.direction}
                 </div>
                 <div className="text-xs opacity-80">{dir.desc}</div>

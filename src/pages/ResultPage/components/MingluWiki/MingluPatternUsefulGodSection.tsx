@@ -35,7 +35,7 @@ export const MingluPatternUsefulGodSection: React.FC<Props> = ({ data }) => {
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <div>
               <span className="minglu-card-badge">{pattern.type}</span>
-              <h4 className="text-2xl font-black text-amber-700 dark:text-amber-300 mt-1">
+              <h4 className="text-2xl font-black mt-1">
                 【{pattern.name}】
               </h4>
             </div>
@@ -92,8 +92,8 @@ export const MingluPatternUsefulGodSection: React.FC<Props> = ({ data }) => {
             </div>
           )}
           {unknownTimeAnalysis && (
-            <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50/80 p-3 dark:border-amber-800 dark:bg-amber-950/20">
-              <div className="text-sm font-bold text-amber-800 dark:text-amber-300">
+            <div className="mt-4 rounded-lg border p-3">
+              <div className="text-sm font-bold">
                 出生时辰待补
               </div>
               <p className="mt-1 text-xs leading-relaxed text-slate-700 dark:text-slate-200">
@@ -251,7 +251,7 @@ export const MingluPatternUsefulGodSection: React.FC<Props> = ({ data }) => {
             <div className="minglu-classic-box">
               <div className="minglu-classic-header">
                 <span className="minglu-classic-source">{ditiansuiAdvice.source}</span>
-                <span className="font-bold text-base text-amber-800 dark:text-amber-300">
+                <span className="font-bold text-base">
                   {ditiansuiAdvice.title}
                 </span>
               </div>
@@ -272,7 +272,7 @@ export const MingluPatternUsefulGodSection: React.FC<Props> = ({ data }) => {
             <div className="minglu-classic-box">
               <div className="minglu-classic-header">
                 <span className="minglu-classic-source">{qiongtongAdvice.source}</span>
-                <span className="font-bold text-base text-amber-800 dark:text-amber-300">
+                <span className="font-bold text-base">
                   {qiongtongAdvice.title}
                 </span>
               </div>
@@ -293,7 +293,7 @@ export const MingluPatternUsefulGodSection: React.FC<Props> = ({ data }) => {
             <div className="minglu-classic-box">
               <div className="minglu-classic-header">
                 <span className="minglu-classic-source">{zipingAdvice.source}</span>
-                <span className="font-bold text-base text-amber-800 dark:text-amber-300">
+                <span className="font-bold text-base">
                   {zipingAdvice.title}
                 </span>
               </div>

@@ -58,7 +58,7 @@ export const MingluInteractionsSection: React.FC<Props> = ({ items }) => {
                 </p>
               ))}
 
-              <div className="text-xs text-amber-800 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 p-2 rounded">
+              <div className="text-xs p-2 rounded">
                 作用影响：{item.influence}
               </div>
             </div>

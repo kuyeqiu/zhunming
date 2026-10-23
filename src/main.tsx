@@ -5,7 +5,6 @@ import App from './App';
 import { registerServiceWorker } from './registerServiceWorker';
 import { registerDeploymentRecovery } from './lib/deployment-recovery';
 import { applyWorkspaceTheme, readWorkspacePreferences } from './lib/workspace';
-import { applyInkMode, readInkMode } from './lib/ink-theme';
 import './styles.css';
 import './workspace.css';
 import './workspace-ui.css';
@@ -14,7 +13,6 @@ import './traditional-charts.css';
 import './styles/ink-tokens.css';
 
 applyWorkspaceTheme(readWorkspacePreferences().theme);
-applyInkMode(readInkMode());
 registerDeploymentRecovery();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

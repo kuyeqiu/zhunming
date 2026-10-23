@@ -54,7 +54,7 @@ export const MingluShenShaSection: React.FC<Props> = ({ items }) => {
             </div>
 
             {s.tenGodCombo && (
-              <div className="text-xs text-amber-700 dark:text-amber-400 mt-1">
+              <div className="text-xs mt-1">
                 配合：{s.tenGodCombo}
               </div>
             )}

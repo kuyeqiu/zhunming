@@ -1,8 +1,9 @@
 /* ===========================================================================
    ink-tokens.css — 水墨极简设计基座
    ---------------------------------------------------------------------------
-   与既有主题体系的关系：
-   - 既有 styles.css 用 --accent* 驱动 5 套配色（海棠/紫藤/青黛/松青/琥珀）。
+   与既有 styles.css 的关系：
+   - styles.css 的 :root[data-accent-theme='ink'] 提供 --accent* / --surface-*，
+     全站只有水墨这一套配色。
    - 本文件只新增 --paper-* / --ink-* / --cinnabar 与 .ink-* 组件类，
      不改写也不覆盖任何既有变量，属于纯增量层，可逐页迁移。
    - 命名空间：所有类名以 ink- 开头，避免与既有 workspace-* 冲突。
@@ -102,22 +103,6 @@
   --ink-z-nav: 70;
 }
 
-/* 夜墨：暗底变体。只由 data-ink-mode 驱动，绝不跟随 prefers-color-scheme。 */
-[data-ink-mode='dark'] {
-  --paper-bg: #14130f;
-  --paper-sub: #2a2823;
-  --paper-raised: #1c1a16;
-  --paper-sunk: #100f0c;
-  --ink-deep: #f2efe6;
-  --ink-strong: #ddd8cc;
-  --ink-medium: #b3ada0;
-  --ink-light: #8a857a;
-  --ink-faint: #5f5b53;
-  --cinnabar: #c4493f;
-  --cinnabar-soft: rgba(196, 73, 63, 0.16);
-  --cinnabar-line: rgba(196, 73, 63, 0.46);
-}
-
 /* ===========================================================================
    宣纸肌理层：极轻的网点，模拟纸纤维。固定定位，不参与交互。
    =========================================================================== */
@@ -129,11 +114,6 @@
   opacity: 0.32;
   background-image: radial-gradient(rgba(24, 23, 21, 0.06) 1px, transparent 0);
   background-size: 24px 24px;
-}
-
-[data-ink-mode='dark'] .ink-grain {
-  opacity: 0.2;
-  background-image: radial-gradient(rgba(242, 239, 230, 0.06) 1px, transparent 0);
 }
 
 /* ===========================================================================
@@ -199,10 +179,6 @@
   bottom: -12vw;
   left: -12vw;
   background: radial-gradient(circle, rgba(158, 42, 43, 0.06), transparent 70%);
-}
-
-[data-ink-mode='dark'] .ink-hero::before {
-  background: radial-gradient(circle, rgba(242, 239, 230, 0.08), transparent 68%);
 }
 
 .ink-hero__canvas {
@@ -1607,13 +1583,11 @@
 /* ===========================================================================
    顶部导航 + 去侧栏
    ---------------------------------------------------------------------------
-   上游外壳是「248px 固定侧栏 + margin-left 主区」。这里在 ink 主题下改为一列：
+   上游外壳是「248px 固定侧栏 + margin-left 主区」。这里改为一列：
    侧栏隐藏、主区回零边距、给固定顶栏让出 64px。
 
-   这几条**不能限定在 ink 作用域内**：.ink-topbar 是无条件渲染的，而设置里另外 5 个
-   主题（blossom / violet / indigo / jade / amber）只在内容配色上有覆盖。一旦布局
-   补偿跟着主题走，选到非 ink 主题就会同时出现「顶栏压住标题」和「深色侧栏 + 重复
-   导航」——6 个主题里有 5 个是坏的。布局跟顶栏走，配色才跟主题走。
+   这几条**不能限定在 ink 作用域内**：.ink-topbar 是无条件渲染的。布局补偿
+   必须无条件生效，否则顶栏会压住标题、深色侧栏和重复导航会一起冒出来。
    =========================================================================== */
 .workspace-sidebar,
 .workspace-mobile-header {

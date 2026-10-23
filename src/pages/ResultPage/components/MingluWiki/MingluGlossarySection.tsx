@@ -94,7 +94,7 @@ export const MingluGlossarySection: React.FC<Props> = ({ entries, navigation }) 
               <span className="minglu-pill is-primary">{e.category}</span>
             </div>
 
-            <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 mb-2">
+            <p className="text-xs font-semibold mb-2">
               {e.shortDesc}
             </p>
 

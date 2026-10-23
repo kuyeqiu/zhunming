@@ -32,7 +32,7 @@ export const MingluLifeStagesSection: React.FC<Props> = ({ data }) => {
                   {ns.pillarLabel} {hasPillar ? `(${ns.stem}${ns.branch})` : '（待补时）'}
                 </div>
                 {hasDayMasterStage && (
-                  <div className="text-sm font-semibold text-amber-700 dark:text-amber-400 mb-1">
+                  <div className="text-sm font-semibold mb-1">
                     日主在{ns.branch}支：{ns.dayMasterStage}
                   </div>
                 )}

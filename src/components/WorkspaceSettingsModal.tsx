@@ -5,7 +5,6 @@ import {
   HOME_MODE_DEFINITIONS,
   WORKSPACE_FEATURES,
   WORKSPACE_FEATURE_GROUPS,
-  WORKSPACE_THEME_DEFINITIONS,
   applyWorkspaceTheme,
   getWorkspaceFeature,
   type HomeModeId,
@@ -59,10 +58,6 @@ export function WorkspaceSettingsModal({
   const [draft, setDraft] = useState(preferences);
   const didApplyRef = useRef(false);
 
-  useEffect(() => {
-    applyWorkspaceTheme(draft.theme);
-  }, [draft.theme]);
-
   useEffect(
     () => () => {
       if (!didApplyRef.current) {
@@ -88,42 +83,6 @@ export function WorkspaceSettingsModal({
 
       <div className="workspace-settings-layout">
         <section className="workspace-settings-section workspace-settings-primary-section">
-          <div className="workspace-theme-setting">
-            <div className="workspace-order-heading">
-              <div>
-                <h3>主题色</h3>
-                <p>选择后立即预览。</p>
-              </div>
-            </div>
-            <div className="workspace-theme-options" role="radiogroup" aria-label="主题色">
-              {WORKSPACE_THEME_DEFINITIONS.map((theme) => {
-                const isActive = draft.theme === theme.id;
-                return (
-                  <button
-                    type="button"
-                    className={`workspace-theme-option${isActive ? ' is-active' : ''}`}
-                    role="radio"
-                    aria-checked={isActive}
-                    key={theme.id}
-                    onClick={() =>
-                      setDraft((current) => ({
-                        ...current,
-                        theme: theme.id,
-                      }))
-                    }
-                  >
-                    <span className="workspace-theme-swatches" aria-hidden="true">
-                      {theme.swatches.map((color) => (
-                        <i key={color} style={{ backgroundColor: color }} />
-                      ))}
-                    </span>
-                    <span>{theme.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           <div className="workspace-order-heading">
             <div>
               <h3>首页模式顺序</h3>

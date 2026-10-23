@@ -176,7 +176,7 @@ export const MingluZiweiSection: React.FC<Props> = ({ data }) => {
                   {p.traditionalInterpretation}
                 </p>
                 {p.sourceQuote && (
-                  <blockquote className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 p-2 rounded">
+                  <blockquote className="text-xs p-2 rounded">
                     “{p.sourceQuote}”
                   </blockquote>
                 )}

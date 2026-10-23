@@ -67,7 +67,7 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
         {cycles.some((cycle) => cycle.entryType === '大运') && (
           <div className="minglu-meta-item">
             <span className="minglu-meta-label">起运年龄</span>
-            <span className="minglu-meta-value font-bold text-amber-700 dark:text-amber-300">
+            <span className="minglu-meta-value font-bold">
               约 {startAge} 岁起运
             </span>
           </div>
@@ -119,12 +119,12 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
         <div className="minglu-subblock">
           {/* 当前周期资料 */}
           <div className="minglu-card minglu-active-luck-card mb-6">
-            <div className="flex flex-wrap justify-between items-start gap-4 mb-4 pb-4 border-b border-amber-200/50 dark:border-amber-800/40">
+            <div className="flex flex-wrap justify-between items-start gap-4 mb-4 pb-4 border-b">
               <div>
                 <span className="minglu-card-badge">
                   {isChildhoodCycle ? '童限（小运）' : '大运'}
                 </span>
-                <h4 className="text-3xl font-black text-amber-800 dark:text-amber-300 mt-1">
+                <h4 className="text-3xl font-black mt-1">
                   【{cycleName}】
                   <span className="text-base font-normal text-slate-600 dark:text-slate-400 ml-2">
                     （所列年龄 {activeCycle.startAge}-{activeCycle.endAge} 岁）
@@ -162,8 +162,8 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
             {(activeCycle.lifeTheme || (!isChildhoodCycle && activeCycle.careerAdvice)) && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-3">
                 {activeCycle.lifeTheme && (
-                  <div className="bg-white/60 dark:bg-slate-900/60 p-3 rounded-lg border border-amber-100 dark:border-slate-800">
-                    <div className="font-bold text-amber-900 dark:text-amber-200 mb-1 flex items-center gap-1">
+                  <div className="bg-white/60 dark:bg-slate-900/60 p-3 rounded-lg border dark:border-slate-800">
+                    <div className="font-bold mb-1 flex items-center gap-1">
                       <span>{isChildhoodCycle ? '童限资料' : '大运干支与十神'}</span>
                     </div>
                     <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
@@ -172,7 +172,7 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
                   </div>
                 )}
                 {!isChildhoodCycle && activeCycle.careerAdvice && (
-                  <div className="bg-white/60 dark:bg-slate-900/60 p-3 rounded-lg border border-amber-100 dark:border-slate-800">
+                  <div className="bg-white/60 dark:bg-slate-900/60 p-3 rounded-lg border dark:border-slate-800">
                     <div className="font-bold text-emerald-900 dark:text-emerald-200 mb-1 flex items-center gap-1">
                       <span>十神取象与本局取用</span>
                     </div>
@@ -221,11 +221,11 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
                       <span className="px-2 py-0.5 text-xs rounded bg-slate-100 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-300">
                         {y.age} 岁
                       </span>
-                      <span className="text-xl font-black text-amber-700 dark:text-amber-400">
+                      <span className="text-xl font-black">
                         {y.ganZhi}
                       </span>
                       {hasValue(y.tenGod) && hasValue(y.zhiTenGod) && (
-                        <span className="text-xs px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-medium border border-amber-200/40">
+                        <span className="text-xs px-2 py-0.5 rounded font-medium border">
                           {y.tenGod} / {y.zhiTenGod}
                         </span>
                       )}
@@ -287,7 +287,7 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
                   {/* 当前流年覆盖的流月 */}
                   {isExpanded && y.months.length > 0 && (
                     <div className="minglu-table-wrap mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
-                      <div className="text-xs font-bold text-amber-800 dark:text-amber-300 mb-2">
+                      <div className="text-xs font-bold mb-2">
                         {y.year} ({y.ganZhi}) 年 · 所列 {y.months.length} 个流月
                       </div>
                       <table className="minglu-table minglu-monthly-table text-xs">
@@ -311,7 +311,7 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
                               <td className="text-slate-500 whitespace-nowrap">
                                 {m.startDateTime} 起，至 {m.endDateTime} 前
                               </td>
-                              <td className="font-bold text-amber-700 dark:text-amber-400">
+                              <td className="font-bold">
                                 {m.ganZhi}
                               </td>
                               <td>{m.ganTenGod}</td>

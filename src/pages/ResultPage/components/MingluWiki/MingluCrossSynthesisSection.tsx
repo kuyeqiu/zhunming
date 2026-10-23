@@ -26,7 +26,7 @@ export const MingluCrossSynthesisSection: React.FC<Props> = ({ themes }) => {
 
             <div className="minglu-card-grid minglu-card-grid-3 mb-3">
               <div className="p-3 rounded bg-slate-50 dark:bg-slate-800/60">
-                <div className="text-xs font-bold text-amber-700 dark:text-amber-400 mb-1">
+                <div className="text-xs font-bold mb-1">
                   八字资料：
                 </div>
                 <ul className="text-xs space-y-1">

@@ -192,11 +192,11 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
               <div className="minglu-beginner-hero-card">
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <span className="minglu-pill is-primary font-bold">你的命格核心原型</span>
-                  <span className="text-xs text-amber-700 dark:text-amber-300 font-medium">
+                  <span className="text-xs font-medium">
                     天人合一 · 自然意象
                   </span>
                 </div>
-                <h3 className="text-2xl font-black text-amber-900 dark:text-amber-200 mb-2">
+                <h3 className="text-2xl font-black mb-2">
                   {article.beginnerGuide.coreArchetype}
                 </h3>
                 <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
@@ -204,7 +204,7 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
                 </p>
 
                 {/* 旺衰白话解 */}
-                <div className="bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-800/40 rounded-lg p-3 text-xs text-slate-800 dark:text-slate-200 mb-4 leading-relaxed">
+                <div className="border rounded-lg p-3 text-xs text-slate-800 dark:text-slate-200 mb-4 leading-relaxed">
                   {article.beginnerGuide.strengthPlain}
                 </div>
 
@@ -217,7 +217,7 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
                     <ul className="space-y-1.5 text-slate-600 dark:text-slate-300">
                       {article.beginnerGuide.careerTalentsPlain.map((t, idx) => (
                         <li key={idx} className="flex items-center gap-1.5">
-                          <span className="text-amber-500 font-bold">•</span>
+                          <span className="font-bold">•</span>
                           <span>{t}</span>
                         </li>
                       ))}
@@ -244,15 +244,15 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
               <div className="minglu-subblock mt-6">
                 <h4 className="minglu-subblock-title">人生四部曲：四柱与“根苗花果”生命节律</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  <div className="minglu-card p-3.5 bg-gradient-to-br from-amber-50/50 to-emerald-50/50 dark:from-slate-900 dark:to-slate-900 border border-slate-200 dark:border-slate-800">
-                    <div className="text-xs font-bold text-amber-800 dark:text-amber-300 mb-1">
+                  <div className="minglu-card p-3.5 bg-gradient-to-br to-emerald-50/50 dark:from-slate-900 dark:to-slate-900 border border-slate-200 dark:border-slate-800">
+                    <div className="text-xs font-bold mb-1">
                       第一幕 · 家族祖荫
                     </div>
                     <div className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
                       {article.beginnerGuide.fourPillarsMetaphor.year}
                     </div>
                   </div>
-                  <div className="minglu-card p-3.5 bg-gradient-to-br from-amber-50/50 to-sky-50/50 dark:from-slate-900 dark:to-slate-900 border border-slate-200 dark:border-slate-800">
+                  <div className="minglu-card p-3.5 bg-gradient-to-br to-sky-50/50 dark:from-slate-900 dark:to-slate-900 border border-slate-200 dark:border-slate-800">
                     <div className="text-xs font-bold text-sky-800 dark:text-sky-300 mb-1">
                       第二幕 · 青年成长
                     </div>
@@ -260,7 +260,7 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
                       {article.beginnerGuide.fourPillarsMetaphor.month}
                     </div>
                   </div>
-                  <div className="minglu-card p-3.5 bg-gradient-to-br from-amber-50/50 to-rose-50/50 dark:from-slate-900 dark:to-slate-900 border border-slate-200 dark:border-slate-800">
+                  <div className="minglu-card p-3.5 bg-gradient-to-br to-rose-50/50 dark:from-slate-900 dark:to-slate-900 border border-slate-200 dark:border-slate-800">
                     <div className="text-xs font-bold text-rose-800 dark:text-rose-300 mb-1">
                       第三幕 · 中年立业
                     </div>
@@ -268,7 +268,7 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
                       {article.beginnerGuide.fourPillarsMetaphor.day}
                     </div>
                   </div>
-                  <div className="minglu-card p-3.5 bg-gradient-to-br from-amber-50/50 to-purple-50/50 dark:from-slate-900 dark:to-slate-900 border border-slate-200 dark:border-slate-800">
+                  <div className="minglu-card p-3.5 bg-gradient-to-br to-purple-50/50 dark:from-slate-900 dark:to-slate-900 border border-slate-200 dark:border-slate-800">
                     <div className="text-xs font-bold text-purple-800 dark:text-purple-300 mb-1">
                       第四幕 · 晚年丰硕
                     </div>
