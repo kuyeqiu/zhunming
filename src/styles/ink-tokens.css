@@ -1739,6 +1739,38 @@
   }
 }
 
+/* 桌面端工具抽屉
+   ---------------------------------------------------------------------------
+   抽屉的定位样式只写在 workspace.css 的 @media (max-width: 979px) 里，而 ink 主题
+   在所有宽度都隐藏了常驻侧栏，于是桌面点「工具」只会渲染出一个 0 尺寸、无定位的
+   块，全部工具在桌面端没有入口。这里补上桌面定位；抽屉内的 switch / nav / footer
+   已由上面的 ink 后代规则覆盖，无需重复。 */
+@media (min-width: 980px) {
+  :root[data-accent-theme='ink'] .workspace-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1600;
+    display: block;
+    background: color-mix(in srgb, var(--ink-deep) 24%, transparent);
+  }
+
+  :root[data-accent-theme='ink'] .workspace-mobile-drawer {
+    width: min(320px, 86vw);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 18px 16px;
+    border-right: 1px solid var(--border-soft);
+    background: var(--surface-elevated-strong);
+    box-shadow: 24px 0 64px rgba(30, 20, 35, 0.16);
+  }
+
+  :root[data-accent-theme='ink'] .workspace-mobile-drawer .workspace-drawer-close {
+    display: block;
+  }
+}
+
 
 /* 首页罗盘：比原来的眼睛大一圈，并吃掉多余的上下留白 */
 .ink-home-motif--compass {
