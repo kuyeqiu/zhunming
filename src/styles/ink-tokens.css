@@ -1609,18 +1609,23 @@
    ---------------------------------------------------------------------------
    上游外壳是「248px 固定侧栏 + margin-left 主区」。这里在 ink 主题下改为一列：
    侧栏隐藏、主区回零边距、给固定顶栏让出 64px。
+
+   这几条**不能限定在 ink 作用域内**：.ink-topbar 是无条件渲染的，而设置里另外 5 个
+   主题（blossom / violet / indigo / jade / amber）只在内容配色上有覆盖。一旦布局
+   补偿跟着主题走，选到非 ink 主题就会同时出现「顶栏压住标题」和「深色侧栏 + 重复
+   导航」——6 个主题里有 5 个是坏的。布局跟顶栏走，配色才跟主题走。
    =========================================================================== */
-:root[data-accent-theme='ink'] .workspace-sidebar,
-:root[data-accent-theme='ink'] .workspace-mobile-header {
+.workspace-sidebar,
+.workspace-mobile-header {
   display: none;
 }
 
-:root[data-accent-theme='ink'] .workspace-main {
+.workspace-main {
   margin-left: 0;
   padding-top: var(--ink-topbar-height, 64px);
 }
 
-:root[data-accent-theme='ink'] .workspace-case-tabbar {
+.workspace-case-tabbar {
   top: var(--ink-topbar-height, 64px);
 }
 
