@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'mingyu-static-v3';
-const RUNTIME_CACHE = 'mingyu-runtime-v3';
+const STATIC_CACHE = 'mingyu-static-v4';
+const RUNTIME_CACHE = 'mingyu-runtime-v4';
 const APP_SHELL = [
   '/',
   '/index.html',

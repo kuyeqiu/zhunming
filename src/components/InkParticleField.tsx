@@ -129,11 +129,29 @@ interface InkParticleFieldProps {
   className?: string;
   /** 采样用的水墨画，默认是压缩进 public 的 1000px JPEG */
   imageSrc?: string;
+  /** 置 true 后粒子从成画位置反向消散（入场动画倒放） */
+  exiting?: boolean;
+  /** 消散播完（uEnter 归零）时回调一次；离开页面/跳转由调用方决定 */
+  onExited?: () => void;
 }
 
-export function InkParticleField({ className, imageSrc = '/ink-scene.jpg' }: InkParticleFieldProps) {
+export function InkParticleField({
+  className,
+  imageSrc = '/ink-scene.jpg',
+  exiting = false,
+  onExited,
+}: InkParticleFieldProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [useImageFallback, setUseImageFallback] = useState(false);
+  const exitingRef = useRef(exiting);
+  const onExitedRef = useRef<(() => void) | undefined>(onExited);
+
+  useEffect(() => {
+    exitingRef.current = exiting;
+  }, [exiting]);
+  useEffect(() => {
+    onExitedRef.current = onExited;
+  }, [onExited]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -331,17 +349,41 @@ export function InkParticleField({ className, imageSrc = '/ink-scene.jpg' }: Ink
     const run = (count: number) => {
       const t0 = performance.now();
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const ENTER_DURATION = 2.8;
+      const EXIT_DURATION = 0.9;
+      let enter = reducedMotion ? 1 : 0;
+      let last = t0;
+      let notified = false;
       const frame = (now: number) => {
         raf = window.requestAnimationFrame(frame);
         if (!inView || document.hidden) return;
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        if (exitingRef.current) {
+          // 消散：入场动画倒放，uEnter 从 1 回到 0 后通知一次
+          if (reducedMotion || enter <= 0) {
+            if (!notified) {
+              notified = true;
+              enter = 0;
+              onExitedRef.current?.();
+            }
+          } else {
+            enter = Math.max(0, enter - dt / EXIT_DURATION);
+            if (enter <= 0 && !notified) {
+              notified = true;
+              onExitedRef.current?.();
+            }
+          }
+        } else if (enter < 1) {
+          enter = Math.min(1, enter + dt / ENTER_DURATION);
+        }
         pointer.x += (pointer.tx - pointer.x) * 0.07;
         pointer.y += (pointer.ty - pointer.y) * 0.07;
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.useProgram(program);
-        const sec = (now - t0) / 1000;
-        gl.uniform1f(uTime, reducedMotion ? 0 : sec);
-        gl.uniform1f(uEnter, reducedMotion ? 1 : Math.min(1, sec / 2.8));
+        gl.uniform1f(uTime, reducedMotion ? 0 : (now - t0) / 1000);
+        gl.uniform1f(uEnter, enter);
         gl.uniform2f(uMouse, pointer.x, pointer.y);
         gl.uniform2f(uResolution, canvas.width, canvas.height);
         gl.drawArrays(gl.POINTS, 0, count);

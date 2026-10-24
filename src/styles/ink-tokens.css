@@ -1867,6 +1867,7 @@
   background:
     radial-gradient(circle at 73% 45%, rgba(255, 184, 96, 0.045), transparent 20%),
     radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.018), transparent 48%);
+  transition: opacity 0.45s ease;
 }
 
 @media (max-width: 979px) {
@@ -1899,6 +1900,7 @@
   gap: 22px;
   padding: 0 20px;
   text-align: center;
+  transition: opacity 0.45s ease;
 }
 
 .workspace-home-hero-copy h1 {
@@ -1919,7 +1921,7 @@
   letter-spacing: 0.34em;
 }
 
-/* 参考 demo 的交互提示：出现约 5 秒后自动淡出；窄屏按 demo 直接隐藏 */
+/* 唯一的操作提示：常驻（这是进入整站的入口说明），离场时随标题一起淡出 */
 .workspace-home-hero-hint {
   position: absolute;
   bottom: 22px;
@@ -1931,38 +1933,18 @@
   letter-spacing: 0.18em;
   user-select: none;
   pointer-events: none;
-  animation: workspace-home-hero-hint-out 1.2s ease 5s forwards;
+  transition: opacity 0.45s ease;
 }
 
-@keyframes workspace-home-hero-hint-out {
-  to {
-    opacity: 0;
-  }
+/* 离场：粒子消散的同时，文字与柔光一起退场 */
+.workspace-home-hero.is-exiting .workspace-home-hero-copy,
+.workspace-home-hero.is-exiting .workspace-home-hero-hint,
+.workspace-home-hero.is-exiting .workspace-home-hero-veil {
+  opacity: 0;
 }
 
-@media (max-width: 700px) {
-  .workspace-home-hero-hint {
-    display: none;
-  }
-}
-
-/* 顶栏浮在星空上：转透明、字转浅，滚出星空后自动恢复 */
+/* 首页是纯场景：顶栏（含其下边框）整体隐藏，点击或按键消散后进入占问页 */
 :root[data-home-hero='true'] .ink-topbar {
-  background: transparent;
-  border-bottom-color: transparent;
-  backdrop-filter: none;
-}
-
-:root[data-home-hero='true'] .ink-topbar__brand,
-:root[data-home-hero='true'] .ink-topbar__name,
-:root[data-home-hero='true'] .ink-topbar__nav a,
-:root[data-home-hero='true'] .ink-topbar__nav a.is-active,
-:root[data-home-hero='true'] .ink-topbar__actions button {
-  color: rgba(243, 241, 233, 0.78);
-}
-
-:root[data-home-hero='true'] .ink-topbar__nav a.is-active,
-:root[data-home-hero='true'] .ink-topbar__actions button:hover {
-  color: #f4f2ec;
+  display: none;
 }
 
