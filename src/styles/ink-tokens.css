@@ -1826,20 +1826,10 @@
 }
 
 /* ===========================================================================
-   首页主视觉：整屏星空粒子
-   ---------------------------------------------------------------------------
-   进站第一屏只有星空（ParticleField 手写 Canvas，零依赖、纯客户端渲染），
-   标题一行 + 一枚向下箭头，其余内容全部退到首屏之下。hero 用负边距顶穿
-   固定顶栏与容器内边距铺满 100dvh；顶栏在星空在场时转透明（HomePage 用
-   IntersectionObserver 维护 <html data-home-hero>），滚出星空即恢复纸色。
+   首页＝水墨粒子场：与参考 demo 一致，黑底整屏粒子，只叠加一行标题。
+   hero 用负边距顶穿固定顶栏铺满 100dvh；顶栏在场时转透明（HomePage 用
+   IntersectionObserver 维护 <html data-home-hero>）。没有按钮、没有边框。
    =========================================================================== */
-:root[data-accent-theme='ink'] .workspace-home-stage {
-  padding-top: 32px;
-  padding-inline: clamp(14px, 4vw, 40px);
-  padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
-  gap: 14px;
-}
-
 /* 移动端旧启动台把首页锁成单屏（height + overflow hidden）、把 home-page 排成
    横向 flex——两个都会毁掉整屏 hero。容器内边距归零（hero 全屏自己管），
    解除锁定，下方提问框与工具矩阵靠舞台的 padding 收边。 */
@@ -1929,38 +1919,31 @@
   letter-spacing: 0.34em;
 }
 
-.workspace-home-hero-enter {
+/* 参考 demo 的交互提示：出现约 5 秒后自动淡出；窄屏按 demo 直接隐藏 */
+.workspace-home-hero-hint {
   position: absolute;
-  bottom: 30px;
+  bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(243, 241, 233, 0.26);
-  border-radius: 0;
-  background: transparent;
-  color: rgba(243, 241, 233, 0.7);
-  cursor: pointer;
-  transition:
-    border-color var(--ink-dur-base) var(--ink-ease),
-    color var(--ink-dur-base) var(--ink-ease);
+  margin-right: -0.18em;
+  color: rgba(255, 255, 255, 0.34);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  user-select: none;
+  pointer-events: none;
+  animation: workspace-home-hero-hint-out 1.2s ease 5s forwards;
 }
 
-.workspace-home-hero-enter svg {
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+@keyframes workspace-home-hero-hint-out {
+  to {
+    opacity: 0;
+  }
 }
 
-.workspace-home-hero-enter:hover {
-  border-color: rgba(243, 241, 233, 0.7);
-  color: #f4f2ec;
+@media (max-width: 700px) {
+  .workspace-home-hero-hint {
+    display: none;
+  }
 }
 
 /* 顶栏浮在星空上：转透明、字转浅，滚出星空后自动恢复 */
@@ -1983,104 +1966,3 @@
   color: #f4f2ec;
 }
 
-.workspace-home-tools {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-soft);
-}
-
-.workspace-home-tools-tabs {
-  display: flex;
-  justify-content: center;
-  gap: clamp(16px, 3vw, 30px);
-}
-
-.workspace-home-tools-tabs button {
-  padding: 4px 2px;
-  border: 0;
-  border-bottom: 1px solid transparent;
-  background: transparent;
-  color: var(--text-secondary);
-  font-family: var(--ink-font-serif);
-  font-size: 0.92rem;
-  letter-spacing: 0.16em;
-  cursor: pointer;
-  transition:
-    color var(--ink-dur-base) var(--ink-ease),
-    border-color var(--ink-dur-base) var(--ink-ease);
-}
-
-.workspace-home-tools-tabs button:hover {
-  color: var(--ink-deep);
-}
-
-.workspace-home-tools-tabs button.is-active {
-  color: var(--cinnabar);
-  border-bottom-color: var(--cinnabar);
-}
-
-.workspace-home-tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
-  gap: 10px;
-}
-
-.workspace-home-tool-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 12px 13px;
-  border: 1px solid var(--border-soft);
-  border-radius: 0;
-  background: transparent;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color var(--ink-dur-base) var(--ink-ease);
-}
-
-.workspace-home-tool-card:hover {
-  border-color: var(--cinnabar-line);
-}
-
-.workspace-home-tool-mark {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  flex: 0 0 auto;
-  border: 1px solid var(--border-strong);
-  color: var(--ink-medium);
-  font-family: var(--ink-font-serif);
-  font-size: 0.82rem;
-  transition:
-    color var(--ink-dur-base) var(--ink-ease),
-    border-color var(--ink-dur-base) var(--ink-ease);
-}
-
-.workspace-home-tool-card:hover .workspace-home-tool-mark {
-  border-color: var(--cinnabar);
-  color: var(--cinnabar);
-}
-
-.workspace-home-tool-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.workspace-home-tool-copy strong {
-  color: var(--text-strong);
-  font-family: var(--ink-font-serif);
-  font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
-}
-
-.workspace-home-tool-copy small {
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  line-height: 1.55;
-}
