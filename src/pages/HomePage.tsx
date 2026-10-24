@@ -6,7 +6,7 @@ import {
   type InstantTimeStandard,
 } from 'mingyu-core/instant';
 import { DropdownSelect, type DropdownSelectOption } from '@/components/DropdownSelect';
-import { ParticleField } from '@/components/ParticleField';
+import { InkParticleField } from '@/components/InkParticleField';
 import {
   QuestionInspirationModal,
   type QuestionInspirationSection,
@@ -498,8 +498,9 @@ export function HomePage() {
 
   return (
     <div className="workspace-home-page">
-      <section ref={heroRef} className="workspace-home-hero">
-          <ParticleField className="workspace-home-hero-field" />
+        <section ref={heroRef} className="workspace-home-hero">
+          <InkParticleField className="workspace-home-hero-field" />
+          <div className="workspace-home-hero-veil" aria-hidden="true" />
           <div className="workspace-home-hero-copy">
             <h1>观象知命</h1>
             <p>输入问题，选择算法，一步开始</p>
