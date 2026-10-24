@@ -1819,37 +1819,124 @@
   right: 15%;
 }
 
-/* 罗盘再大一号，成为真正的视觉锚点 */
+/* 罗盘主视觉已由星空粒子 hero 取代，规则保留给可能的复用 */
 .ink-home-motif--compass {
   width: clamp(300px, 32vw, 430px);
+  display: none;
 }
 
 /* ===========================================================================
-   首页改版：主视觉压小，首屏让给工具矩阵
+   首页主视觉：星空粒子 hero
    ---------------------------------------------------------------------------
-   罗盘此前占 330–490px 高，视口低于约 990px 时提问框就被挤出首屏，而 24 个工具
-   全部藏在抽屉里，用户找不到。现在罗盘缩成一行小章，工具按「排盘/合盘/占卜/择日」
-   四组页签 + 卡片直接陈列在首页。
+   深夜幕 + 缓移星点 + 距离连线，由 ParticleField 组件手写 Canvas 绘制（零依赖、
+   纯客户端渲染）。全站其余部分仍是宣纸纸面，首屏刻意压一段夜色做对比——
+   观象，本来就是看天。罗盘主视觉随之退场。
    =========================================================================== */
-.ink-home-motif--compass {
-  width: clamp(104px, 11vw, 140px);
-}
-
 :root[data-accent-theme='ink'] .workspace-home-stage {
   padding-top: 10px;
-  gap: 12px;
+  gap: 14px;
 }
 
-:root[data-accent-theme='ink'] .workspace-home-ink-scene {
-  height: auto;
-  margin: -2px auto 0;
+.workspace-home-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  min-height: clamp(280px, 42vh, 420px);
+  margin-top: 4px;
+  padding: 36px 24px;
+  overflow: hidden;
+  background: radial-gradient(130% 150% at 50% -10%, #1b2244 0%, #111531 45%, #0b0e1e 100%);
+  border: 1px solid rgba(28, 32, 56, 0.6);
 }
 
-/* 罗盘缩小后，两侧竖排题字与印章失去构图依托，一并收起 */
-:root[data-accent-theme='ink'] .workspace-home-ink-verse-left,
-:root[data-accent-theme='ink'] .workspace-home-ink-verse-right,
-:root[data-accent-theme='ink'] .workspace-home-ink-scene .workspace-home-ink-seal {
-  display: none;
+.workspace-home-hero-field {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-hero .workspace-home-heading {
+  position: relative;
+  gap: 8px;
+  padding-bottom: 0;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-hero .workspace-home-copy h1 {
+  color: #f4f2ec;
+  font-size: clamp(26px, 3.2vw, 40px);
+  letter-spacing: 0.12em;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-hero .workspace-home-copy p {
+  color: rgba(243, 241, 233, 0.62);
+  letter-spacing: 0.26em;
+}
+
+:root[data-accent-theme='ink'] .workspace-home-hero .workspace-home-donation {
+  border-color: rgba(243, 241, 233, 0.3);
+  color: rgba(243, 241, 233, 0.75);
+}
+
+.workspace-home-hero-actions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.workspace-home-hero-primary,
+.workspace-home-hero-ghost {
+  padding: 11px 30px;
+  border-radius: 0;
+  font-family: var(--ink-font-serif);
+  font-size: 0.92rem;
+  letter-spacing: 0.24em;
+  cursor: pointer;
+  transition:
+    background-color var(--ink-dur-base) var(--ink-ease),
+    border-color var(--ink-dur-base) var(--ink-ease),
+    color var(--ink-dur-base) var(--ink-ease);
+}
+
+.workspace-home-hero-primary {
+  border: 1px solid var(--cinnabar);
+  background: var(--cinnabar);
+  color: #f7f4ec;
+}
+
+.workspace-home-hero-primary:hover {
+  border-color: var(--accent-deep);
+  background: var(--accent-deep);
+}
+
+.workspace-home-hero-ghost {
+  border: 1px solid rgba(243, 241, 233, 0.38);
+  background: transparent;
+  color: rgba(243, 241, 233, 0.9);
+}
+
+.workspace-home-hero-ghost:hover {
+  border-color: rgba(243, 241, 233, 0.85);
+  color: #f4f2ec;
+}
+
+@media (max-width: 979px) {
+  .workspace-home-hero {
+    min-height: clamp(230px, 34vh, 330px);
+    padding: 26px 16px;
+  }
+
+  .workspace-home-hero-primary,
+  .workspace-home-hero-ghost {
+    padding: 10px 22px;
+    letter-spacing: 0.18em;
+  }
 }
 
 .workspace-home-tools {

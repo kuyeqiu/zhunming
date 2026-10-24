@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   INSTANT_CHART_DEFINITIONS,
@@ -6,7 +6,7 @@ import {
   type InstantTimeStandard,
 } from 'mingyu-core/instant';
 import { DropdownSelect, type DropdownSelectOption } from '@/components/DropdownSelect';
-import { InkMotif } from '@/components/ink/InkArt';
+import { ParticleField } from '@/components/ParticleField';
 import {
   QuestionInspirationModal,
   type QuestionInspirationSection,
@@ -144,6 +144,8 @@ export function HomePage() {
   } | null>(null);
   const [currentTime, setCurrentTime] = useState(() => new Date());
   const [activeToolGroup, setActiveToolGroup] = useState(HOME_TOOL_GROUPS[0].id);
+  const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
+  const toolsRef = useRef<HTMLElement | null>(null);
   const instantBirthPlace = useBirthPlace({ form: instantPlaceForm, setForm: setInstantPlaceForm });
   const requestedMode = searchParams.get('section');
   const defaultMode = preferences.homeModeOrder[0] ?? 'divination';
@@ -346,6 +348,17 @@ export function HomePage() {
     setSearchParams(next, { replace: true });
   }
 
+  function focusQuestion() {
+    const input = questionInputRef.current;
+    if (!input) return;
+    input.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    window.setTimeout(() => input.focus(), 350);
+  }
+
+  function revealTools() {
+    toolsRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }
+
   function selectAlgorithm(value: string) {
     if (activeMode === 'chart' && isHomeChartWorkspaceId(value)) {
       setSelectedChartFeature(value);
@@ -469,43 +482,41 @@ export function HomePage() {
   return (
     <div className="workspace-home-page">
       <div className="workspace-home-stage">
-        <header className="workspace-home-heading">
-          <div className="workspace-home-brand">
-            <span className="workspace-home-seal" aria-hidden="true">
-              命
-            </span>
+        <section className="workspace-home-hero">
+          <ParticleField className="workspace-home-hero-field" />
+          <header className="workspace-home-heading">
+            <div className="workspace-home-brand">
+              <span className="workspace-home-seal" aria-hidden="true">
+                命
+              </span>
+            </div>
+            <div className="workspace-home-copy">
+              <h1>{modeCopy[activeMode].heading}</h1>
+              <p>输入问题，选择算法，一步开始</p>
+            </div>
+            {isDonationBoxEnabled ? (
+              <a
+                className="workspace-home-donation"
+                href={DONATION_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 20.4 10.6 19.2C5.7 14.9 2.5 12 2.5 8.4A4.9 4.9 0 0 1 7.5 3.5c1.8 0 3.5.9 4.5 2.3a5.6 5.6 0 0 1 4.5-2.3 4.9 4.9 0 0 1 5 4.9c0 3.6-3.2 6.5-8.1 10.8L12 20.4Z" />
+                </svg>
+                <span>功德箱</span>
+              </a>
+            ) : null}
+          </header>
+          <div className="workspace-home-hero-actions">
+            <button type="button" className="workspace-home-hero-primary" onClick={focusQuestion}>
+              开始提问
+            </button>
+            <button type="button" className="workspace-home-hero-ghost" onClick={revealTools}>
+              浏览全部工具
+            </button>
           </div>
-          <div className="workspace-home-copy">
-            <h1>{modeCopy[activeMode].heading}</h1>
-            <p>输入问题，选择算法，一步开始</p>
-          </div>
-          {isDonationBoxEnabled ? (
-            <a
-              className="workspace-home-donation"
-              href={DONATION_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 20.4 10.6 19.2C5.7 14.9 2.5 12 2.5 8.4A4.9 4.9 0 0 1 7.5 3.5c1.8 0 3.5.9 4.5 2.3a5.6 5.6 0 0 1 4.5-2.3 4.9 4.9 0 0 1 5 4.9c0 3.6-3.2 6.5-8.1 10.8L12 20.4Z" />
-              </svg>
-              <span>功德箱</span>
-            </a>
-          ) : null}
-        </header>
-
-        <div className="workspace-home-ink-scene" aria-hidden="true">
-          <span className="workspace-home-ink-verse workspace-home-ink-verse-left">
-            观象
-          </span>
-          <div className="ink-home-motif ink-home-motif--compass">
-            <InkMotif name="compass" />
-          </div>
-          <span className="workspace-home-ink-verse workspace-home-ink-verse-right">
-            知命
-          </span>
-          <span className="workspace-home-ink-seal">玄览</span>
-        </div>
+        </section>
 
         <div className="workspace-home-mode-switch" role="tablist" aria-label="首页模式">
           {homeModes.map((mode) => (
@@ -532,6 +543,7 @@ export function HomePage() {
             }}
           >
             <textarea
+              ref={questionInputRef}
               className="workspace-home-question"
               value={questionDraft}
               placeholder={modeCopy[activeMode].placeholder}
@@ -642,7 +654,7 @@ export function HomePage() {
           </form>
         </div>
 
-        <section className="workspace-home-tools" aria-label="全部工具">
+        <section ref={toolsRef} className="workspace-home-tools" aria-label="全部工具">
           <div className="workspace-home-tools-tabs" role="tablist" aria-label="工具分组">
             {toolGroups.map((group) => (
               <button
