@@ -102,7 +102,7 @@ export function PromptShareModal({
         <div className="prompt-share-card">
           <div className="share-card-header">
             <div className="share-card-brand">
-              <span className="share-card-logo">命语</span>
+              <span className="share-card-logo">准命</span>
               <span className="share-card-tag">完整解读提示词</span>
             </div>
             {methodName ? <span className="share-card-method">{methodName}</span> : null}

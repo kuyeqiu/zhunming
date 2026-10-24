@@ -56,7 +56,7 @@ export function InkHero({
   const motifs: InkMotifName[] = ['shadow', 'eye'];
 
   return (
-    <section className="ink-hero" aria-label="命语·水墨首屏">
+    <section className="ink-hero" aria-label="准命·水墨首屏">
       <div className="ink-hero__canvas">
         <div className="ink-vertical ink-hero__title">{title}</div>
 

@@ -66,7 +66,7 @@ function resolvePageTitle(pathname: string, activeFeature: WorkspaceFeatureId | 
   if (pathname === '/cases') return '案例';
   if (pathname === '/records') return '历史记录';
   if (pathname === '/tutorial') return '使用说明';
-  if (!activeFeature) return '命语';
+  if (!activeFeature) return '准命';
   const feature = getWorkspaceFeature(activeFeature);
   if (pathname === '/result/assistant') return `${feature.shortLabel}解读`;
   if (pathname.endsWith('/result/assistant')) return `${feature.shortLabel}解读`;
@@ -344,7 +344,7 @@ export function WorkspaceShell() {
             命
           </span>
           <span>
-            <strong>命语</strong>
+            <strong>准命</strong>
           </span>
         </button>
         <button

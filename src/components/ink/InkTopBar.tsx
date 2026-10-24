@@ -21,11 +21,11 @@ export function InkTopBar({ onOpenTools }: { onOpenTools: () => void }) {
 
   return (
     <header className="ink-topbar">
-      <Link className="ink-topbar__brand" to="/" aria-label="命语首页">
+      <Link className="ink-topbar__brand" to="/" aria-label="准命首页">
         <span className="ink-topbar__seal" aria-hidden="true">
-          命
+          准
         </span>
-        <span className="ink-topbar__name">命语</span>
+        <span className="ink-topbar__name">准命</span>
       </Link>
 
       <nav className="ink-topbar__nav" aria-label="主导航">

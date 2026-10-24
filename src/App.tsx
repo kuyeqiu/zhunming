@@ -136,9 +136,10 @@ export default function App() {
         <Routes>
           {/* 后台独立于 C 端 Shell：自己的布局、自己的 admin-* 样式命名空间 */}
           <Route path="/admin" element={<AdminPage />} />
+          {/* 首页同样独立于 Shell：纯粒子场景，没有顶栏与任何容器包裹 */}
+          <Route path="/" element={<DefaultEntryRoute />} />
+          <Route path="/home" element={<DefaultEntryRoute />} />
           <Route element={<WorkspaceShell />}>
-            <Route path="/" element={<DefaultEntryRoute />} />
-            <Route path="/home" element={<DefaultEntryRoute />} />
             <Route path="/chart/:tool" element={<InputPage />} />
             <Route path="/divination/:method" element={<DivinationPage />} />
             <Route path="/divination/:method/result" element={<DivinationResultPage />} />

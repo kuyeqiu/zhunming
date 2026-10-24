@@ -94,7 +94,7 @@ export function AiSettingsModal({ settings, onApply, onClose }: AiSettingsModalP
           </label>
 
           <p className="workspace-setting-note">
-            发送 AI 解读会将当前排盘资料和问题提供给所选 AI 服务；自定义接口经命语服务转发。
+            发送 AI 解读会将当前排盘资料和问题提供给所选 AI 服务；自定义接口经准命服务转发。
           </p>
 
           {builtinEnabled ? (

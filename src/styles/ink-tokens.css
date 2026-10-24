@@ -612,15 +612,15 @@
 :root[data-accent-theme='ink'] .workspace-home-composer {
   overflow: visible;
   border: 0;
-  border-top: 1px solid rgba(74, 72, 67, 0.18);
-  border-bottom: 1px solid rgba(74, 72, 67, 0.18);
+  border-top: 1px solid rgba(236, 233, 224, 0.18);
+  border-bottom: 1px solid rgba(236, 233, 224, 0.18);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
 }
 
 :root[data-accent-theme='ink'] .workspace-home-composer:focus-within {
-  border-color: rgba(74, 72, 67, 0.32);
+  border-color: rgba(236, 233, 224, 0.32);
   box-shadow: none;
 }
 
@@ -659,7 +659,7 @@
 }
 
 :root[data-accent-theme='ink'] .workspace-home-composer-footer {
-  border-top: 1px dashed rgba(74, 72, 67, 0.16);
+  border-top: 1px dashed rgba(236, 233, 224, 0.16);
   background: transparent;
 }
 
@@ -693,7 +693,7 @@
 :root[data-accent-theme='ink'] .workspace-home-case-select > * {
   border-radius: 0;
   background: transparent;
-  border: 1px dashed rgba(74, 72, 67, 0.22);
+  border: 1px dashed rgba(236, 233, 224, 0.22);
   color: var(--ink-medium);
   font-family: var(--ink-font-serif);
   letter-spacing: 0.08em;
@@ -753,7 +753,7 @@
    =========================================================================== */
 :root[data-accent-theme='ink'] .workspace-sidebar {
   background: transparent;
-  border-right: 1px solid rgba(74, 72, 67, 0.14);
+  border-right: 1px solid rgba(236, 233, 224, 0.14);
   box-shadow: none;
 }
 
@@ -763,7 +763,7 @@
   gap: 20px;
   padding: 0 0 9px;
   border-radius: 0;
-  border-bottom: 1px solid rgba(74, 72, 67, 0.16);
+  border-bottom: 1px solid rgba(236, 233, 224, 0.16);
   background: transparent;
 }
 
@@ -826,7 +826,7 @@
   width: 22px;
   height: 22px;
   border-radius: 0;
-  border: 1px solid rgba(74, 72, 67, 0.2);
+  border: 1px solid rgba(236, 233, 224, 0.2);
   background: transparent;
   color: var(--ink-light);
   font-family: var(--ink-font-serif);
@@ -848,7 +848,7 @@
 }
 
 :root[data-accent-theme='ink'] .workspace-sidebar-footer {
-  border-top: 1px solid rgba(74, 72, 67, 0.14);
+  border-top: 1px solid rgba(236, 233, 224, 0.14);
 }
 /* ===========================================================================
    与上游局部水墨变量对接
@@ -870,7 +870,7 @@
   min-height: 40px;
   padding: 8px 2px;
   border: 0;
-  border-bottom: 1px solid rgba(74, 72, 67, 0.22);
+  border-bottom: 1px solid rgba(236, 233, 224, 0.22);
   border-radius: 0;
   background: transparent;
   color: var(--ink-deep);
@@ -915,7 +915,7 @@
 /* 按钮：主按钮空心→实心，其余一律细线墨字 */
 :root[data-accent-theme='ink'] .workspace-ui-button {
   border-radius: 0;
-  border: 1px solid rgba(74, 72, 67, 0.28);
+  border: 1px solid rgba(236, 233, 224, 0.28);
   background: transparent;
   color: var(--ink-medium);
   font-family: var(--ink-font-serif);
@@ -983,7 +983,7 @@
   padding: 0;
   border-radius: 0;
   background: transparent;
-  box-shadow: inset 0 -1px 0 rgba(74, 72, 67, 0.16);
+  box-shadow: inset 0 -1px 0 rgba(236, 233, 224, 0.16);
 }
 
 :root[data-accent-theme='ink'] .workspace-ui-segmented-indicator {
@@ -1030,7 +1030,7 @@
   min-height: 40px;
   padding: 8px 2px;
   border: 0;
-  border-bottom: 1px solid rgba(74, 72, 67, 0.22);
+  border-bottom: 1px solid rgba(236, 233, 224, 0.22);
   border-radius: 0;
   background: transparent;
   color: var(--ink-deep);
@@ -1053,7 +1053,7 @@
 
 :root[data-accent-theme='ink'] .workspace-ui-dropdown-menu {
   border-radius: 0;
-  border: 1px solid rgba(74, 72, 67, 0.18);
+  border: 1px solid rgba(236, 233, 224, 0.18);
   background: var(--paper-raised);
   box-shadow: 0 18px 40px rgba(24, 23, 21, 0.08);
   font-family: var(--ink-font-serif);
@@ -1068,12 +1068,12 @@
 /* 顶部案例标签条：粉底胶囊 → 细线小签 */
 :root[data-accent-theme='ink'] .workspace-case-tabbar {
   background: transparent;
-  border-bottom: 1px solid rgba(74, 72, 67, 0.14);
+  border-bottom: 1px solid rgba(236, 233, 224, 0.14);
 }
 
 :root[data-accent-theme='ink'] .workspace-case-tab {
   border-radius: 0;
-  border: 1px solid rgba(74, 72, 67, 0.2);
+  border: 1px solid rgba(236, 233, 224, 0.2);
   background: transparent;
   color: var(--ink-medium);
   box-shadow: none;
@@ -1107,7 +1107,7 @@
 :root[data-accent-theme='ink'] .workspace-case-tab-manage,
 :root[data-accent-theme='ink'] .workspace-case-tab-new {
   border-radius: 0;
-  border: 1px solid rgba(74, 72, 67, 0.2);
+  border: 1px solid rgba(236, 233, 224, 0.2);
   background: transparent;
   color: var(--ink-medium);
   font-family: var(--ink-font-serif);
@@ -1138,7 +1138,7 @@
 :root[data-accent-theme='ink'] .bazi-pillars-cell {
   padding: 7px 4px;
   border-right: 0;
-  border-bottom: 1px dashed rgba(74, 72, 67, 0.14);
+  border-bottom: 1px dashed rgba(236, 233, 224, 0.14);
   background: transparent;
   color: var(--ink-deep);
   font-family: var(--ink-font-serif);
@@ -1149,7 +1149,7 @@
 :root[data-accent-theme='ink'] .bazi-pillars-cell.is-head,
 :root[data-accent-theme='ink'] .bazi-pillars-cell.is-label {
   background: transparent;
-  border-bottom: 1px solid rgba(74, 72, 67, 0.22);
+  border-bottom: 1px solid rgba(236, 233, 224, 0.22);
   color: var(--ink-light);
   font-weight: 400;
   letter-spacing: 0.2em;
@@ -1187,7 +1187,7 @@
    =========================================================================== */
 :root[data-accent-theme='ink'] .fortune-selector-card,
 :root[data-accent-theme='ink'] .result-side-card {
-  border: 1px solid rgba(74, 72, 67, 0.14);
+  border: 1px solid rgba(236, 233, 224, 0.14);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -1231,7 +1231,7 @@
 :root[data-accent-theme='ink'] .fortune-grid,
 :root[data-accent-theme='ink'] .fortune-row,
 :root[data-accent-theme='ink'] .fortune-container {
-  border-color: rgba(74, 72, 67, 0.12);
+  border-color: rgba(236, 233, 224, 0.12);
   background: transparent;
 }
 
@@ -1249,7 +1249,7 @@
 
 :root[data-accent-theme='ink'] .bazi-interaction-card {
   border: 0;
-  border-left: 1px solid rgba(74, 72, 67, 0.24);
+  border-left: 1px solid rgba(236, 233, 224, 0.24);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -1259,7 +1259,7 @@
 :root[data-accent-theme='ink'] .bazi-interaction-badge {
   border-radius: 0;
   background: transparent;
-  border: 1px solid rgba(74, 72, 67, 0.18);
+  border: 1px solid rgba(236, 233, 224, 0.18);
   font-family: var(--ink-font-serif);
   font-weight: 400;
 }
@@ -1303,7 +1303,7 @@
 /* 顶部说明条（旺衰、格局与取用依据）：灰底圆角 → 一道细线 */
 :root[data-accent-theme='ink'] .bazi-context-grid > * {
   border: 0;
-  border-left: 1px solid rgba(74, 72, 67, 0.24);
+  border-left: 1px solid rgba(236, 233, 224, 0.24);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -1409,7 +1409,7 @@
   justify-content: space-between;
   gap: 20px;
   padding-bottom: 20px;
-  border-bottom: 1px solid rgba(74, 72, 67, 0.16);
+  border-bottom: 1px solid rgba(236, 233, 224, 0.16);
 }
 
 .ink-acct__head-actions {
@@ -1428,7 +1428,7 @@
   grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 1px;
   margin: 26px 0 8px;
-  background: rgba(74, 72, 67, 0.14);
+  background: rgba(236, 233, 224, 0.14);
 }
 
 .ink-acct__stats > div {
@@ -1476,7 +1476,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 11px 0;
-  border-bottom: 1px dashed rgba(74, 72, 67, 0.14);
+  border-bottom: 1px dashed rgba(236, 233, 224, 0.14);
   font-size: var(--ink-text-sm);
 }
 
@@ -1552,7 +1552,7 @@
   margin-top: 4px;
   padding: 7px 0 7px 2px;
   border: 0;
-  border-top: 1px dashed rgba(74, 72, 67, 0.16);
+  border-top: 1px dashed rgba(236, 233, 224, 0.16);
   border-radius: 0;
   background: transparent;
   color: var(--ink-light);
@@ -1612,7 +1612,7 @@
   align-items: center;
   gap: 28px;
   padding: 0 clamp(16px, 4vw, 40px);
-  border-bottom: 1px solid rgba(74, 72, 67, 0.14);
+  border-bottom: 1px solid rgba(236, 233, 224, 0.14);
   background: color-mix(in srgb, var(--paper-bg) 88%, transparent);
   backdrop-filter: blur(10px);
   font-family: var(--ink-font-serif);
@@ -1765,7 +1765,7 @@
 /* 功德箱：方框按钮改细线小签 */
 :root[data-accent-theme='ink'] .workspace-home-donation {
   padding: 5px 12px;
-  border: 1px solid rgba(74, 72, 67, 0.2);
+  border: 1px solid rgba(236, 233, 224, 0.2);
   border-radius: 0;
   background: transparent;
   color: var(--ink-light);
@@ -1826,25 +1826,13 @@
 }
 
 /* ===========================================================================
-   首页＝水墨粒子场：与参考 demo 一致，黑底整屏粒子，只叠加一行标题。
-   hero 用负边距顶穿固定顶栏铺满 100dvh；顶栏在场时转透明（HomePage 用
-   IntersectionObserver 维护 <html data-home-hero>）。没有按钮、没有边框。
+   首页＝水墨粒子场：与参考 demo 一致，黑底整屏粒子 + 一个问题输入框。
+   本页在 App.tsx 里独立于 WorkspaceShell 渲染——没有顶栏、没有容器包裹，
+   任何缓存状态下都不会出现外壳残留，因此也不再需要任何负边距逃逸。
    =========================================================================== */
-/* 移动端旧启动台把首页锁成单屏（height + overflow hidden）、把 home-page 排成
-   横向 flex——两个都会毁掉整屏 hero。容器内边距归零（hero 全屏自己管），
-   解除锁定，下方提问框与工具矩阵靠舞台的 padding 收边。 */
-@media (max-width: 979px) {
-  :root[data-accent-theme='ink'] .workspace-main.is-home .workspace-page {
-    display: block;
-    height: auto;
-    min-height: 0;
-    overflow: visible;
-    padding: 0;
-  }
-
-  :root[data-accent-theme='ink'] .workspace-main.is-home .workspace-home-page {
-    display: block;
-  }
+.workspace-home-page {
+  display: block;
+  background: #000;
 }
 
 .workspace-home-hero {
@@ -1854,7 +1842,6 @@
   align-items: center;
   justify-content: center;
   height: 100dvh;
-  margin: calc(-1 * var(--ink-topbar-height, 64px)) 0 0;
   overflow: hidden;
   background: #000;
 }
@@ -1871,14 +1858,6 @@
 }
 
 @media (max-width: 979px) {
-  /* 移动端首页容器仍带 6–8px 内边距（多条旧规则叠加，逐条对齐易碎），
-     改用 100vw + 负中距让 hero 自己逃逸到视口宽，不依赖父级内边距归零。
-     顶部多拉 8px 盖掉容器的上内边距。 */
-  .workspace-home-hero {
-    width: 100vw;
-    margin: calc(-1 * var(--ink-topbar-height, 64px) - 8px) calc(50% - 50vw) 0;
-  }
-
   .workspace-home-page {
     overflow-x: clip;
   }
@@ -1892,33 +1871,39 @@
   height: 100%;
 }
 
-.workspace-home-hero-copy {
+/* 问题输入：无边框，只有一道底线，聚焦时转亮 */
+.workspace-home-hero-ask {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 22px;
-  padding: 0 20px;
-  text-align: center;
-  transition: opacity 0.45s ease;
+  width: min(560px, 82vw);
 }
 
-.workspace-home-hero-copy h1 {
-  margin: 0;
-  margin-right: -0.42em; /* 抵消末字后的字距，让字组真正视觉居中 */
+.workspace-home-hero-question {
+  width: 100%;
+  padding: 10px 2px;
+  border: 0;
+  border-bottom: 1px solid rgba(243, 241, 233, 0.28);
+  border-radius: 0;
+  background: transparent;
   color: #f4f2ec;
   font-family: var(--ink-font-serif);
-  font-weight: 600;
-  font-size: clamp(30px, 4.8vw, 56px);
-  letter-spacing: 0.42em;
+  font-size: 16px; /* ≥16px，避免 iOS 聚焦时页面缩放 */
+  line-height: 1.7;
+  letter-spacing: 0.06em;
+  text-align: center;
+  resize: none;
+  outline: none;
+  transition:
+    border-color var(--ink-dur-base) var(--ink-ease),
+    opacity 0.45s ease;
 }
 
-.workspace-home-hero-copy p {
-  margin: 0;
-  margin-right: -0.34em;
-  color: rgba(243, 241, 233, 0.55);
-  font-size: 13px;
-  letter-spacing: 0.34em;
+.workspace-home-hero-question::placeholder {
+  color: rgba(243, 241, 233, 0.35);
+  letter-spacing: 0.12em;
+}
+
+.workspace-home-hero-question:focus {
+  border-bottom-color: rgba(243, 241, 233, 0.75);
 }
 
 /* 唯一的操作提示：常驻（这是进入整站的入口说明），离场时随标题一起淡出 */
@@ -1936,15 +1921,77 @@
   transition: opacity 0.45s ease;
 }
 
-/* 离场：粒子消散的同时，文字与柔光一起退场 */
-.workspace-home-hero.is-exiting .workspace-home-hero-copy,
+/* 离场：粒子消散的同时，输入框、提示与柔光一起退场 */
+.workspace-home-hero.is-exiting .workspace-home-hero-ask,
 .workspace-home-hero.is-exiting .workspace-home-hero-hint,
 .workspace-home-hero.is-exiting .workspace-home-hero-veil {
   opacity: 0;
 }
 
-/* 首页是纯场景：顶栏（含其下边框）整体隐藏，点击或按键消散后进入占问页 */
-:root[data-home-hero='true'] .ink-topbar {
+/* 纯场景模式（首页）：隐藏全局纸纹层，保持与参考 demo 完全一致的黑 */
+:root[data-pure-scene='true'] .ink-grain {
   display: none;
 }
 
+
+/* ===========================================================================
+   全站夜幕化：与首页水墨粒子场同源的黑色风格
+   ---------------------------------------------------------------------------
+   首页是纯黑粒子场景，内页原为宣纸纸面，两种气质割裂。此块把整套 token 翻到
+   夜幕：纸变夜、墨变霜、朱砂提亮一档保证黑底可读。放在文件末尾，靠加载顺序
+   覆盖 styles.css 里 ink 块的浅色值。
+   =========================================================================== */
+:root[data-accent-theme='ink'] {
+  --text-primary: #e6e3da;
+  --text-strong: #f4f2ec;
+  --text-secondary: #bab7ae;
+  --text-muted: #8b8880;
+  --text-soft: #66635b;
+  --danger-text: #e07a76;
+  --success-text: #85c29f;
+  --accent: #b23839;
+  --accent-strong: #9e2a2b;
+  --accent-deep: #7f2223;
+  --accent-soft: rgba(178, 56, 57, 0.16);
+  --accent-soft-strong: rgba(178, 56, 57, 0.24);
+  --accent-surface: rgba(32, 20, 20, 0.9);
+  --accent-surface-solid: #201414;
+  --secondary: #9a978e;
+  --secondary-strong: #bab7ae;
+  --secondary-soft: rgba(236, 233, 224, 0.1);
+  --secondary-soft-strong: rgba(236, 233, 224, 0.16);
+  --highlight-soft: rgba(236, 233, 224, 0.08);
+  --surface-page: #0b0d15;
+  --surface-page-end: #090b11;
+  --surface-base: #10131d;
+  --surface-base-rgb: 16 19 29;
+  --surface-panel: rgba(18, 21, 32, 0.9);
+  --surface-elevated: rgba(20, 23, 35, 0.96);
+  --surface-elevated-strong: rgba(23, 26, 38, 0.98);
+  --surface-soft: rgba(16, 19, 29, 0.94);
+  --surface-soft-solid: #10131d;
+  --surface-muted: rgba(14, 17, 26, 0.96);
+  --surface-muted-solid: #0e111a;
+  --surface-overlay: rgba(9, 11, 17, 0.86);
+  --border-soft: rgba(236, 233, 224, 0.13);
+  --border-strong: rgba(236, 233, 224, 0.22);
+  --border-contrast: rgba(178, 56, 57, 0.4);
+  --state-hover-surface: color-mix(in srgb, var(--text-muted) 9%, var(--surface-base));
+  --state-selected-surface: color-mix(in srgb, var(--accent-strong) 26%, var(--surface-base));
+  --state-selected-text: var(--accent);
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 16px 38px rgba(0, 0, 0, 0.42);
+  --shadow-card: 0 18px 50px rgba(0, 0, 0, 0.42);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --backdrop-scrim: rgba(4, 5, 9, 0.66);
+  --paper-bg: #0b0d15;
+  --paper-sub: #1e222e;
+  --paper-raised: #141824;
+  --paper-sunk: #0d101a;
+  --ink-deep: #f2efe6;
+  --ink-strong: #e6e3da;
+  --ink-medium: #bab7ae;
+  --ink-light: #8b8880;
+  --ink-faint: #66635b;
+  --ink-hairline: 1px solid var(--paper-sub);
+}
