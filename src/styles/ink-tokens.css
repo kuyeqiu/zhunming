@@ -1826,15 +1826,35 @@
 }
 
 /* ===========================================================================
-   首页主视觉：星空粒子 hero
+   首页主视觉：整屏星空粒子
    ---------------------------------------------------------------------------
-   深夜幕 + 缓移星点 + 距离连线，由 ParticleField 组件手写 Canvas 绘制（零依赖、
-   纯客户端渲染）。全站其余部分仍是宣纸纸面，首屏刻意压一段夜色做对比——
-   观象，本来就是看天。罗盘主视觉随之退场。
+   进站第一屏只有星空（ParticleField 手写 Canvas，零依赖、纯客户端渲染），
+   标题一行 + 一枚向下箭头，其余内容全部退到首屏之下。hero 用负边距顶穿
+   固定顶栏与容器内边距铺满 100dvh；顶栏在星空在场时转透明（HomePage 用
+   IntersectionObserver 维护 <html data-home-hero>），滚出星空即恢复纸色。
    =========================================================================== */
 :root[data-accent-theme='ink'] .workspace-home-stage {
-  padding-top: 10px;
+  padding-top: 32px;
+  padding-inline: clamp(14px, 4vw, 40px);
+  padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
   gap: 14px;
+}
+
+/* 移动端旧启动台把首页锁成单屏（height + overflow hidden）、把 home-page 排成
+   横向 flex——两个都会毁掉整屏 hero。容器内边距归零（hero 全屏自己管），
+   解除锁定，下方提问框与工具矩阵靠舞台的 padding 收边。 */
+@media (max-width: 979px) {
+  :root[data-accent-theme='ink'] .workspace-main.is-home .workspace-page {
+    display: block;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 0;
+  }
+
+  :root[data-accent-theme='ink'] .workspace-main.is-home .workspace-home-page {
+    display: block;
+  }
 }
 
 .workspace-home-hero {
@@ -1843,13 +1863,24 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 22px;
-  min-height: clamp(280px, 42vh, 420px);
-  margin-top: 4px;
-  padding: 36px 24px;
+  height: 100dvh;
+  margin: calc(-1 * var(--ink-topbar-height, 64px)) 0 0;
   overflow: hidden;
   background: radial-gradient(130% 150% at 50% -10%, #1b2244 0%, #111531 45%, #0b0e1e 100%);
-  border: 1px solid rgba(28, 32, 56, 0.6);
+}
+
+@media (max-width: 979px) {
+  /* 移动端首页容器仍带 6–8px 内边距（多条旧规则叠加，逐条对齐易碎），
+     改用 100vw + 负中距让 hero 自己逃逸到视口宽，不依赖父级内边距归零。
+     顶部多拉 8px 盖掉容器的上内边距。 */
+  .workspace-home-hero {
+    width: 100vw;
+    margin: calc(-1 * var(--ink-topbar-height, 64px) - 8px) calc(50% - 50vw) 0;
+  }
+
+  .workspace-home-page {
+    overflow-x: clip;
+  }
 }
 
 .workspace-home-hero-field {
@@ -1860,83 +1891,86 @@
   height: 100%;
 }
 
-:root[data-accent-theme='ink'] .workspace-home-hero .workspace-home-heading {
-  position: relative;
-  gap: 8px;
-  padding-bottom: 0;
-}
-
-:root[data-accent-theme='ink'] .workspace-home-hero .workspace-home-copy h1 {
-  color: #f4f2ec;
-  font-size: clamp(26px, 3.2vw, 40px);
-  letter-spacing: 0.12em;
-}
-
-:root[data-accent-theme='ink'] .workspace-home-hero .workspace-home-copy p {
-  color: rgba(243, 241, 233, 0.62);
-  letter-spacing: 0.26em;
-}
-
-:root[data-accent-theme='ink'] .workspace-home-hero .workspace-home-donation {
-  border-color: rgba(243, 241, 233, 0.3);
-  color: rgba(243, 241, 233, 0.75);
-}
-
-.workspace-home-hero-actions {
+.workspace-home-hero-copy {
   position: relative;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 14px;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 0 20px;
+  text-align: center;
 }
 
-.workspace-home-hero-primary,
-.workspace-home-hero-ghost {
-  padding: 11px 30px;
-  border-radius: 0;
+.workspace-home-hero-copy h1 {
+  margin: 0;
+  margin-right: -0.42em; /* 抵消末字后的字距，让字组真正视觉居中 */
+  color: #f4f2ec;
   font-family: var(--ink-font-serif);
-  font-size: 0.92rem;
-  letter-spacing: 0.24em;
+  font-weight: 600;
+  font-size: clamp(30px, 4.8vw, 56px);
+  letter-spacing: 0.42em;
+}
+
+.workspace-home-hero-copy p {
+  margin: 0;
+  margin-right: -0.34em;
+  color: rgba(243, 241, 233, 0.55);
+  font-size: 13px;
+  letter-spacing: 0.34em;
+}
+
+.workspace-home-hero-enter {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(243, 241, 233, 0.26);
+  border-radius: 0;
+  background: transparent;
+  color: rgba(243, 241, 233, 0.7);
   cursor: pointer;
   transition:
-    background-color var(--ink-dur-base) var(--ink-ease),
     border-color var(--ink-dur-base) var(--ink-ease),
     color var(--ink-dur-base) var(--ink-ease);
 }
 
-.workspace-home-hero-primary {
-  border: 1px solid var(--cinnabar);
-  background: var(--cinnabar);
-  color: #f7f4ec;
+.workspace-home-hero-enter svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.workspace-home-hero-primary:hover {
-  border-color: var(--accent-deep);
-  background: var(--accent-deep);
-}
-
-.workspace-home-hero-ghost {
-  border: 1px solid rgba(243, 241, 233, 0.38);
-  background: transparent;
-  color: rgba(243, 241, 233, 0.9);
-}
-
-.workspace-home-hero-ghost:hover {
-  border-color: rgba(243, 241, 233, 0.85);
+.workspace-home-hero-enter:hover {
+  border-color: rgba(243, 241, 233, 0.7);
   color: #f4f2ec;
 }
 
-@media (max-width: 979px) {
-  .workspace-home-hero {
-    min-height: clamp(230px, 34vh, 330px);
-    padding: 26px 16px;
-  }
+/* 顶栏浮在星空上：转透明、字转浅，滚出星空后自动恢复 */
+:root[data-home-hero='true'] .ink-topbar {
+  background: transparent;
+  border-bottom-color: transparent;
+  backdrop-filter: none;
+}
 
-  .workspace-home-hero-primary,
-  .workspace-home-hero-ghost {
-    padding: 10px 22px;
-    letter-spacing: 0.18em;
-  }
+:root[data-home-hero='true'] .ink-topbar__brand,
+:root[data-home-hero='true'] .ink-topbar__name,
+:root[data-home-hero='true'] .ink-topbar__nav a,
+:root[data-home-hero='true'] .ink-topbar__nav a.is-active,
+:root[data-home-hero='true'] .ink-topbar__actions button {
+  color: rgba(243, 241, 233, 0.78);
+}
+
+:root[data-home-hero='true'] .ink-topbar__nav a.is-active,
+:root[data-home-hero='true'] .ink-topbar__actions button:hover {
+  color: #f4f2ec;
 }
 
 .workspace-home-tools {

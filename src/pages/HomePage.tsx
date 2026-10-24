@@ -108,9 +108,6 @@ const HOME_TOOL_GROUPS: ReadonlyArray<{
 ];
 
 const TEMPORARY_CASE_VALUE = '__temporary_case__';
-const DONATION_URL = 'https://lk.sydf.cc/';
-const isDonationBoxEnabled =
-  import.meta.env.DEV || import.meta.env.VITE_ENABLE_DONATION_BOX === 'true';
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -145,7 +142,7 @@ export function HomePage() {
   const [currentTime, setCurrentTime] = useState(() => new Date());
   const [activeToolGroup, setActiveToolGroup] = useState(HOME_TOOL_GROUPS[0].id);
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
-  const toolsRef = useRef<HTMLElement | null>(null);
+  const heroRef = useRef<HTMLElement | null>(null);
   const instantBirthPlace = useBirthPlace({ form: instantPlaceForm, setForm: setInstantPlaceForm });
   const requestedMode = searchParams.get('section');
   const defaultMode = preferences.homeModeOrder[0] ?? 'divination';
@@ -355,9 +352,29 @@ export function HomePage() {
     window.setTimeout(() => input.focus(), 350);
   }
 
-  function revealTools() {
-    toolsRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
-  }
+  // 首屏星空在场时，把 <html> 标记为 data-home-hero，顶栏据此转透明浮在夜幕上；
+  // 滚出星空后标记移除，顶栏恢复纸色——不需要监听滚动位置，只看 hero 的可见比例。
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return undefined;
+    const root = document.documentElement;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry && entry.intersectionRatio > 0.4) {
+          root.dataset.homeHero = 'true';
+        } else {
+          delete root.dataset.homeHero;
+        }
+      },
+      { threshold: [0, 0.4, 0.75, 1] },
+    );
+    observer.observe(hero);
+    return () => {
+      observer.disconnect();
+      delete root.dataset.homeHero;
+    };
+  }, []);
 
   function selectAlgorithm(value: string) {
     if (activeMode === 'chart' && isHomeChartWorkspaceId(value)) {
@@ -481,43 +498,25 @@ export function HomePage() {
 
   return (
     <div className="workspace-home-page">
-      <div className="workspace-home-stage">
-        <section className="workspace-home-hero">
+      <section ref={heroRef} className="workspace-home-hero">
           <ParticleField className="workspace-home-hero-field" />
-          <header className="workspace-home-heading">
-            <div className="workspace-home-brand">
-              <span className="workspace-home-seal" aria-hidden="true">
-                命
-              </span>
-            </div>
-            <div className="workspace-home-copy">
-              <h1>{modeCopy[activeMode].heading}</h1>
-              <p>输入问题，选择算法，一步开始</p>
-            </div>
-            {isDonationBoxEnabled ? (
-              <a
-                className="workspace-home-donation"
-                href={DONATION_URL}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 20.4 10.6 19.2C5.7 14.9 2.5 12 2.5 8.4A4.9 4.9 0 0 1 7.5 3.5c1.8 0 3.5.9 4.5 2.3a5.6 5.6 0 0 1 4.5-2.3 4.9 4.9 0 0 1 5 4.9c0 3.6-3.2 6.5-8.1 10.8L12 20.4Z" />
-                </svg>
-                <span>功德箱</span>
-              </a>
-            ) : null}
-          </header>
-          <div className="workspace-home-hero-actions">
-            <button type="button" className="workspace-home-hero-primary" onClick={focusQuestion}>
-              开始提问
-            </button>
-            <button type="button" className="workspace-home-hero-ghost" onClick={revealTools}>
-              浏览全部工具
-            </button>
+          <div className="workspace-home-hero-copy">
+            <h1>观象知命</h1>
+            <p>输入问题，选择算法，一步开始</p>
           </div>
-        </section>
+          <button
+            type="button"
+            className="workspace-home-hero-enter"
+            onClick={focusQuestion}
+            aria-label="开始提问"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+      </section>
 
+      <div className="workspace-home-stage">
         <div className="workspace-home-mode-switch" role="tablist" aria-label="首页模式">
           {homeModes.map((mode) => (
             <button
@@ -654,7 +653,7 @@ export function HomePage() {
           </form>
         </div>
 
-        <section ref={toolsRef} className="workspace-home-tools" aria-label="全部工具">
+        <section className="workspace-home-tools" aria-label="全部工具">
           <div className="workspace-home-tools-tabs" role="tablist" aria-label="工具分组">
             {toolGroups.map((group) => (
               <button
