@@ -26,7 +26,7 @@ export function DivinationPage() {
         initialMethod={method}
         lockedMethod={method}
         displayMode="input"
-        initialQuestion={launchState.initialQuestion}
+        initialQuestion={launchState.initialQuestion ?? new URLSearchParams(location.search).get('q') ?? ''}
         initialSupplementaryInfo={launchState.initialSupplementaryInfo}
         initialGender={launchState.initialGender}
         initialBirthYear={launchState.initialBirthYear}

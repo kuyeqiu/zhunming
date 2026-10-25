@@ -2149,3 +2149,60 @@
 .workspace-case-tabbar {
   display: none;
 }
+
+/* ===========================================================================
+   占问页＝弹出式信息窗
+   ---------------------------------------------------------------------------
+   从首页进入后不再是一整页表单，而是一个弹出的对话框：背景压暗、卡片居中
+   （680px）、轻微上浮入场。内容顺序：问题 → 用户信息（性别/出生年份，用
+   order 提前）→ 起卦设置 → 解读细化 → 开始占卜。结果页类名不同，不受影响。
+   =========================================================================== */
+.workspace-divination-page:has(.divination-form-card) {
+  position: fixed;
+  inset: 0;
+  z-index: 320;
+  display: grid;
+  grid-template-columns: minmax(0, 680px);
+  justify-content: center;
+  align-content: safe center;
+  gap: 14px;
+  padding: clamp(16px, 4vh, 40px) 20px;
+  background: rgba(12, 12, 12, 0.45);
+  overflow-y: auto;
+}
+
+.workspace-divination-page:has(.divination-form-card) .divination-form-card {
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.28);
+  animation: divination-dialog-in 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@keyframes divination-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 弹窗内按钮不再吸底 */
+.workspace-divination-page .workspace-ui-form-actions {
+  position: static;
+  padding-bottom: 0;
+}
+
+/* 用户信息（性别/出生年份）提到问题之后 */
+.workspace-divination-page .person-info-form > * {
+  order: 4;
+}
+
+.workspace-divination-page .person-info-form > .form-row:first-child {
+  order: 1;
+}
+
+.workspace-divination-page .person-info-form .divination-subject-fields {
+  order: 2;
+}
