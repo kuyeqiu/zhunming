@@ -2074,6 +2074,16 @@
   margin-inline: 0;
 }
 
+/* 内联下拉框没带 is-field 类，按内容缩成 68px 小丁点；统一撑满所在列 */
+.divination-form-card .divination-select-shell {
+  width: 100%;
+}
+
+.divination-form-card .divination-select-shell .workspace-ui-dropdown-trigger {
+  width: 100%;
+  justify-content: space-between;
+}
+
 /* 标签：小、轻、灰 */
 .divination-form-card .form-item > label,
 .divination-form-card .divination-prompt-selection .form-item > label {
