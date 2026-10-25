@@ -647,8 +647,6 @@ export function DivinationForm({
           </div>
         ) : null}
 
-        <PromptSelectionFields draft={draft} updateDraft={updateDraft} />
-
         <div className="person-info-form">
           <div className="form-row">
             <div className="form-item">
@@ -2161,6 +2159,9 @@ export function DivinationForm({
             </div>
           ) : null}
         </div>
+
+        {/* 解读细化（主题/范围）：默认值即可用，沉到最后作为可选高级设置 */}
+        <PromptSelectionFields draft={draft} updateDraft={updateDraft} />
       </section>
 
       {error ? <div className="workspace-ui-form-error">{error}</div> : null}

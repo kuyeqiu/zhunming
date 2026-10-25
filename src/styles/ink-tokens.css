@@ -1993,3 +1993,143 @@
   --ink-faint: #a0a0a0;
   --ink-hairline: 1px solid var(--paper-sub);
 }
+
+/* ===========================================================================
+   占问表单重设计：问题为王
+   ---------------------------------------------------------------------------
+   重排后顺序：问题（含起卦控件）→ 起卦时间/口径 → 求测人（可选）→ 解读细化
+   （可选，沉底）。视觉系统：全表单共享同一套两列网格与间距（此前三套网格
+   列起点分别是 601/552/726，竖线是斜的）；标签统一小号轻灰（替代又小又粗
+   的黑字），值为 15px 近黑成为主视觉；字阶收敛；区块以发丝线分组；
+   问题框全页最大字号；主按钮底部留出呼吸。窄屏回落单列。
+   =========================================================================== */
+.divination-form-card {
+  padding: 26px clamp(20px, 4vw, 36px) 30px;
+  font-size: 15px;
+}
+
+.divination-form-card .workspace-ui-form-heading {
+  margin: 0 0 18px;
+}
+
+.divination-form-card .workspace-ui-form-heading h2 {
+  font-size: 18px;
+  letter-spacing: 0.02em;
+}
+
+.divination-form-card .form-row,
+.divination-form-card .person-info-form .form-row,
+.divination-form-card .divination-desktop-question-controls,
+.divination-form-card .divination-prompt-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 32px;
+  align-items: start;
+}
+
+/* 求测人行用的是 form-row-flex（不是 form-row），一并纳入统一网格；
+   三个网格容器宽度原本各不相同（590/746/760），全部拉满卡片内容宽 */
+.divination-form-card .form-row-flex {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 32px;
+  align-items: start;
+}
+
+.divination-form-card .divination-desktop-question-controls,
+.divination-form-card .divination-prompt-selection-grid,
+.divination-form-card .form-row-flex {
+  width: 100%;
+}
+
+/* 固定宽的项目全部放开，让网格轨道决定宽度 */
+.divination-form-card .form-item,
+.divination-form-card .divination-inline-field {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  grid-template-columns: none;
+}
+
+.divination-form-card .divination-prompt-selection {
+  padding: 22px 0 12px;
+  margin-inline: 0;
+}
+
+.divination-form-card .divination-method-grid {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+/* 问题行独占整行 */
+.divination-form-card .form-row:has(.divination-question-field) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* 解读区网格容器自带 746px 宽与内缩，拉满与上方网格对齐 */
+.divination-form-card .divination-prompt-selection-grid {
+  width: 100%;
+  max-width: none;
+  padding-inline: 0;
+  margin-inline: 0;
+}
+
+/* 标签：小、轻、灰 */
+.divination-form-card .form-item > label,
+.divination-form-card .divination-prompt-selection .form-item > label {
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+
+/* 值：主视觉 */
+.divination-form-card .form-input,
+.divination-form-card .divination-select-shell {
+  font-size: 15px;
+  color: var(--ink-strong);
+}
+
+.divination-form-card .form-input:focus {
+  border-color: var(--accent);
+}
+
+/* 问题框：全页最大字号 */
+.divination-form-card .divination-textarea {
+  font-size: 16px;
+  line-height: 1.75;
+  min-height: 112px;
+}
+
+.divination-form-card .divination-question-field:focus-within .divination-textarea {
+  border-color: var(--accent);
+}
+
+.divination-desktop-question-controls {
+  gap: 20px;
+}
+
+.divination-desktop-question-controls .form-item {
+  min-width: 0;
+}
+
+/* 区块分组：发丝线 */
+.divination-form-card .person-info-form,
+.divination-form-card .divination-prompt-selection {
+  padding-top: 22px;
+  margin-top: 22px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* 主按钮底部呼吸 */
+.workspace-divination-page .workspace-ui-form-actions {
+  margin-top: 20px;
+  padding-bottom: 56px;
+}
+
+@media (max-width: 700px) {
+  .divination-form-card .form-row,
+  .divination-form-card .divination-prompt-selection-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
