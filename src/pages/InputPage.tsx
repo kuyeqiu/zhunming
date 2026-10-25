@@ -30,6 +30,7 @@ import {
   hydratePersonalCaseInput,
 } from '@/lib/compatibility-case-selection';
 import { isChartWorkspaceId, type ChartWorkspaceId } from '@/lib/workspace';
+import { WorkspaceToolSwitcher } from '@/components/workspace/ToolSwitcher';
 import type { InstantTimeStandard } from 'mingyu-core/instant';
 import {
   buildFrontendInstantObserver,
@@ -581,6 +582,7 @@ export function InputPage() {
           ) : null
         }
       >
+        <WorkspaceToolSwitcher current={tool} group="chart" ariaLabel="命盘工具切换" />
         <PrivacyHint />
         {config.compatibility ? (
           <div className="workspace-ui-form-row">

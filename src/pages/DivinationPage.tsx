@@ -1,5 +1,6 @@
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { DivinationPanel } from '@/components/DivinationPanel';
+import { WorkspaceToolSwitcher } from '@/components/workspace/ToolSwitcher';
 import { buildWorkspaceFeaturePath, isDivinationWorkspaceId } from '@/lib/workspace';
 import { readWorkspaceLaunchState } from '@/lib/workspace-launch';
 
@@ -21,6 +22,7 @@ export function DivinationPage() {
     <div
       className={`workspace-focused-page workspace-divination-page${method === 'almanac' ? ' is-almanac' : ''}`}
     >
+      <WorkspaceToolSwitcher current={method} group="divination" ariaLabel="占问工具切换" />
       <DivinationPanel
         key={location.key}
         initialMethod={method}

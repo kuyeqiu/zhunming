@@ -2312,3 +2312,42 @@
   border-color: #000000;
   color: #ffffff;
 }
+
+/* ===========================================================================
+   工具切换条：把工具抽屉里的常用组平铺到页面上（排盘/占问/结果页顶部）
+   胶囊按钮，当前工具朱砂高亮；窄屏自动换行
+   =========================================================================== */
+.workspace-tool-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+.workspace-tool-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font-size: 13px;
+  line-height: 1.6;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.workspace-tool-chip:hover {
+  border-color: rgba(0, 0, 0, 0.32);
+}
+
+.workspace-tool-chip.is-active {
+  border-color: var(--cinnabar);
+  background: rgba(158, 42, 43, 0.05);
+  color: var(--cinnabar);
+  font-weight: 600;
+}

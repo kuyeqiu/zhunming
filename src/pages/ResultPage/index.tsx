@@ -32,6 +32,7 @@ import {
   mergeAstrolabePeriodCollections,
 } from '@/lib/astrolabe-scope';
 import { QuestionInspirationModal } from '@/components/QuestionInspirationModal';
+import { WorkspaceToolSwitcher } from '@/components/workspace/ToolSwitcher';
 import { useViewportSize } from '@/hooks/useViewportWidth';
 import { getBaziDefaultQuestion } from '@/lib/prompt-default-questions';
 import { formatBaziCompatibilityFacts } from '@/lib/bazi-compatibility-facts';
@@ -3225,6 +3226,14 @@ export function ResultPage({ assistantOnly = false }: ResultPageProps) {
             <p key={text}>{text}</p>
           ))}
         </div>
+      ) : null}
+
+      {!isAssistantPage ? (
+        <WorkspaceToolSwitcher
+          current={promptState.promptSource}
+          group="chart"
+          ariaLabel="命盘工具切换"
+        />
       ) : null}
 
       {!isAssistantPage && chartTabs.length > 1 ? (
