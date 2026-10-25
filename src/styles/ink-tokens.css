@@ -2052,8 +2052,11 @@
 }
 
 .divination-form-card .divination-prompt-selection {
-  padding: 22px 0 12px;
-  margin-inline: 0;
+  padding: 18px 20px;
+  margin: 22px 0 0;
+  background: #fafafa;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
 }
 
 .divination-form-card .divination-method-grid {
@@ -2090,7 +2093,7 @@
   font-size: 12.5px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: var(--text-muted);
+  color: #5c5c5c;
 }
 
 /* 值：主视觉 */
@@ -2124,17 +2127,17 @@
 }
 
 /* 区块分组：发丝线 */
-.divination-form-card .person-info-form,
-.divination-form-card .divination-prompt-selection {
+.divination-form-card .person-info-form {
   padding-top: 22px;
   margin-top: 22px;
   border-top: 1px solid var(--border-soft);
 }
 
-/* 主按钮底部呼吸 */
-.workspace-divination-page .workspace-ui-form-actions {
-  margin-top: 20px;
-  padding-bottom: 56px;
+/* 主按钮：作为卡片内页脚，与上方内容以发丝线分隔 */
+.divination-form-card .workspace-ui-form-actions {
+  margin-top: 24px;
+  padding: 20px 0 0;
+  border-top: 1px solid var(--border-soft);
 }
 
 @media (max-width: 700px) {
@@ -2157,7 +2160,7 @@
    （680px）、轻微上浮入场。内容顺序：问题 → 用户信息（性别/出生年份，用
    order 提前）→ 起卦设置 → 解读细化 → 开始占卜。结果页类名不同，不受影响。
    =========================================================================== */
-.workspace-divination-page:has(.divination-form-card) {
+.workspace-divination-page:has(.divination-form-card .person-info-form) {
   position: fixed;
   inset: 0;
   z-index: 320;
@@ -2171,7 +2174,7 @@
   overflow-y: auto;
 }
 
-.workspace-divination-page:has(.divination-form-card) .divination-form-card {
+.workspace-divination-page:has(.divination-form-card .person-info-form) .divination-form-card {
   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.28);
   animation: divination-dialog-in 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -2194,15 +2197,42 @@
   padding-bottom: 0;
 }
 
-/* 用户信息（性别/出生年份）提到问题之后 */
-.workspace-divination-page .person-info-form > * {
-  order: 4;
+/* ===========================================================================
+   弹窗视觉收口（2026-10 修复：卡片曾无背景色，遮罩透出导致整窗发灰）
+   ---------------------------------------------------------------------------
+   表面类兜底纯白；开始占卜＝墨黑实心大按钮；解读细化去掉「占问 · 六爻」
+   装饰头（与弹窗标题重复），只留带标签的下拉。
+   =========================================================================== */
+/* 与 960 行的 form-surface 规则同优先级，但位于文件末尾，恢复弹窗卡片的
+   纸面实体：纯白底、细边、圆角、完整内边距与大投影 */
+:root[data-accent-theme='ink'] .divination-form-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 26px clamp(20px, 4vw, 36px) 30px;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.28);
 }
 
-.workspace-divination-page .person-info-form > .form-row:first-child {
-  order: 1;
+.divination-form-card:has(.person-info-form) .divination-prompt-selection-head {
+  display: none;
 }
 
-.workspace-divination-page .person-info-form .divination-subject-fields {
-  order: 2;
+.divination-form-card .workspace-ui-form-actions .workspace-ui-button.is-primary {
+  background: #141414;
+  border: 1px solid #141414;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.divination-form-card .workspace-ui-form-actions .workspace-ui-button.is-primary:hover:not(:disabled) {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+.divination-form-card .workspace-ui-form-actions .workspace-ui-button.is-primary:disabled {
+  background: #141414;
+  border-color: #141414;
+  color: rgba(255, 255, 255, 0.4);
 }

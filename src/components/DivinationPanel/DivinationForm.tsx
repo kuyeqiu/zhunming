@@ -1311,6 +1311,39 @@ export function DivinationForm({
             </div>
           </div>
 
+          {draft.method !== 'almanac' &&
+          draft.method !== 'astrolabe' &&
+          draft.method !== 'huangji' &&
+          draft.method !== 'wuyun' ? (
+            <div className="form-row-flex divination-subject-fields">
+              <div className="form-item">
+                <label htmlFor="divination-gender-select">性别（可选）</label>
+                <DropdownSelect
+                  id="divination-gender-select"
+                  value={draft.gender ?? ''}
+                  options={OPTIONAL_GENDER_OPTIONS}
+                  variant="field"
+                  onChange={(value) => updateDraft('gender', value as DivinationDraft['gender'])}
+                />
+              </div>
+              <div className="form-item">
+                <label htmlFor="divination-birth-year-input">出生年份（可选）</label>
+                <input
+                  id="divination-birth-year-input"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={4}
+                  className="form-input"
+                  placeholder="例如 1998"
+                  value={draft.birthYear}
+                  onChange={(event) =>
+                    updateDraft('birthYear', event.target.value.replace(/[^\d]/g, '').slice(0, 4))
+                  }
+                />
+              </div>
+            </div>
+          ) : null}
+
           {draft.method === 'meihua' && draft.meihuaMethod === 'number' ? (
             <div className="form-row divination-mobile-only">
               <div className="form-item">
@@ -2020,39 +2053,6 @@ export function DivinationForm({
             </div>
           ) : null}
 
-          {draft.method !== 'almanac' &&
-          draft.method !== 'astrolabe' &&
-          draft.method !== 'huangji' &&
-          draft.method !== 'wuyun' ? (
-            <div className="form-row-flex divination-subject-fields">
-              <div className="form-item">
-                <label htmlFor="divination-gender-select">性别（可选）</label>
-                <DropdownSelect
-                  id="divination-gender-select"
-                  value={draft.gender ?? ''}
-                  options={OPTIONAL_GENDER_OPTIONS}
-                  variant="field"
-                  onChange={(value) => updateDraft('gender', value as DivinationDraft['gender'])}
-                />
-              </div>
-              <div className="form-item">
-                <label htmlFor="divination-birth-year-input">出生年份（可选）</label>
-                <input
-                  id="divination-birth-year-input"
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={4}
-                  className="form-input"
-                  placeholder="例如 1998"
-                  value={draft.birthYear}
-                  onChange={(event) =>
-                    updateDraft('birthYear', event.target.value.replace(/[^\d]/g, '').slice(0, 4))
-                  }
-                />
-              </div>
-            </div>
-          ) : null}
-
           {draft.method === 'astrolabe' ? (
             <div className="divination-extra-panel">
               <div className="form-row-flex">
@@ -2162,21 +2162,21 @@ export function DivinationForm({
 
         {/* 解读细化（主题/范围）：默认值即可用，沉到最后作为可选高级设置 */}
         <PromptSelectionFields draft={draft} updateDraft={updateDraft} />
+
+        {error ? <div className="workspace-ui-form-error">{error}</div> : null}
+
+        <div className="workspace-ui-form-actions">
+          <WorkspaceButton
+            variant="primary"
+            size="large"
+            block
+            disabled={isSubmitting || isManualInputIncomplete || isBaziReverseSelectionIncomplete}
+            onClick={onSubmit}
+          >
+            {submitButtonText}
+          </WorkspaceButton>
+        </div>
       </section>
-
-      {error ? <div className="workspace-ui-form-error">{error}</div> : null}
-
-      <div className="workspace-ui-form-actions is-sticky-mobile">
-        <WorkspaceButton
-          variant="primary"
-          size="large"
-          block
-          disabled={isSubmitting || isManualInputIncomplete || isBaziReverseSelectionIncomplete}
-          onClick={onSubmit}
-        >
-          {submitButtonText}
-        </WorkspaceButton>
-      </div>
       {supplementaryInfoModal}
     </>
   );
