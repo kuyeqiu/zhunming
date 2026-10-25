@@ -2236,3 +2236,31 @@
   border-color: #141414;
   color: rgba(255, 255, 255, 0.4);
 }
+
+/* 问题行辅助按钮（问题灵感/补充信息）：白药丸→文字按钮，与白底黑字统一；
+   问题框与下方控件行拉开间距 */
+.divination-form-card .divination-desktop-question-footer {
+  margin-top: 14px;
+}
+
+:root[data-accent-theme='ink'] .divination-form-card .divination-desktop-question-actions .workspace-ui-choice,
+:root[data-accent-theme='ink'] .divination-form-card .divination-desktop-question-actions .workspace-ui-choice:hover {
+  min-height: 0;
+  padding: 2px 0;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .divination-form-card .divination-desktop-question-actions .workspace-ui-choice {
+  color: #5c5c5c;
+}
+
+:root[data-accent-theme='ink'] .divination-form-card .divination-desktop-question-actions .workspace-ui-choice:hover {
+  color: var(--ink-deep);
+}
+
+:root[data-accent-theme='ink'] .divination-form-card .divination-desktop-question-actions .workspace-ui-choice.is-active {
+  color: var(--cinnabar);
+}
