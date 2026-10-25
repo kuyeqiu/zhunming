@@ -2143,3 +2143,9 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* 案例档案快速切换条：按用户要求移除。
+   案例功能本身保留——顶栏「工具」抽屉里的「案例」入口不变。 */
+.workspace-case-tabbar {
+  display: none;
+}
