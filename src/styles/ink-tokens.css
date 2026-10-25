@@ -2154,31 +2154,8 @@
 }
 
 /* ===========================================================================
-   占问页＝弹出式信息窗
-   ---------------------------------------------------------------------------
-   从首页进入后不再是一整页表单，而是一个弹出的对话框：背景压暗、卡片居中
-   （680px）、轻微上浮入场。内容顺序：问题 → 用户信息（性别/出生年份，用
-   order 提前）→ 起卦设置 → 解读细化 → 开始占卜。结果页类名不同，不受影响。
+   弹窗入场动画（供首页八字个人信息弹窗 .workspace-input-dialog-card 复用）
    =========================================================================== */
-.workspace-divination-page:has(.divination-form-card .person-info-form) {
-  position: fixed;
-  inset: 0;
-  z-index: 320;
-  display: grid;
-  grid-template-columns: minmax(0, 680px);
-  justify-content: center;
-  align-content: safe center;
-  gap: 14px;
-  padding: clamp(16px, 4vh, 40px) 20px;
-  background: rgba(12, 12, 12, 0.45);
-  overflow-y: auto;
-}
-
-.workspace-divination-page:has(.divination-form-card .person-info-form) .divination-form-card {
-  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.28);
-  animation: divination-dialog-in 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
 @keyframes divination-dialog-in {
   from {
     opacity: 0;
@@ -2191,26 +2168,20 @@
   }
 }
 
-/* 弹窗内按钮不再吸底 */
-.workspace-divination-page .workspace-ui-form-actions {
-  position: static;
-  padding-bottom: 0;
-}
-
 /* ===========================================================================
-   弹窗视觉收口（2026-10 修复：卡片曾无背景色，遮罩透出导致整窗发灰）
+   占问表单卡视觉（2026-10 修复：卡片曾无背景色导致整窗发灰）
    ---------------------------------------------------------------------------
    表面类兜底纯白；开始占卜＝墨黑实心大按钮；解读细化去掉「占问 · 六爻」
-   装饰头（与弹窗标题重复），只留带标签的下拉。
+   装饰头（与标题重复），只留带标签的下拉。
    =========================================================================== */
-/* 与 960 行的 form-surface 规则同优先级，但位于文件末尾，恢复弹窗卡片的
-   纸面实体：纯白底、细边、圆角、完整内边距与大投影 */
+/* 与 960 行的 form-surface 规则同优先级，但位于文件末尾，恢复表单卡片的
+   纸面实体：纯白底、细边、圆角、完整内边距与轻投影（占问页为普通页面） */
 :root[data-accent-theme='ink'] .divination-form-card {
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 16px;
   padding: 26px clamp(20px, 4vw, 36px) 30px;
-  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.06);
 }
 
 .divination-form-card:has(.person-info-form) .divination-prompt-selection-head {
