@@ -272,6 +272,41 @@ export function InputPage() {
     return <Navigate to="/chart/bazi" replace />;
   }
 
+  // 首页入场（?entry=dialog）：个人信息（八字）以弹出小窗呈现，
+  // 不渲染整页外壳；问题经 launch state 在提交时带到结果页。
+  const isDialogEntry = searchParams.get('entry') === 'dialog';
+
+  if (isDialogEntry) {
+    return (
+      <div className="workspace-input-dialog-overlay">
+        <section className="workspace-input-dialog-card" aria-label={`${config.label}个人信息`}>
+          <PersonForm
+            role="self"
+            form={form}
+            updatePersonField={updatePersonField}
+            updateNumericField={updateNumericField}
+            updateBirthTime={updateBirthTime}
+            openBirthPlaceModal={birthPlace.openBirthPlaceModal}
+            sectionTitle={config.label}
+            forcePreciseBirthPlace={config.preciseBirthData}
+            inputMode={personInputModes.self}
+            onInputModeChange={(mode) => changePersonInputMode('self', mode)}
+            allowUnknownTime={config.allowUnknownTime}
+          />
+          {error ? <div className="workspace-ui-form-error">{error}</div> : null}
+          <div className="workspace-input-dialog-actions">
+            <WorkspaceButton variant="primary" size="large" block onClick={handleSubmit}>
+              开始
+            </WorkspaceButton>
+          </div>
+        </section>
+        {birthPlace.isBirthPlaceModalOpen ? (
+          <BirthPlaceModal birthPlace={birthPlace} purpose="birth" />
+        ) : null}
+      </div>
+    );
+  }
+
   function updatePersonField(
     role: PersonRole,
     key: keyof typeof SELF_FIELD_MAP,

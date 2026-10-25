@@ -2264,3 +2264,80 @@
 :root[data-accent-theme='ink'] .divination-form-card .divination-desktop-question-actions .workspace-ui-choice.is-active {
   color: var(--cinnabar);
 }
+
+/* ===========================================================================
+   八字入场弹窗（/chart/bazi?entry=dialog）
+   ---------------------------------------------------------------------------
+   首页点击进入后，个人信息不再是整页表单，而是居中弹出的小窗（用户图一）：
+   姓名（可选）→ 性别 → 公历/农历 → 年月日 → 时辰 → 开始。
+   问题在首页已问过，提交后经 launch state 直达结果页。
+   =========================================================================== */
+.workspace-input-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 320;
+  display: grid;
+  justify-content: center;
+  align-content: safe center;
+  padding: clamp(16px, 4vh, 40px) 20px;
+  background: rgba(12, 12, 12, 0.45);
+  overflow-y: auto;
+}
+
+.workspace-input-dialog-card {
+  width: min(500px, 100%);
+  height: fit-content;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 8px clamp(20px, 4vw, 32px) 26px;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.28);
+  animation: divination-dialog-in 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* 卡内的 PersonForm 自带一层 surface 外壳，弹窗里拍平成一块整卡
+   （带 :root 前缀以压过 960 行的主题级 form-surface 规则） */
+:root[data-accent-theme='ink'] .workspace-input-dialog-card .workspace-ui-form-surface {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+:root[data-accent-theme='ink'] .workspace-input-dialog-card .workspace-ui-form-heading {
+  margin: 18px 0 14px;
+}
+
+:root[data-accent-theme='ink'] .workspace-input-dialog-card .workspace-ui-form-heading h2 {
+  font-size: 20px;
+  letter-spacing: 0.06em;
+}
+
+:root[data-accent-theme='ink'] .workspace-input-dialog-card .workspace-ui-form-body {
+  display: grid;
+  gap: 16px;
+}
+
+/* 开始按钮：与占问弹窗一致的墨黑实心（同样需要 :root 前缀压过按钮主题规则） */
+.workspace-input-dialog-actions {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-soft);
+}
+
+:root[data-accent-theme='ink'] .workspace-input-dialog-card .workspace-ui-button.is-primary {
+  background: #141414;
+  border: 1px solid #141414;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+:root[data-accent-theme='ink']
+  .workspace-input-dialog-card
+  .workspace-ui-button.is-primary:hover:not(:disabled) {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}

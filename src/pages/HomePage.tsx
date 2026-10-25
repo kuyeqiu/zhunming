@@ -9,9 +9,9 @@ import { buildWorkspaceFeaturePath } from '@/lib/workspace';
  *
  * 本页在 App.tsx 里独立于 WorkspaceShell 渲染：没有顶栏、没有容器包裹，
  * 任何缓存状态下都不可能出现外壳残留。输入问题后回车（或点击任意空白处），
- * 粒子反向消散，随后带问题进入占问页；空着回车则聚焦输入框。
+ * 粒子反向消散，随后带问题进入个人信息（八字）弹窗；空着回车则聚焦输入框。
  */
-const ENTER_METHOD = 'liuyao';
+const ENTER_METHOD = 'bazi';
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -60,8 +60,10 @@ export function HomePage() {
   const leave = () => {
     if (leftRef.current) return;
     leftRef.current = true;
-    navigate(buildWorkspaceFeaturePath(ENTER_METHOD) + (text ? `?q=${encodeURIComponent(text)}` : ''), {
-      // 始终弹窗补用户信息，不自动起卦
+    // entry=dialog：个人信息（八字）以弹出小窗呈现，问题经 launch state 带到结果页
+    const params = new URLSearchParams({ entry: 'dialog' });
+    if (text) params.set('q', text);
+    navigate(`${buildWorkspaceFeaturePath(ENTER_METHOD)}?${params.toString()}`, {
       state: buildWorkspaceLaunchState(text || undefined),
     });
   };
