@@ -23,6 +23,19 @@ const YIN_STROKES = [
   '/ink-hexagrams/yin-3.webp',
 ] as const;
 
+const ALL_STROKE_URLS = [...YANG_STROKES, ...YIN_STROKES] as const;
+
+let strokesPreloaded = false;
+function preloadInkStrokes() {
+  if (strokesPreloaded || typeof window === 'undefined') return;
+  strokesPreloaded = true;
+  for (const url of ALL_STROKE_URLS) {
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = url;
+  }
+}
+
 export type InkHexagramSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type InkHexagramTone = 'solid' | 'soft' | 'watermark';
 
@@ -52,6 +65,10 @@ export function InkHexagram({
   className = '',
 }: InkHexagramProps) {
   const lines = useMemo(() => getHexagramLines(lot), [lot]);
+
+  useEffect(() => {
+    preloadInkStrokes();
+  }, []);
 
   const strokeItems = useMemo(
     () =>

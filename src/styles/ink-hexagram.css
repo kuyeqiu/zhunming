@@ -43,7 +43,7 @@
 }
 
 .ink-hexagram--xl {
-  --ink-hex-width: clamp(168px, 15vw, 224px);
+  --ink-hex-width: clamp(148px, 13.5vw, 220px);
   --ink-hex-gap: 4px;
 }
 
@@ -233,11 +233,11 @@
 
 .ink-hex-showcase__name {
   margin: 0;
-  font-family: 'MingyuLotBrush', var(--ink-font-serif, serif);
-  font-size: 28px;
-  font-weight: 400;
+  font-family: var(--ink-font-serif, 'Noto Serif SC', 'Songti SC', serif);
+  font-size: 26px;
+  font-weight: 600;
   letter-spacing: 0.14em;
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--ink-deep, #181715);
 }
 
@@ -402,10 +402,19 @@
   letter-spacing: 0.04em;
 }
 
-/* 岁庚页双栏比例微调：右侧留足空间让手绘卦象与笺框舒展 */
+/* 岁庚页双栏比例与宽屏容器：呼应设计稿未标题-1.png 的舒展布局 */
+.workspace-input-page .workspace-ui-screen.is-wide {
+  width: min(1360px, 100%);
+}
+
 .profile-ledger {
-  grid-template-columns: minmax(0, 5.4fr) minmax(0, 6.6fr);
-  gap: 32px;
+  grid-template-columns: minmax(0, 5.2fr) minmax(0, 6.8fr);
+  gap: clamp(20px, 2.8vw, 40px);
+}
+
+.profile-ledger-work {
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 18px;
 }
 
 /* ===========================================================================
@@ -417,7 +426,7 @@
   display: grid;
   justify-items: center;
   gap: 18px;
-  padding: 26px 22px 20px;
+  padding: 24px 20px 18px;
   border-left: 1px solid rgba(24, 23, 21, 0.08);
   text-align: center;
   color: var(--ink-strong, #2e2c28);
@@ -443,9 +452,9 @@
 }
 
 .ink-hex-aside__title-line strong {
-  font-family: 'MingyuLotBrush', var(--ink-font-serif, serif);
-  font-size: 22px;
-  font-weight: 400;
+  font-family: var(--ink-font-serif, 'Noto Serif SC', 'Songti SC', serif);
+  font-size: 20px;
+  font-weight: 600;
   letter-spacing: 0.14em;
   color: var(--ink-deep, #181715);
 }
@@ -545,8 +554,8 @@
 /* ---- 通用双栏留白容器（桌面端左主内容 + 右水墨卦象） ---- */
 .ink-split-stage {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 32px;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: clamp(20px, 2.5vw, 34px);
   align-items: start;
 }
 
@@ -558,10 +567,10 @@
 
 /* 占问页宽容器让表单与右侧水墨卦象平衡舒展 */
 .workspace-divination-page .ink-split-stage {
-  max-width: 1140px;
+  max-width: 1180px;
   margin: 0 auto;
-  grid-template-columns: minmax(0, 1fr) 292px;
-  gap: 28px;
+  grid-template-columns: minmax(0, 1fr) 276px;
+  gap: clamp(18px, 2.4vw, 30px);
 }
 
 /* 账户页登录态双栏（表单左 + 水墨卦象右） */
@@ -582,6 +591,9 @@
 
 .ink-acct-stage .ink-hex-aside {
   position: static;
+  border-top: 0;
+  border-left: 1px solid rgba(24, 23, 21, 0.08);
+  padding: 20px 0 20px 36px;
 }
 
 /* ===========================================================================
@@ -668,19 +680,21 @@
 /* ===========================================================================
    响应式适配
    =========================================================================== */
-@media (max-width: 1120px) {
+@media (max-width: 960px) {
   .profile-ledger {
     grid-template-columns: 1fr;
     gap: 28px;
   }
+}
 
+@media (max-width: 860px) {
   .ink-split-stage,
   .workspace-divination-page .ink-split-stage {
     grid-template-columns: 1fr;
     gap: 24px;
   }
 
-  .ink-hex-aside {
+  .ink-split-stage .ink-hex-aside {
     position: static;
     border-left: 0;
     border-top: 1px solid rgba(24, 23, 21, 0.08);
@@ -697,6 +711,12 @@
 
   .ink-acct-stage .ink-acct {
     margin: 0 auto;
+  }
+
+  .ink-acct-stage .ink-hex-aside {
+    border-left: 0;
+    border-top: 1px solid rgba(24, 23, 21, 0.08);
+    padding: 24px 12px 8px;
   }
 }
 
