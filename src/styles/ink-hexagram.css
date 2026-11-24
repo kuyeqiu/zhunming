@@ -1,13 +1,13 @@
 /* ===========================================================================
-   ink-hexagram.css — 手绘水墨卦象装饰与伴随系统
+   ink-hexagram.css — 手绘水墨卦象装饰与全屏舒展布局系统
    ---------------------------------------------------------------------------
    以用户手绘水墨爻线（/ink-hexagrams/yang|yin-1..3.webp）动态拼合六十四卦，
-   用于填补各页面留白与空状态，呈现「白底 + 墨迹 + 朱砂点缀」的书卷气韵。
+   按全屏宽度舒展排布（与顶栏左右边距对齐），避免大屏下两侧空旷、中间拥挤。
    =========================================================================== */
 
 /* ---- 基础水墨卦象原子 ---- */
 .ink-hexagram {
-  --ink-hex-width: 152px;
+  --ink-hex-width: 164px;
   --ink-hex-gap: 3px;
   position: relative;
   display: inline-flex;
@@ -28,23 +28,23 @@
 }
 
 .ink-hexagram--sm {
-  --ink-hex-width: 78px;
+  --ink-hex-width: 82px;
   --ink-hex-gap: 2px;
 }
 
 .ink-hexagram--md {
-  --ink-hex-width: 136px;
+  --ink-hex-width: 148px;
   --ink-hex-gap: 3px;
 }
 
 .ink-hexagram--lg {
-  --ink-hex-width: 176px;
+  --ink-hex-width: clamp(188px, 14vw, 272px);
   --ink-hex-gap: 4px;
 }
 
 .ink-hexagram--xl {
-  --ink-hex-width: clamp(148px, 13.5vw, 220px);
-  --ink-hex-gap: 4px;
+  --ink-hex-width: clamp(210px, 17.5vw, 340px);
+  --ink-hex-gap: 5px;
 }
 
 .ink-hexagram--solid {
@@ -52,7 +52,7 @@
 }
 
 .ink-hexagram--soft {
-  opacity: 0.78;
+  opacity: 0.82;
 }
 
 .ink-hexagram--watermark {
@@ -131,7 +131,7 @@
   background: transparent;
   padding: 2px 4px;
   font-family: var(--ink-font-serif, serif);
-  font-size: 12px;
+  font-size: 12.5px;
   letter-spacing: 0.14em;
   color: var(--ink-light, #8c887f);
   cursor: pointer;
@@ -153,11 +153,75 @@
 }
 
 /* ===========================================================================
-   1. 岁庚页右侧主展示区 (.ink-hex-showcase) — 呼应设计稿未标题-1.png
+   全屏舒展容器：取消过窄的居中限宽，与顶栏左右边距对齐
    =========================================================================== */
-.ink-hex-showcase {
+.workspace-input-page .workspace-ui-screen,
+.workspace-input-page .workspace-ui-screen.is-wide,
+.chart-menu-page.workspace-ui-screen,
+.workspace-case-page .workspace-ui-screen,
+.workspace-divination-page {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+
+/* ===========================================================================
+   1. 岁庚页 (/profile) — 全屏铺满，精确还原产品图比例
+      左侧（约 38%）：岁庚标题 + 已存岁庚 + 出生资料表单，贴左对齐顶栏 Logo
+      中间：宽阔呼吸留白（clamp(36px, 5vw, 112px)）
+      右侧（约 55%）：顶部齐平起排，大水墨卦象 + 右侧「今日之卦」大框，
+                      下方书法「今日吉凶」+ 通栏大卡直抵右缘
+   =========================================================================== */
+.workspace-input-page.is-profile-full {
+  width: 100%;
+}
+
+.profile-ledger {
+  width: 100%;
   display: grid;
-  gap: 28px;
+  grid-template-columns: minmax(470px, 38%) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 112px);
+  align-items: start;
+}
+
+.profile-ledger-left {
+  min-width: 0;
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.profile-ledger-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 40px;
+}
+
+.profile-ledger-header h1 {
+  margin: 0;
+  font-family: var(--ink-font-serif, 'Noto Serif SC', 'Songti SC', serif);
+  font-size: clamp(22px, 1.8vw, 28px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ink-deep, #181715);
+}
+
+.profile-ledger-work {
+  display: grid;
+  grid-template-columns: minmax(170px, 210px) minmax(0, 1fr);
+  gap: clamp(18px, 2vw, 34px);
+  align-items: start;
+  min-width: 0;
+}
+
+/* ---- 岁庚右侧展示区 (.ink-hex-showcase) ---- */
+.ink-hex-showcase {
+  min-width: 0;
+  width: 100%;
+  display: grid;
+  gap: clamp(28px, 3.4vh, 48px);
   align-content: start;
   padding-top: 2px;
 }
@@ -165,7 +229,7 @@
 .ink-hex-showcase__top {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 24px;
+  gap: clamp(24px, 3vw, 56px);
   align-items: stretch;
 }
 
@@ -175,13 +239,13 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 6px 4px;
+  padding: 2px 4px;
 }
 
 .ink-hex-showcase__art-hint {
   font-family: var(--ink-font-serif, serif);
-  font-size: 11px;
-  letter-spacing: 0.16em;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
   color: var(--ink-faint, #b4b0a6);
 }
 
@@ -189,11 +253,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 14px;
-  min-height: 214px;
-  padding: 20px 22px 16px;
-  border: 1px solid rgba(24, 23, 21, 0.14);
-  border-radius: 4px;
+  gap: 18px;
+  min-height: clamp(256px, 33vh, 380px);
+  padding: clamp(22px, 2.2vw, 36px) clamp(24px, 2.6vw, 40px);
+  border: 1px solid rgba(24, 23, 21, 0.22);
+  border-radius: 3px;
   background: #ffffff;
 }
 
@@ -201,58 +265,58 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
 }
 
 .ink-hex-showcase__kicker {
   font-family: var(--ink-font-serif, serif);
-  font-size: 11.5px;
-  letter-spacing: 0.26em;
+  font-size: 12.5px;
+  letter-spacing: 0.28em;
   color: var(--ink-light, #8c887f);
 }
 
 .ink-hex-showcase__seal {
   display: inline-flex;
   align-items: center;
-  padding: 1px 7px;
-  border: 1px solid rgba(158, 42, 43, 0.48);
+  padding: 2px 9px;
+  border: 1px solid rgba(158, 42, 43, 0.5);
   border-radius: 2px;
   color: var(--cinnabar, #9e2a2b);
   font-family: var(--ink-font-serif, serif);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
   line-height: 1.5;
 }
 
 .ink-hex-showcase__title-row {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
 .ink-hex-showcase__name {
   margin: 0;
   font-family: var(--ink-font-serif, 'Noto Serif SC', 'Songti SC', serif);
-  font-size: 26px;
+  font-size: clamp(28px, 2.2vw, 38px);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   line-height: 1.25;
   color: var(--ink-deep, #181715);
 }
 
 .ink-hex-showcase__trigrams {
   font-family: var(--ink-font-serif, serif);
-  font-size: 12px;
-  letter-spacing: 0.2em;
+  font-size: 13px;
+  letter-spacing: 0.22em;
   color: var(--ink-light, #8c887f);
 }
 
 .ink-hex-showcase__quote {
   margin: 0;
   font-family: var(--ink-font-reading, 'Songti SC', serif);
-  font-size: 14.5px;
-  line-height: 1.95;
+  font-size: clamp(15px, 1.05vw, 17.5px);
+  line-height: 2.05;
   letter-spacing: 0.06em;
   color: var(--ink-strong, #2e2c28);
 }
@@ -261,13 +325,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding-top: 12px;
-  border-top: 1px dashed rgba(24, 23, 21, 0.11);
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(24, 23, 21, 0.12);
 }
 
 .ink-hex-showcase__time {
-  font-size: 11.5px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   color: var(--ink-light, #8c887f);
 }
@@ -275,52 +339,55 @@
 .ink-hex-showcase__actions {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-/* ---- 今日吉凶区块（书法标题 + 留白大卡） ---- */
+/* ---- 今日吉凶区块（书法大标题 + 通栏长卡） ---- */
 .ink-hex-fortune {
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 
 .ink-hex-fortune__header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
 }
 
 .ink-hex-fortune__heading {
   margin: 0;
   font-family: 'MingyuLotBrush', var(--ink-font-serif, serif);
-  font-size: 28px;
+  font-size: clamp(30px, 2.3vw, 40px);
   font-weight: 400;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   line-height: 1.15;
   color: var(--ink-deep, #181715);
 }
 
 .ink-hex-fortune__sub {
   font-family: var(--ink-font-serif, serif);
-  font-size: 12px;
-  letter-spacing: 0.16em;
+  font-size: 12.5px;
+  letter-spacing: 0.18em;
   color: var(--ink-light, #8c887f);
 }
 
 .ink-hex-fortune__card {
-  display: grid;
-  gap: 18px;
-  padding: 22px 24px;
-  border: 1px solid rgba(24, 23, 21, 0.14);
-  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: clamp(220px, 29vh, 330px);
+  padding: clamp(24px, 2.4vw, 38px) clamp(26px, 2.8vw, 42px);
+  border: 1px solid rgba(24, 23, 21, 0.22);
+  border-radius: 3px;
   background: #ffffff;
 }
 
 .ink-hex-fortune__lead {
   display: flex;
   align-items: flex-start;
-  gap: 18px;
+  gap: clamp(18px, 2vw, 28px);
 }
 
 .ink-hex-fortune__verdict {
@@ -328,13 +395,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 64px;
-  padding: 6px 12px;
+  min-width: 78px;
+  padding: 8px 16px;
   border: 1.5px solid var(--ink-deep, #181715);
   border-radius: 2px;
   font-family: 'MingyuLotBrush', var(--ink-font-serif, serif);
-  font-size: 24px;
-  letter-spacing: 0.12em;
+  font-size: clamp(26px, 2vw, 34px);
+  letter-spacing: 0.14em;
   line-height: 1.2;
   color: var(--ink-deep, #181715);
 }
@@ -346,26 +413,26 @@
 }
 
 .ink-hex-fortune__detail {
-  margin: 2px 0 0;
+  margin: 4px 0 0;
   font-family: var(--ink-font-reading, 'Songti SC', serif);
-  font-size: 14.5px;
-  line-height: 1.9;
-  letter-spacing: 0.04em;
+  font-size: clamp(15px, 1.08vw, 18px);
+  line-height: 2;
+  letter-spacing: 0.05em;
   color: var(--ink-strong, #2e2c28);
 }
 
 .ink-hex-fortune__yiji {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 20px;
-  padding-top: 16px;
-  border-top: 1px dashed rgba(24, 23, 21, 0.11);
+  gap: 14px 28px;
+  padding-top: 20px;
+  border-top: 1px dashed rgba(24, 23, 21, 0.12);
 }
 
 .ink-hex-fortune__yiji-group {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
@@ -374,11 +441,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 2px;
   font-family: var(--ink-font-serif, serif);
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   line-height: 1;
 }
@@ -396,25 +463,10 @@
 }
 
 .ink-hex-fortune__yiji-list {
-  font-size: 13px;
-  line-height: 1.65;
+  font-size: clamp(13.5px, 0.95vw, 15px);
+  line-height: 1.7;
   color: var(--ink-medium, #4a4843);
-  letter-spacing: 0.04em;
-}
-
-/* 岁庚页双栏比例与宽屏容器：呼应设计稿未标题-1.png 的舒展布局 */
-.workspace-input-page .workspace-ui-screen.is-wide {
-  width: min(1360px, 100%);
-}
-
-.profile-ledger {
-  grid-template-columns: minmax(0, 5.2fr) minmax(0, 6.8fr);
-  gap: clamp(20px, 2.8vw, 40px);
-}
-
-.profile-ledger-work {
-  grid-template-columns: 168px minmax(0, 1fr);
-  gap: 18px;
+  letter-spacing: 0.05em;
 }
 
 /* ===========================================================================
@@ -425,8 +477,8 @@
   top: 84px;
   display: grid;
   justify-items: center;
-  gap: 18px;
-  padding: 24px 20px 18px;
+  gap: 22px;
+  padding: 28px clamp(20px, 2.5vw, 40px) 22px;
   border-left: 1px solid rgba(24, 23, 21, 0.08);
   text-align: center;
   color: var(--ink-strong, #2e2c28);
@@ -440,20 +492,20 @@
 
 .ink-hex-aside__meta {
   display: grid;
-  gap: 8px;
-  max-width: 260px;
+  gap: 10px;
+  max-width: 360px;
 }
 
 .ink-hex-aside__title-line {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .ink-hex-aside__title-line strong {
   font-family: var(--ink-font-serif, 'Noto Serif SC', 'Songti SC', serif);
-  font-size: 20px;
+  font-size: clamp(22px, 1.6vw, 28px);
   font-weight: 600;
   letter-spacing: 0.14em;
   color: var(--ink-deep, #181715);
@@ -461,36 +513,36 @@
 
 .ink-hex-aside__title-line span {
   font-family: var(--ink-font-serif, serif);
-  font-size: 11px;
-  letter-spacing: 0.16em;
+  font-size: 12px;
+  letter-spacing: 0.18em;
   color: var(--ink-light, #8c887f);
 }
 
 .ink-hex-aside__quote {
   margin: 0;
   font-family: var(--ink-font-reading, 'Songti SC', serif);
-  font-size: 13px;
-  line-height: 1.85;
+  font-size: 14px;
+  line-height: 1.9;
   letter-spacing: 0.05em;
   color: var(--ink-medium, #4a4843);
 }
 
 .ink-hex-aside__caption {
   margin: 2px 0 0;
-  font-size: 11.5px;
-  letter-spacing: 0.14em;
+  font-size: 12px;
+  letter-spacing: 0.16em;
   color: var(--ink-faint, #b4b0a6);
 }
 
 .ink-hex-aside__fortune {
   width: 100%;
-  max-width: 268px;
+  max-width: 380px;
   display: grid;
-  gap: 8px;
-  padding: 14px 16px;
-  border: 1px solid rgba(24, 23, 21, 0.1);
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.72);
+  gap: 10px;
+  padding: 18px 20px;
+  border: 1px solid rgba(24, 23, 21, 0.14);
+  border-radius: 3px;
+  background: #ffffff;
   text-align: left;
 }
 
@@ -503,16 +555,16 @@
 
 .ink-hex-aside__fortune-head span {
   font-family: var(--ink-font-serif, serif);
-  font-size: 11.5px;
-  letter-spacing: 0.22em;
+  font-size: 12px;
+  letter-spacing: 0.24em;
   color: var(--ink-light, #8c887f);
 }
 
 .ink-hex-aside__fortune-head strong {
   font-family: 'MingyuLotBrush', var(--ink-font-serif, serif);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 400;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   color: var(--ink-deep, #181715);
 }
 
@@ -522,40 +574,41 @@
 
 .ink-hex-aside__fortune p {
   margin: 0;
-  font-size: 12.5px;
-  line-height: 1.75;
+  font-size: 13.5px;
+  line-height: 1.85;
   color: var(--ink-medium, #4a4843);
 }
 
 .ink-hex-aside__fortune-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 12px;
-  padding-top: 8px;
+  gap: 6px 14px;
+  padding-top: 10px;
   border-top: 1px dashed rgba(24, 23, 21, 0.1);
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--ink-light, #8c887f);
 }
 
 .ink-hex-aside__foot {
   width: 100%;
-  max-width: 268px;
+  max-width: 380px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   padding-top: 12px;
   border-top: 1px dashed rgba(24, 23, 21, 0.1);
-  font-size: 11px;
+  font-size: 11.5px;
   letter-spacing: 0.08em;
   color: var(--ink-faint, #b4b0a6);
 }
 
-/* ---- 通用双栏留白容器（桌面端左主内容 + 右水墨卦象） ---- */
+/* ---- 通用全屏双栏容器（桌面端左主内容 + 右水墨卦象） ---- */
 .ink-split-stage {
+  width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: clamp(20px, 2.5vw, 34px);
+  grid-template-columns: minmax(0, 1.35fr) clamp(320px, 34vw, 540px);
+  gap: clamp(28px, 4.5vw, 84px);
   align-items: start;
 }
 
@@ -565,24 +618,24 @@
   gap: 14px;
 }
 
-/* 占问页宽容器让表单与右侧水墨卦象平衡舒展 */
 .workspace-divination-page .ink-split-stage {
-  max-width: 1180px;
-  margin: 0 auto;
-  grid-template-columns: minmax(0, 1fr) 276px;
-  gap: clamp(18px, 2.4vw, 30px);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  grid-template-columns: minmax(0, 1.4fr) clamp(320px, 33vw, 520px);
+  gap: clamp(28px, 4.2vw, 76px);
 }
 
-/* 账户页登录态双栏（表单左 + 水墨卦象右） */
+/* 账户页登录态全屏双栏（表单左 + 水墨卦象右） */
 .ink-acct-stage {
   width: 100%;
-  max-width: 920px;
+  max-width: 1440px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 440px) minmax(240px, 1fr);
-  gap: 48px;
+  grid-template-columns: minmax(340px, 460px) minmax(0, 1fr);
+  gap: clamp(40px, 7vw, 120px);
   align-items: center;
-  padding: 0 var(--ink-gutter, 28px);
+  padding: 0 clamp(22px, 4vw, 52px);
 }
 
 .ink-acct-stage .ink-acct {
@@ -593,7 +646,7 @@
   position: static;
   border-top: 0;
   border-left: 1px solid rgba(24, 23, 21, 0.08);
-  padding: 20px 0 20px 36px;
+  padding: 28px 0 28px clamp(32px, 4vw, 64px);
 }
 
 /* ===========================================================================
@@ -680,18 +733,18 @@
 /* ===========================================================================
    响应式适配
    =========================================================================== */
-@media (max-width: 960px) {
+@media (max-width: 1020px) {
   .profile-ledger {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 32px;
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 880px) {
   .ink-split-stage,
   .workspace-divination-page .ink-split-stage {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 26px;
   }
 
   .ink-split-stage .ink-hex-aside {
@@ -728,11 +781,12 @@
 
   .ink-hex-showcase__scroll {
     min-height: 0;
-    padding: 16px 16px 14px;
+    padding: 18px 16px 14px;
   }
 
   .ink-hex-fortune__card {
-    padding: 16px;
+    min-height: 0;
+    padding: 18px 16px;
   }
 
   .ink-hex-fortune__lead {

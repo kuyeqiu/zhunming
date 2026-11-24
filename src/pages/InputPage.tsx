@@ -704,72 +704,68 @@ export function InputPage({ mode = 'chart' }: { mode?: 'chart' | 'profile' }) {
   }
 
   return (
-    <div className={`workspace-input-page${compatMode ? ' is-compatibility' : ''}`}>
-      <WorkspacePage
-        title={
-          compatMode
-            ? mode === 'profile'
-              ? '岁庚合盘'
-              : '双人合盘'
-            : mode === 'profile'
-              ? '岁庚'
-              : config.label
-        }
-        width="wide"
-        action={
-          <div className="workspace-input-page-actions">
-            {instantType ? (
-              <WorkspaceButton
-                size="small"
-                variant="outline"
-                onClick={() => setIsInstantDialogOpen(true)}
-              >
-                即时起盘
-              </WorkspaceButton>
-            ) : null}
-            <WorkspaceButton
-              size="small"
-              variant={compatMode ? 'primary' : 'outline'}
-              onClick={toggleCompatMode}
-              aria-pressed={compatMode}
-            >
-              双人合盘
-            </WorkspaceButton>
-          </div>
-        }
-      >
-        {mode === 'profile' && !compatMode ? (
-          <div className="profile-ledger">
+    <div
+      className={`workspace-input-page${compatMode ? ' is-compatibility' : ''}${
+        mode === 'profile' && !compatMode ? ' is-profile-full' : ''
+      }`}
+    >
+      {mode === 'profile' && !compatMode ? (
+        <div className="profile-ledger">
+          <div className="profile-ledger-left">
+            <header className="profile-ledger-header">
+              <h1>岁庚</h1>
+              <div className="workspace-input-page-actions">
+                {instantType ? (
+                  <WorkspaceButton
+                    size="small"
+                    variant="outline"
+                    onClick={() => setIsInstantDialogOpen(true)}
+                  >
+                    即时起盘
+                  </WorkspaceButton>
+                ) : null}
+                <WorkspaceButton
+                  size="small"
+                  variant="outline"
+                  onClick={toggleCompatMode}
+                  aria-pressed={false}
+                >
+                  双人合盘
+                </WorkspaceButton>
+              </div>
+            </header>
             <div className="profile-ledger-work">
               <aside className="profile-ledger-side" aria-label="已存岁庚">
-              <div className="profile-ledger-side-head">
-                <span>已存岁庚</span>
-                <button
-                  type="button"
-                  className="profile-ledger-new"
-                  onClick={() => navigate('/profile')}
-                >
-                  + 新岁庚
-                </button>
-              </div>
-              {cases.length ? (
-                <ul className="profile-ledger-list">
-                  {sortPersonalCasesForQuickSwitch(cases).map((record) => (
-                    <li key={record.id}>
-                      <button
-                        type="button"
-                        className={`profile-ledger-item${record.id === (routeCaseId ?? activeCaseId) ? ' is-active' : ''}`}
-                        onClick={() => navigate(`/profile?rid=${record.id}`)}
-                      >
-                        <span className="profile-ledger-item-name">{record.name}</span>
-                        <span className="profile-ledger-item-meta">{record.birthText}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div className="profile-ledger-empty">还没有岁庚，右边填好资料存入后这里会列出来。</div>
-              )}
+                <div className="profile-ledger-side-head">
+                  <span>已存岁庚</span>
+                  <button
+                    type="button"
+                    className="profile-ledger-new"
+                    onClick={() => navigate('/profile')}
+                  >
+                    + 新岁庚
+                  </button>
+                </div>
+                {cases.length ? (
+                  <ul className="profile-ledger-list">
+                    {sortPersonalCasesForQuickSwitch(cases).map((record) => (
+                      <li key={record.id}>
+                        <button
+                          type="button"
+                          className={`profile-ledger-item${record.id === (routeCaseId ?? activeCaseId) ? ' is-active' : ''}`}
+                          onClick={() => navigate(`/profile?rid=${record.id}`)}
+                        >
+                          <span className="profile-ledger-item-name">{record.name}</span>
+                          <span className="profile-ledger-item-meta">{record.birthText}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="profile-ledger-empty">
+                    还没有岁庚，右边填好资料存入后这里会列出来。
+                  </div>
+                )}
               </aside>
               <div className="profile-ledger-form">
                 <PrivacyHint />
@@ -782,39 +778,73 @@ export function InputPage({ mode = 'chart' }: { mode?: 'chart' | 'profile' }) {
                 </div>
               </div>
             </div>
-            <InkHexagramShowcase contextKey="profile" />
           </div>
-        ) : compatMode ? (
-          <>
-            <PrivacyHint />
-            {renderFormLayout()}
-            {error ? <div className="workspace-ui-form-error">{error}</div> : null}
-            <div className="workspace-ui-form-actions is-sticky-mobile">
-              <WorkspaceButton variant="primary" size="large" block onClick={handleSubmit}>
-                查看合盘
+          <InkHexagramShowcase contextKey="profile" />
+        </div>
+      ) : (
+        <WorkspacePage
+          title={
+            compatMode
+              ? mode === 'profile'
+                ? '岁庚合盘'
+                : '双人合盘'
+              : config.label
+          }
+          width="wide"
+          action={
+            <div className="workspace-input-page-actions">
+              {instantType ? (
+                <WorkspaceButton
+                  size="small"
+                  variant="outline"
+                  onClick={() => setIsInstantDialogOpen(true)}
+                >
+                  即时起盘
+                </WorkspaceButton>
+              ) : null}
+              <WorkspaceButton
+                size="small"
+                variant={compatMode ? 'primary' : 'outline'}
+                onClick={toggleCompatMode}
+                aria-pressed={compatMode}
+              >
+                双人合盘
               </WorkspaceButton>
             </div>
-          </>
-        ) : (
-          <div className="ink-split-stage">
-            <div className="ink-split-stage__main">
+          }
+        >
+          {compatMode ? (
+            <>
               <PrivacyHint />
               {renderFormLayout()}
               {error ? <div className="workspace-ui-form-error">{error}</div> : null}
               <div className="workspace-ui-form-actions is-sticky-mobile">
                 <WorkspaceButton variant="primary" size="large" block onClick={handleSubmit}>
-                  查看完整{config.label}盘面
+                  查看合盘
                 </WorkspaceButton>
               </div>
+            </>
+          ) : (
+            <div className="ink-split-stage">
+              <div className="ink-split-stage__main">
+                <PrivacyHint />
+                {renderFormLayout()}
+                {error ? <div className="workspace-ui-form-error">{error}</div> : null}
+                <div className="workspace-ui-form-actions is-sticky-mobile">
+                  <WorkspaceButton variant="primary" size="large" block onClick={handleSubmit}>
+                    查看完整{config.label}盘面
+                  </WorkspaceButton>
+                </div>
+              </div>
+              <InkHexagramAside
+                contextKey={tool ?? 'bazi'}
+                caption={CHART_TOOL_CAPTIONS[tool ?? 'bazi']}
+                showFortune
+              />
             </div>
-            <InkHexagramAside
-              contextKey={tool ?? 'bazi'}
-              caption={CHART_TOOL_CAPTIONS[tool ?? 'bazi']}
-              showFortune
-            />
-          </div>
-        )}
-      </WorkspacePage>
+          )}
+        </WorkspacePage>
+      )}
 
       {birthPlace.isBirthPlaceModalOpen ? (
         <BirthPlaceModal
