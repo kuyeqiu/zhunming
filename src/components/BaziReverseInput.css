@@ -42,6 +42,7 @@
   min-width: 0;
 }
 
+.workspace-ui-field > select.bazi-reverse-select,
 .bazi-reverse-select {
   width: 100%;
   min-width: 0;
@@ -65,15 +66,18 @@
     background-color 160ms ease;
 }
 
+.workspace-ui-field > select.bazi-reverse-select:hover:not(:disabled),
 .bazi-reverse-select:hover:not(:disabled) {
   border-color: rgba(24, 23, 21, 0.32);
 }
 
+.workspace-ui-field > select.bazi-reverse-select:focus,
 .bazi-reverse-select:focus {
   outline: none;
   border-color: var(--ink-deep, #181715);
 }
 
+.workspace-ui-field > select.bazi-reverse-select:disabled,
 .bazi-reverse-select:disabled {
   background-color: rgba(24, 23, 21, 0.035);
   border-color: rgba(24, 23, 21, 0.1);
