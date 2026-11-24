@@ -1,4 +1,7 @@
 import type { QimenLifetimeData } from '@/types/divination';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 
 export function QimenBirthRangeNavigator({
   range,
@@ -31,19 +34,19 @@ export function QimenBirthRangeNavigator({
           </p>
           {onChange ? (
             <div className="traditional-qimen-actions qimen-birth-range-navigation">
-              <button type="button" disabled={range.index === 0} onClick={() => onChange(0)}>
+              <Button variant="outline" size="sm" type="button" disabled={range.index === 0} onClick={() => onChange(0)}>
                 首秒
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 disabled={range.index === 0}
                 onClick={() => onChange(range!.index - 1)}
               >
                 上一秒
-              </button>
-              <label>
+              </Button>
+              <Label>
                 候选序号{' '}
-                <input
+                <Input
                   aria-label="奇门出生候选序号"
                   type="number"
                   min={1}
@@ -60,22 +63,22 @@ export function QimenBirthRangeNavigator({
                     else event.currentTarget.value = String(range!.index + 1);
                   }}
                 />
-              </label>
+              </Label>
               <span>共 {range.totalSamples} 秒</span>
-              <button
+              <Button
                 type="button"
                 disabled={range.nextIndex === null}
                 onClick={() => onChange(range!.nextIndex!)}
               >
                 下一秒
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 disabled={range.nextIndex === null}
                 onClick={() => onChange(range!.totalSamples - 1)}
               >
                 末秒
-              </button>
+              </Button>
             </div>
           ) : null}
         </section>

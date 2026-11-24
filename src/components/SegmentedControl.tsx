@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 type SegmentedOption<T extends string | number | boolean> = {
   label: string;
   value: T;
@@ -30,14 +31,14 @@ export function SegmentedControl<T extends string | number | boolean>(
         }}
       />
       {options.map((option) => (
-        <button
+        <Button
           key={String(option.value)}
           type="button"
           className={`workspace-ui-segmented-item ${value === option.value ? 'is-active' : ''}`}
           onClick={() => onChange(option.value)}
         >
           {option.label}
-        </button>
+        </Button>
       ))}
     </div>
   );

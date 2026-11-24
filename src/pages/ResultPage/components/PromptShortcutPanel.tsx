@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 
 type ShortcutAction = { label: string };
 
@@ -107,7 +110,7 @@ export function PromptShortcutPanel({
                 key={section.key}
                 className={`workspace-prompt-section ${isExpanded ? 'is-expanded' : ''}`}
               >
-                <button
+                <Button
                   type="button"
                   className="workspace-prompt-section-head"
                   aria-expanded={isExpanded}
@@ -120,21 +123,21 @@ export function PromptShortcutPanel({
                   <span className="workspace-prompt-section-state">
                     {isExpanded ? '已展开' : `${section.items.length} 项`}
                   </span>
-                </button>
+                </Button>
 
                 {isExpanded ? (
                   <div
-                    className={`workspace-ui-choice-grid${quickGridClassName ? ` ${quickGridClassName}` : ''}`}
+                    className={`workspace-ui-choice-grid${quickGridClassName ? `${quickGridClassName}` : ''}`}
                   >
                     {section.items.map((item) => (
-                      <button
+                      <Button
                         key={item.label}
                         type="button"
-                        className={`workspace-ui-choice ${activeMode === item.label ? 'is-active' : ''}`}
+                        variant={activeMode === item.label ? 'secondary' : 'outline'}
                         onClick={() => onApplyMode(item.label)}
                       >
                         {item.label}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 ) : null}
@@ -144,17 +147,17 @@ export function PromptShortcutPanel({
 
           {ungroupedActions.length > 0 ? (
             <div
-              className={`workspace-ui-choice-grid${quickGridClassName ? ` ${quickGridClassName}` : ''}`}
+              className={`workspace-ui-choice-grid${quickGridClassName ? `${quickGridClassName}` : ''}`}
             >
               {ungroupedActions.map((item) => (
-                <button
+                <Button
                   key={item.label}
                   type="button"
-                  className={`workspace-ui-choice ${activeMode === item.label ? 'is-active' : ''}`}
+                  variant={activeMode === item.label ? 'secondary' : 'outline'}
                   onClick={() => onApplyMode(item.label)}
                 >
                   {item.label}
-                </button>
+                </Button>
               ))}
             </div>
           ) : null}
@@ -163,7 +166,7 @@ export function PromptShortcutPanel({
             <section
               className={`workspace-prompt-section ${isCustomSectionExpanded ? 'is-expanded' : ''}`}
             >
-              <button
+              <Button
                 type="button"
                 className="workspace-prompt-section-head"
                 aria-expanded={isCustomSectionExpanded}
@@ -176,29 +179,29 @@ export function PromptShortcutPanel({
                 <span className="workspace-prompt-section-state">
                   {isCustomSectionExpanded ? '已展开' : `${customActionCount} 项`}
                 </span>
-              </button>
+              </Button>
 
               {isCustomSectionExpanded ? (
                 <div
-                  className={`workspace-ui-choice-grid${quickGridClassName ? ` ${quickGridClassName}` : ''}`}
+                  className={`workspace-ui-choice-grid${quickGridClassName ? `${quickGridClassName}` : ''}`}
                 >
                   {showInspirationAction ? (
-                    <button
+                    <Button
                       type="button"
-                      className={`workspace-ui-choice ${activeMode === '问题灵感' ? 'is-active' : ''}`}
+                      variant={activeMode === '问题灵感' ? 'secondary' : 'outline'}
                       onClick={onOpenInspiration}
                     >
                       问题灵感
-                    </button>
+                    </Button>
                   ) : null}
                   {showCustomAction ? (
-                    <button
+                    <Button
                       type="button"
-                      className={`workspace-ui-choice ${activeMode === '自定义' ? 'is-active' : ''}`}
+                      variant={activeMode === '自定义' ? 'secondary' : 'outline'}
                       onClick={() => onApplyMode('自定义')}
                     >
                       直接输入问题
-                    </button>
+                    </Button>
                   ) : null}
                 </div>
               ) : null}
@@ -207,17 +210,17 @@ export function PromptShortcutPanel({
         </div>
       ) : (
         <div
-          className={`workspace-ui-choice-grid${quickGridClassName ? ` ${quickGridClassName}` : ''}`}
+          className={`workspace-ui-choice-grid${quickGridClassName ? `${quickGridClassName}` : ''}`}
         >
           {actions.map((item) => (
-            <button
+            <Button
               key={item.label}
               type="button"
-              className={`workspace-ui-choice ${activeMode === item.label ? 'is-active' : ''}`}
+              variant={activeMode === item.label ? 'secondary' : 'outline'}
               onClick={() => onApplyMode(item.label)}
             >
               {item.label}
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -225,16 +228,15 @@ export function PromptShortcutPanel({
       {afterShortcuts}
 
       {shouldShowCustomField ? (
-        <label className="workspace-ui-field">
+        <Label className="workspace-ui-field">
           <span>{customFieldTitle}</span>
-          <textarea
-            className="workspace-ui-control"
+          <Textarea
             rows={6}
             value={customDraft}
             placeholder={customPlaceholder}
             onChange={(event) => onCustomDraftChange(event.target.value)}
           />
-        </label>
+        </Label>
       ) : null}
     </>
   );

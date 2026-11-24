@@ -1,23 +1,28 @@
 import { Link, useLocation } from 'react-router-dom';
+import { cn } from 'cn';
 
 const PRIMARY_LINKS = [
-  { href: '/chart/bazi', label: '排盘' },
-  { href: '/divination/liuyao', label: '占问' },
-  { href: '/calendar', label: '历法' },
-  { href: '/account', label: '我的' },
+  { href: '/chart', label: '排盘', match: '/chart', exclude: '/profile' },
+  { href: '/divination/liuyao', label: '占问', match: '/divination', exclude: '/divination/almanac' },
+  { href: '/divination/almanac', label: '择日' },
+  { href: '/profile', label: '岁庚' },
 ];
 
 /**
- * 顶部一行导航：取代原来的 248px 常驻侧栏。
- *
- * 只有四个入口 + 一个动作（工具抽屉）。工具全集仍在抽屉里，
- * 所以去掉侧栏不会丢功能，只是把"墙"藏到一次点击之后。
+ * 顶部一行导航：排盘 / 占问 / 择日 / 岁庚，账号入口「我的」固定在右端。
+ * 岁庚＝出生年月日时之纪，这里用来收个人资料。
  */
-export function InkTopBar({ onOpenTools }: { onOpenTools: () => void }) {
+export function InkTopBar() {
   const location = useLocation();
 
-  const isActive = (href: string) =>
-    location.pathname === href || location.pathname.startsWith(`${href}/`);
+  const isActive = (item: (typeof PRIMARY_LINKS)[number]) => {
+    const match: string = 'match' in item && item.match ? item.match : item.href;
+    if (!location.pathname.startsWith(match)) return false;
+    if ('exclude' in item && item.exclude && location.pathname.startsWith(item.exclude)) {
+      return false;
+    }
+    return true;
+  };
 
   return (
     <header className="ink-topbar">
@@ -33,8 +38,8 @@ export function InkTopBar({ onOpenTools }: { onOpenTools: () => void }) {
           <Link
             key={item.href}
             to={item.href}
-            className={isActive(item.href) ? 'is-active' : ''}
-            aria-current={isActive(item.href) ? 'page' : undefined}
+            className={isActive(item) ? 'is-active' : ''}
+            aria-current={isActive(item) ? 'page' : undefined}
           >
             {item.label}
           </Link>
@@ -42,9 +47,16 @@ export function InkTopBar({ onOpenTools }: { onOpenTools: () => void }) {
       </nav>
 
       <div className="ink-topbar__actions">
-        <button type="button" onClick={onOpenTools} aria-label="打开全部工具">
-          工具
-        </button>
+        <Link
+          to="/account"
+          className={cn(
+            'ink-topbar__account',
+            location.pathname === '/account' && 'is-active',
+          )}
+          aria-current={location.pathname === '/account' ? 'page' : undefined}
+        >
+          我的
+        </Link>
       </div>
     </header>
   );

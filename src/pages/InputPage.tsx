@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { PrivacyHint } from '@/components/PrivacyHint';
 import { getPersonReferenceLabel, type PersonRole } from '@/lib/input-labels';
@@ -30,7 +30,6 @@ import {
   hydratePersonalCaseInput,
 } from '@/lib/compatibility-case-selection';
 import { isChartWorkspaceId, type ChartWorkspaceId } from '@/lib/workspace';
-import { WorkspaceToolSwitcher } from '@/components/workspace/ToolSwitcher';
 import type { InstantTimeStandard } from 'mingyu-core/instant';
 import {
   buildFrontendInstantObserver,
@@ -59,6 +58,10 @@ import {
   type SELF_FIELD_MAP,
 } from './InputPage.field-helpers';
 import { parseBaziReverseSource, type BaziReverseResolvedInput } from '@/lib/bazi-reverse-input';
+import { getDailyHexagramLot, getDailyFortune } from '@/lib/hexagram-lot';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 
 type ChartToolConfig = {
   label: string;
@@ -203,7 +206,7 @@ function createFormFromLocation(
   return normalizeFormForTool(input, config);
 }
 
-export function InputPage() {
+export function InputPage({ mode = 'chart' }: { mode?: 'chart' | 'profile' }) {
   const navigate = useNavigate();
   const location = useLocation();
   const launchState = useMemo(() => readWorkspaceLaunchState(location.state), [location.state]);
@@ -212,6 +215,10 @@ export function InputPage() {
   const [, startSubmitTransition] = useTransition();
   const tool = isChartWorkspaceId(toolParam) ? toolParam : null;
   const config = tool ? CHART_TOOL_CONFIG[tool] : CHART_TOOL_CONFIG.bazi;
+  // 合盘不再是单独工具入口：个人资料页内的开关，打开后追加“对方资料”
+  const [compatMode, setCompatMode] = useState(config.compatibility);
+  const dailyHexagramLot = useMemo(() => getDailyHexagramLot(), []);
+  const dailyFortune = useMemo(() => getDailyFortune(dailyHexagramLot), [dailyHexagramLot]);
   const { cases, activeCaseId } = useActivePersonalCase();
   const routeCaseId = searchParams.get(CHART_RECORD_PARAM);
   const routeCase = useMemo(
@@ -237,7 +244,11 @@ export function InputPage() {
     }),
   );
   const birthPlace = useBirthPlace({ form, setForm });
-  const instantType = getInstantChartTypeForWorkspace(tool ?? '');
+  const instantType = getInstantChartTypeForWorkspace(mode === 'profile' ? 'bazi' : (tool ?? ''));
+  // profile 模式（/profile 岁庚）：不依赖路由 tool 参数，强制按八字口径建表；
+  // chart 模式从排盘菜单带 ?auto=1 进来时，case 数据齐全即跳过表单直接出盘。
+  const autoSubmit = mode === 'chart' && searchParams.get('auto') === '1';
+  const didAutoSubmitRef = useRef(false);
   const visibleCases = useMemo(() => {
     const query = caseSearchText.trim().toLowerCase();
     return sortPersonalCasesForQuickSwitch(cases).filter((record) => {
@@ -252,6 +263,7 @@ export function InputPage() {
     if (!tool) return;
     const nextConfig = CHART_TOOL_CONFIG[tool];
     setError('');
+    setCompatMode(nextConfig.compatibility);
     const nextForm = createFormFromLocation(searchParams, nextConfig, routeCase);
     setForm(nextForm);
     setCompatibilityPromptSource('bazi');
@@ -261,6 +273,24 @@ export function InputPage() {
     });
   }, [location.key, routeCase, searchParams, tool]);
 
+  // chart 模式 + ?auto=1：首次 mount 后表单已由 case/URL 参数水合，直接走提交
+  useEffect(() => {
+    if (!autoSubmit || didAutoSubmitRef.current) return;
+    didAutoSubmitRef.current = true;
+    handleSubmit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function toggleCompatMode() {
+    const next = !compatMode;
+    setCompatMode(next);
+    setForm((current) => ({
+      ...current,
+      analysisMode: next ? 'compatibility' : 'single',
+    }));
+    setError('');
+  }
+
   useEffect(() => {
     if (!resumeInstantDialogAfterPlace || birthPlace.isBirthPlaceModalOpen) return;
     if (buildFrontendInstantObserver(form)) {
@@ -269,8 +299,8 @@ export function InputPage() {
     setResumeInstantDialogAfterPlace(false);
   }, [birthPlace.isBirthPlaceModalOpen, form, resumeInstantDialogAfterPlace]);
 
-  if (!tool) {
-    return <Navigate to="/chart/bazi" replace />;
+  if (!tool && mode !== 'profile') {
+    return <Navigate to="/chart" replace />;
   }
 
   // 首页入场（?entry=dialog）：个人信息（八字）以弹出小窗呈现，
@@ -468,9 +498,9 @@ export function InputPage() {
       return;
     }
     let recordId: string | undefined;
-    const promptSource = config.compatibility ? compatibilityPromptSource : config.promptSource;
+    const promptSource = compatMode ? compatibilityPromptSource : config.promptSource;
     try {
-      if (config.compatibility) {
+      if (compatMode) {
         const partnerError = validatePerson('partner');
         if (partnerError) {
           setError(partnerError);
@@ -490,6 +520,11 @@ export function InputPage() {
     }
 
     startSubmitTransition(() => {
+      if (mode === 'profile' && !compatMode) {
+        // 岁庚页：资料已入库，去排盘菜单选盘
+        navigate('/chart');
+        return;
+      }
       const promptDefaults = createDefaultPromptState();
       navigate(
         buildChartRecordPath(
@@ -498,8 +533,8 @@ export function InputPage() {
             ...promptDefaults,
             tab: config.resultTab,
             promptSource,
-            baziShortcutMode: config.compatibility ? '合婚' : promptDefaults.baziShortcutMode,
-            baziPresetId: config.compatibility ? 'ai-compat-marriage' : promptDefaults.baziPresetId,
+            baziShortcutMode: compatMode ? '合婚' : promptDefaults.baziShortcutMode,
+            baziPresetId: compatMode ? 'ai-compat-marriage' : promptDefaults.baziPresetId,
           },
           recordId,
         ),
@@ -569,25 +604,13 @@ export function InputPage() {
     partnerReverseSource?.intervalEnd,
   ].join('|');
 
-  return (
-    <div className={`workspace-input-page${config.compatibility ? ' is-compatibility' : ''}`}>
-      <WorkspacePage
-        title={config.label}
-        width={config.compatibility ? 'wide' : 'default'}
-        action={
-          instantType ? (
-            <WorkspaceButton size="small" onClick={() => setIsInstantDialogOpen(true)}>
-              即时起盘
-            </WorkspaceButton>
-          ) : null
-        }
-      >
-        <WorkspaceToolSwitcher current={tool} group="chart" ariaLabel="命盘工具切换" />
-        <PrivacyHint />
-        {config.compatibility ? (
+  function renderFormLayout() {
+    return (
+      <>
+        {compatMode ? (
           <div className="workspace-ui-form-row">
             <div className="workspace-ui-field">
-              <label htmlFor="compatibility-method-select">合盘方法</label>
+              <Label htmlFor="compatibility-method-select">合盘方法</Label>
               <DropdownSelect<CompatibilityPromptSource>
                 id="compatibility-method-select"
                 value={compatibilityPromptSource}
@@ -600,7 +623,7 @@ export function InputPage() {
             </div>
           </div>
         ) : null}
-        <div className={`workspace-ui-form-layout${config.compatibility ? ' is-two-column' : ''}`}>
+        <div className={`workspace-ui-form-layout${compatMode ? ' is-two-column' : ''}`}>
           <PersonForm
             role="self"
             form={form}
@@ -608,10 +631,10 @@ export function InputPage() {
             updateNumericField={updateNumericField}
             updateBirthTime={updateBirthTime}
             openBirthPlaceModal={birthPlace.openBirthPlaceModal}
-            sectionTitle={config.compatibility ? '本人资料' : '出生资料'}
+            sectionTitle={compatMode ? '本人资料' : '出生资料'}
             headerAction={
-              config.compatibility ? (
-                <WorkspaceButton size="small" onClick={() => openCasePicker('self')}>
+              compatMode ? (
+                <WorkspaceButton size="small" variant="primary" onClick={() => openCasePicker('self')}>
                   从案例选择
                 </WorkspaceButton>
               ) : null
@@ -636,8 +659,9 @@ export function InputPage() {
             }
             reverseSource={selfReverseSource}
             allowUnknownTime={config.allowUnknownTime}
+            compact={mode === 'profile'}
           />
-          {config.compatibility ? (
+          {compatMode ? (
             <PersonForm
               role="partner"
               form={form}
@@ -647,7 +671,7 @@ export function InputPage() {
               openBirthPlaceModal={birthPlace.openBirthPlaceModal}
               sectionTitle="对方资料"
               headerAction={
-                <WorkspaceButton size="small" onClick={() => openCasePicker('partner')}>
+                <WorkspaceButton size="small" variant="primary" onClick={() => openCasePicker('partner')}>
                   从案例选择
                 </WorkspaceButton>
               }
@@ -662,17 +686,126 @@ export function InputPage() {
                 />
               }
               reverseSource={partnerReverseSource}
+              compact={mode === 'profile'}
             />
           ) : null}
         </div>
+      </>
+    );
+  }
 
-        {error ? <div className="workspace-ui-form-error">{error}</div> : null}
-
-        <div className="workspace-ui-form-actions is-sticky-mobile">
-          <WorkspaceButton variant="primary" size="large" block onClick={handleSubmit}>
-            查看完整{config.label}盘面
-          </WorkspaceButton>
-        </div>
+  return (
+    <div className={`workspace-input-page${compatMode ? ' is-compatibility' : ''}`}>
+      <WorkspacePage
+        title={
+          compatMode
+            ? mode === 'profile'
+              ? '岁庚合盘'
+              : '双人合盘'
+            : mode === 'profile'
+              ? '岁庚'
+              : config.label
+        }
+        width={compatMode ? 'wide' : mode === 'profile' ? 'wide' : 'default'}
+        action={
+          <div className="workspace-input-page-actions">
+            {instantType ? (
+              <WorkspaceButton
+                size="small"
+                variant="outline"
+                onClick={() => setIsInstantDialogOpen(true)}
+              >
+                即时起盘
+              </WorkspaceButton>
+            ) : null}
+            <WorkspaceButton
+              size="small"
+              variant={compatMode ? 'primary' : 'outline'}
+              onClick={toggleCompatMode}
+              aria-pressed={compatMode}
+            >
+              双人合盘
+            </WorkspaceButton>
+          </div>
+        }
+      >
+        {mode === 'profile' && !compatMode ? (
+          <div className="profile-ledger">
+            <div className="profile-ledger-work">
+              <aside className="profile-ledger-side" aria-label="已存岁庚">
+              <div className="profile-ledger-side-head">
+                <span>已存岁庚</span>
+                <button
+                  type="button"
+                  className="profile-ledger-new"
+                  onClick={() => navigate('/profile')}
+                >
+                  + 新岁庚
+                </button>
+              </div>
+              {cases.length ? (
+                <ul className="profile-ledger-list">
+                  {sortPersonalCasesForQuickSwitch(cases).map((record) => (
+                    <li key={record.id}>
+                      <button
+                        type="button"
+                        className={`profile-ledger-item${record.id === (routeCaseId ?? activeCaseId) ? ' is-active' : ''}`}
+                        onClick={() => navigate(`/profile?rid=${record.id}`)}
+                      >
+                        <span className="profile-ledger-item-name">{record.name}</span>
+                        <span className="profile-ledger-item-meta">{record.birthText}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="profile-ledger-empty">还没有岁庚，右边填好资料存入后这里会列出来。</div>
+              )}
+              </aside>
+              <div className="profile-ledger-form">
+                <PrivacyHint />
+                {renderFormLayout()}
+                {error ? <div className="workspace-ui-form-error">{error}</div> : null}
+                <div className="workspace-ui-form-actions is-sticky-mobile">
+                  <WorkspaceButton variant="primary" size="large" block onClick={handleSubmit}>
+                    存入岁庚
+                  </WorkspaceButton>
+                </div>
+              </div>
+            </div>
+            <aside className="profile-hexagram" aria-label="今日之卦">
+              <div className="profile-hexagram-main">
+                <span className="profile-hexagram-glyph" aria-hidden="true">{dailyHexagramLot.glyph}</span>
+                <div className="profile-hexagram-info">
+                  <span className="profile-hexagram-name">{dailyHexagramLot.name}卦</span>
+                  <span className="profile-hexagram-trigrams">{dailyHexagramLot.trigrams}</span>
+                  <span className="profile-hexagram-quote">{dailyHexagramLot.text}</span>
+                </div>
+              </div>
+              <div className="profile-hexagram-frame" aria-hidden="true" />
+              <div className="profile-hexagram-fortune">
+                <div className="profile-hexagram-fortune-head">
+                  <span>今日吉凶</span>
+                  <span className="profile-hexagram-verdict">{dailyFortune.verdict}</span>
+                </div>
+                <div className="profile-hexagram-fortune-body">
+                  <span className="profile-hexagram-fortune-text">{dailyFortune.detail}</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        ) : (
+          <>
+            <PrivacyHint />
+            {renderFormLayout()}
+            {error ? <div className="workspace-ui-form-error">{error}</div> : null}
+            <div className="workspace-ui-form-actions is-sticky-mobile">
+              <WorkspaceButton variant="primary" size="large" block onClick={handleSubmit}>
+                {compatMode ? '查看合盘' : `查看完整${config.label}盘面`}
+              </WorkspaceButton>
+            </div>
+          </>
+        )}
       </WorkspacePage>
 
       {birthPlace.isBirthPlaceModalOpen ? (
@@ -704,9 +837,9 @@ export function InputPage() {
             </WorkspaceButton>
           </header>
           <div className="workspace-ui-dialog-body compatibility-case-picker-body">
-            <input
+            <Input
               type="search"
-              className="workspace-ui-control compatibility-case-search"
+              className="compatibility-case-search"
               value={caseSearchText}
               placeholder="搜索姓名、日期或出生地"
               aria-label="搜索案例"
@@ -715,7 +848,7 @@ export function InputPage() {
             {visibleCases.length ? (
               <div className="compatibility-case-options">
                 {visibleCases.map((record) => (
-                  <button
+                  <Button
                     type="button"
                     key={record.id}
                     className="compatibility-case-option"
@@ -735,7 +868,7 @@ export function InputPage() {
                     <span className="compatibility-case-option-arrow" aria-hidden="true">
                       ›
                     </span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             ) : (
@@ -764,7 +897,7 @@ export function InputPage() {
               role="group"
               aria-label="时间口径"
             >
-              <button
+              <Button
                 type="button"
                 className={instantTimeStandard === 'beijing' ? 'is-active' : ''}
                 aria-pressed={instantTimeStandard === 'beijing'}
@@ -772,8 +905,8 @@ export function InputPage() {
               >
                 <strong>北京时间</strong>
                 <small>按东八区当前时刻</small>
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 className={instantTimeStandard === 'true-solar' ? 'is-active' : ''}
                 aria-pressed={instantTimeStandard === 'true-solar'}
@@ -781,10 +914,10 @@ export function InputPage() {
               >
                 <strong>真太阳时</strong>
                 <small>按地点经度校正</small>
-              </button>
+              </Button>
             </div>
             {instantChartNeedsObserver(instantType, instantTimeStandard) ? (
-              <button
+              <Button
                 type="button"
                 className="workspace-instant-place is-dialog"
                 onClick={openInstantLocationPicker}
@@ -792,7 +925,7 @@ export function InputPage() {
                 <span>观测地点</span>
                 <strong>{form.birthPlace || '选择地点'}</strong>
                 <span aria-hidden="true">›</span>
-              </button>
+              </Button>
             ) : null}
           </div>
           <footer className="workspace-ui-dialog-footer">

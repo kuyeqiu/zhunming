@@ -18,6 +18,7 @@ import {
   formatBaziMonthStart,
 } from './helpers';
 import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
+import { Button } from '@/components/ui/button';
 
 export function BaziFortuneModal(props: {
   result: BaziChartResult;
@@ -145,7 +146,7 @@ export function BaziFortuneModal(props: {
         <div className="fortune-modal-summary-row">
           <span className="fortune-modal-quick-label">当前</span>
           <div className="fortune-modal-quick-actions">
-            <button
+            <Button
               type="button"
               className="fortune-modal-quick-btn"
               disabled={!currentQuickSelection}
@@ -153,8 +154,8 @@ export function BaziFortuneModal(props: {
               onClick={() => handleJumpToCurrent('dayun')}
             >
               大运
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className="fortune-modal-quick-btn"
               disabled={!currentQuickSelection}
@@ -162,8 +163,8 @@ export function BaziFortuneModal(props: {
               onClick={() => handleJumpToCurrent('year')}
             >
               流年
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className="fortune-modal-quick-btn"
               disabled={!currentQuickSelection}
@@ -171,8 +172,8 @@ export function BaziFortuneModal(props: {
               onClick={() => handleJumpToCurrent('month')}
             >
               流月
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className="fortune-modal-quick-btn"
               disabled={!currentQuickSelection}
@@ -180,7 +181,7 @@ export function BaziFortuneModal(props: {
               onClick={() => handleJumpToCurrent('day')}
             >
               流日
-            </button>
+            </Button>
           </div>
           <span className="result-chip result-chip-highlight">
             {baziFortuneScopeLabelMap[draftScope]}
@@ -196,7 +197,7 @@ export function BaziFortuneModal(props: {
             </div>
             <div className="fortune-modal-list">
               {result.luckInfo.cycles.map((cycle, index) => (
-                <button
+                <Button
                   type="button"
                   key={`${cycle.year}-${cycle.ganZhi}-${cycle.age}`}
                   className={`fortune-modal-item ${
@@ -210,7 +211,7 @@ export function BaziFortuneModal(props: {
                   <strong>{formatBaziCycleDisplay(cycle.ganZhi, cycle.isXiaoyun)}</strong>
                   <span>{cycle.year} 年起</span>
                   <span>{cycle.age} 岁交运</span>
-                </button>
+                </Button>
               ))}
             </div>
           </section>
@@ -222,7 +223,7 @@ export function BaziFortuneModal(props: {
                 <small>第一项是大运；选具体流年后，才会展开下一排流月。</small>
               </div>
               <div className="fortune-modal-list">
-                <button
+                <Button
                   type="button"
                   className={`fortune-modal-item fortune-modal-item-overall ${
                     isYearOverallActive ? 'is-selected is-active' : ''
@@ -235,9 +236,9 @@ export function BaziFortuneModal(props: {
                       ? formatBaziCycleDisplay(selectedCycle.ganZhi, selectedCycle.isXiaoyun)
                       : ''}
                   </span>
-                </button>
+                </Button>
                 {yearOptions.map((item) => (
-                  <button
+                  <Button
                     type="button"
                     key={`${item.year}-${item.ganZhi}`}
                     className={`fortune-modal-item ${
@@ -251,7 +252,7 @@ export function BaziFortuneModal(props: {
                     <strong>{item.year}年</strong>
                     <span>{item.ganZhi}</span>
                     <span>{item.age} 岁</span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             </section>
@@ -264,7 +265,7 @@ export function BaziFortuneModal(props: {
                 <small>第一项是流年；选具体流月后，才会展开下一排流日。</small>
               </div>
               <div className="fortune-modal-list">
-                <button
+                <Button
                   type="button"
                   className={`fortune-modal-item fortune-modal-item-overall ${
                     isMonthOverallActive ? 'is-selected is-active' : ''
@@ -273,11 +274,11 @@ export function BaziFortuneModal(props: {
                 >
                   <strong>流年</strong>
                   <span>{draftYear}年</span>
-                </button>
+                </Button>
                 {monthOptions.map((item, index) => {
                   const monthNumber = index + 1;
                   return (
-                    <button
+                    <Button
                       type="button"
                       key={`${draftYear}-${monthNumber}-${item.ganZhi}`}
                       className={`fortune-modal-item ${
@@ -300,7 +301,7 @@ export function BaziFortuneModal(props: {
                         {item.startDate} 至 {item.endDate}
                       </span>
                       <span>{item.ganZhi}</span>
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
@@ -314,7 +315,7 @@ export function BaziFortuneModal(props: {
                 <small>第一项是流月；选具体流日时，只写这个流日本身。</small>
               </div>
               <div className="fortune-modal-list">
-                <button
+                <Button
                   type="button"
                   className={`fortune-modal-item fortune-modal-item-overall ${
                     isDayOverallActive ? 'is-selected is-active' : ''
@@ -325,9 +326,9 @@ export function BaziFortuneModal(props: {
                   <span>
                     {draftYear}年 {monthOptions[draftMonth - 1]?.month ?? ''}
                   </span>
-                </button>
+                </Button>
                 {dayOptions.map((item) => (
-                  <button
+                  <Button
                     type="button"
                     key={item.solarDate}
                     className={`fortune-modal-item ${
@@ -341,7 +342,7 @@ export function BaziFortuneModal(props: {
                     <strong>{item.solarLabel}</strong>
                     <span>{item.ganZhi}</span>
                     <span>{item.lunar}</span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             </section>

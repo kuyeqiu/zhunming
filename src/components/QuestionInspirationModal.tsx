@@ -80,7 +80,7 @@ export function QuestionInspirationModal(props: QuestionInspirationModalProps) {
             aria-label={filterVariant === 'segmented' ? '问题类型' : undefined}
           >
             {filters.map((filter) => (
-              <button
+              <Button
                 key={filter.value}
                 type="button"
                 className={`question-filter-chip ${activeFilter === filter.value ? 'is-active' : ''}`}
@@ -91,14 +91,13 @@ export function QuestionInspirationModal(props: QuestionInspirationModalProps) {
                 }
               >
                 {filter.label}
-              </button>
+              </Button>
             ))}
           </div>
 
           <div className="question-inspiration-search">
-            <input
+            <Input
               type="text"
-              className="workspace-ui-control"
               aria-label={searchPlaceholder}
               placeholder={searchPlaceholder}
               value={searchValue}
@@ -117,7 +116,7 @@ export function QuestionInspirationModal(props: QuestionInspirationModalProps) {
                   ) : null}
                   <div className="question-inspiration-list">
                     {section.items.map((item) => (
-                      <button
+                      <Button
                         key={item.id}
                         type="button"
                         className={`question-inspiration-item ${
@@ -129,7 +128,7 @@ export function QuestionInspirationModal(props: QuestionInspirationModalProps) {
                           <span className="question-inspiration-tag">{item.tag}</span>
                         ) : null}
                         <span>{item.question}</span>
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -144,3 +143,5 @@ export function QuestionInspirationModal(props: QuestionInspirationModalProps) {
   );
 }
 import { WorkspaceButton, WorkspaceDialog } from './workspace/WorkspaceUI';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';

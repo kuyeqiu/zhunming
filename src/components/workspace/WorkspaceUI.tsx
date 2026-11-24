@@ -5,6 +5,8 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from 'cn';
 import { registerDismissLayer } from '@/lib/dismiss-layer';
 
 let dialogScrollLockCount = 0;
@@ -24,10 +26,24 @@ function joinClassNames(...values: Array<string | false | null | undefined>) {
 }
 
 type WorkspaceButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'small' | 'medium' | 'large';
   block?: boolean;
 };
+
+const workspaceButtonVariantMap = {
+  primary: 'default',
+  secondary: 'secondary',
+  outline: 'outline',
+  ghost: 'ghost',
+  danger: 'destructive',
+} as const;
+
+const workspaceButtonSizeMap = {
+  small: 'sm',
+  medium: 'default',
+  large: 'lg',
+} as const;
 
 export function WorkspaceButton({
   variant = 'secondary',
@@ -38,16 +54,12 @@ export function WorkspaceButton({
   ...props
 }: WorkspaceButtonProps) {
   return (
-    <button
+    <Button
       {...props}
       type={type}
-      className={joinClassNames(
-        'workspace-ui-button',
-        `is-${variant}`,
-        `is-${size}`,
-        block && 'is-block',
-        className,
-      )}
+      variant={workspaceButtonVariantMap[variant]}
+      size={workspaceButtonSizeMap[size]}
+      className={cn(block && 'w-full', className)}
     />
   );
 }

@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { InkParticleField } from '@/components/InkParticleField';
 import { buildWorkspaceLaunchState } from '@/lib/workspace-launch';
 import { buildWorkspaceFeaturePath } from '@/lib/workspace';
+import { Textarea } from '@/components/ui/textarea';
 
 /**
  * 首页＝水墨粒子场（与参考 demo 一致）＋ 一个问题输入框，别无他物。
  *
  * 本页在 App.tsx 里独立于 WorkspaceShell 渲染：没有顶栏、没有容器包裹，
  * 任何缓存状态下都不可能出现外壳残留。输入问题后回车（或点击任意空白处），
- * 粒子反向消散，随后带问题进入个人信息（八字）弹窗；空着回车则聚焦输入框。
+ * 粒子反向消散，随后带问题直接进六爻占问页并自动起卦；空着回车则聚焦输入框。
  */
-const ENTER_METHOD = 'bazi';
+const ENTER_METHOD = 'liuyao' as const;
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -60,11 +61,13 @@ export function HomePage() {
   const leave = () => {
     if (leftRef.current) return;
     leftRef.current = true;
-    // entry=dialog：个人信息（八字）以弹出小窗呈现，问题经 launch state 带到结果页
-    const params = new URLSearchParams({ entry: 'dialog' });
+    // 直接进六爻占问：带文字自动起卦，空着就是普通占问页
+    const pathname = buildWorkspaceFeaturePath(ENTER_METHOD);
+    const params = new URLSearchParams();
     if (text) params.set('q', text);
-    navigate(`${buildWorkspaceFeaturePath(ENTER_METHOD)}?${params.toString()}`, {
-      state: buildWorkspaceLaunchState(text || undefined),
+    const search = params.toString();
+    navigate(`${pathname}${search ? `?${search}` : ''}`, {
+      state: buildWorkspaceLaunchState(text || undefined, { autoSubmit: Boolean(text) }),
     });
   };
 
@@ -85,7 +88,7 @@ export function HomePage() {
         />
         <div className="workspace-home-hero-veil" aria-hidden="true" />
         <div className="workspace-home-hero-ask">
-          <textarea
+          <Textarea
             ref={inputRef}
             className="workspace-home-hero-question"
             value={question}

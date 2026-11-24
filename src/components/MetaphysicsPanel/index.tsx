@@ -3,6 +3,8 @@ import type { BaZhaiResult } from 'mingyu-core/bazhai';
 import type { ResidentialFengshuiResult } from 'mingyu-core/residential-fengshui';
 import type { XuanKongGuaType, XuanKongResult } from 'mingyu-core/xuankong';
 import { daysInGregorianMonth } from 'mingyu-core/calendar';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   buildResidentialChartInput,
   calculateResidentialChart,
@@ -550,11 +552,11 @@ export function MetaphysicsPanel({
                 <h3>{measurement || facingDegree.trim() ? '补充住宅信息' : '补充住宅角度'}</h3>
                 <p>有山向可先看宅运；有出生可看人宅。两边都有时自动合参。</p>
               </div>
-              <label className="form-item" htmlFor="metaphysics-house-year">
+              <Label className="form-item" htmlFor="metaphysics-house-year">
                 <span>建造或起运年</span>
-                <input
+                <Input
                   id="metaphysics-house-year"
-                  className="form-input"
+                  
                   type="number"
                   inputMode="numeric"
                   min="1"
@@ -569,12 +571,12 @@ export function MetaphysicsPanel({
                   }}
                 />
                 <small className="birth-time-hint">填写后计算住宅所属元运。</small>
-              </label>
-              <label className="form-item" htmlFor="metaphysics-facing-degree">
+              </Label>
+              <Label className="form-item" htmlFor="metaphysics-facing-degree">
                 <span>从大门面向屋内的度数</span>
-                <input
+                <Input
                   id="metaphysics-facing-degree"
-                  className="form-input"
+                  
                   type="number"
                   inputMode="decimal"
                   min="0"
@@ -591,12 +593,12 @@ export function MetaphysicsPanel({
                 <small className="birth-time-hint">
                   站在大门处面向屋内，用手机指南针连续测三次，填写接近的平均度数。
                 </small>
-              </label>
-              <label className="form-item" htmlFor="metaphysics-gua-type">
+              </Label>
+              <Label className="form-item" htmlFor="metaphysics-gua-type">
                 <span>玄空起法</span>
                 <select
                   id="metaphysics-gua-type"
-                  className="form-input"
+                  
                   value={guaType}
                   onChange={(event) => {
                     const value = event.target.value as XuanKongGuaType;
@@ -610,7 +612,7 @@ export function MetaphysicsPanel({
                 <small className="birth-time-hint">
                   下卦用于每山中央九度，替卦用于两侧兼向各三度；山向分界处需重新测量。
                 </small>
-              </label>
+              </Label>
               {error ? (
                 <div className="form-error-text">{error}</div>
               ) : directionPreview.position ? (
@@ -638,11 +640,11 @@ export function MetaphysicsPanel({
                 <h3>住宅目标流运</h3>
                 <p>选择目标日期后，玄空盘会叠加对应流年与节气流月飞星。</p>
               </div>
-              <label className="form-item" htmlFor="metaphysics-flow-date">
+              <Label className="form-item" htmlFor="metaphysics-flow-date">
                 <span>目标流运日期</span>
-                <input
+                <Input
                   id="metaphysics-flow-date"
-                  className="form-input"
+                  
                   type="date"
                   value={flowDate}
                   onChange={(event) => {
@@ -652,7 +654,7 @@ export function MetaphysicsPanel({
                   }}
                 />
                 <small className="birth-time-hint">默认按当前日期，可切换到历史或未来日期。</small>
-              </label>
+              </Label>
             </div>
           </div>
         </div>

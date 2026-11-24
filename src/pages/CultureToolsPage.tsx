@@ -1,3 +1,7 @@
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import {
   useEffect,
   useMemo,
@@ -262,7 +266,7 @@ export function CultureToolsPage() {
     <WorkspacePage title="文字与数理" width="wide" className="culture-tools-page">
       <nav className="culture-tools-tabs" aria-label="文字与数理工具">
         {tools.map((tool) => (
-          <button
+          <Button
             key={tool.id}
             type="button"
             className={activeTool === tool.id ? 'is-active' : ''}
@@ -271,7 +275,7 @@ export function CultureToolsPage() {
             <span>{tool.mark}</span>
             <strong>{tool.label}</strong>
             <small>{tool.description}</small>
-          </button>
+          </Button>
         ))}
       </nav>
 
@@ -320,7 +324,7 @@ export function CultureToolsPage() {
             <SectionHeading step="01" title="基础偏好" hint="姓氏和名字气质" />
             <div className="culture-tools-fields is-two">
               <Field label="姓氏">
-                <input value={surname} onChange={(event) => setSurname(event.target.value)} />
+                <Input value={surname} onChange={(event) => setSurname(event.target.value)} />
               </Field>
               <Field label="名字气质">
                 <select
@@ -335,21 +339,21 @@ export function CultureToolsPage() {
             </div>
             <div className="culture-tools-fields is-two">
               <Field label="偏好字" hint="喜欢或希望保留的字">
-                <input
+                <Input
                   value={preferredCharacters}
                   onChange={(event) => setPreferredCharacters(event.target.value)}
                   placeholder="例如：清 宁 和"
                 />
               </Field>
               <Field label="忌用字" hint="姓名中不会使用的字">
-                <input
+                <Input
                   value={forbiddenCharacters}
                   onChange={(event) => setForbiddenCharacters(event.target.value)}
                   placeholder="例如：乐"
                 />
               </Field>
               <Field label="辈分字" hint="填写一个固定用字">
-                <input
+                <Input
                   value={generationCharacter}
                   onChange={(event) => setGenerationCharacter(event.target.value)}
                   placeholder="例如：承"
@@ -375,9 +379,9 @@ export function CultureToolsPage() {
               caseOptions={caseOptions}
               onCaseChange={selectCase}
             />
-            <button className="culture-tools-primary" type="submit">
+            <Button className="culture-tools-primary" type="submit">
               生成姓名候选
-            </button>
+            </Button>
           </form>
 
           <section className="culture-tools-result-panel">
@@ -398,7 +402,7 @@ export function CultureToolsPage() {
                 />
                 <div className="culture-name-grid">
                   {nameCandidates.map((item, index) => (
-                    <button
+                    <Button
                       key={item.fullName}
                       type="button"
                       className={selectedCandidate === index ? 'is-selected' : ''}
@@ -407,7 +411,7 @@ export function CultureToolsPage() {
                     >
                       <strong>{item.fullName}</strong>
                       <small>{formatCandidateSelection(item)}</small>
-                    </button>
+                    </Button>
                   ))}
                 </div>
                 {nameCandidates[selectedCandidate] ? (
@@ -456,7 +460,7 @@ export function CultureToolsPage() {
             <SectionHeading step="01" title="姓名资料" hint="复姓请选择两个姓氏字" />
             <div className="culture-tools-fields is-two">
               <Field label="完整姓名">
-                <input value={fullName} onChange={(event) => setFullName(event.target.value)} />
+                <Input value={fullName} onChange={(event) => setFullName(event.target.value)} />
               </Field>
               <Field label="姓氏长度">
                 <select
@@ -477,16 +481,16 @@ export function CultureToolsPage() {
               onCaseChange={selectCase}
             />
             <Field label="想重点了解什么">
-              <textarea
+              <Textarea
                 value={nameQuestion}
                 onChange={(event) => setNameQuestion(event.target.value)}
                 placeholder="例如：这个名字适合长期用于职场和公开表达吗？"
                 rows={3}
               />
             </Field>
-            <button className="culture-tools-primary" type="submit">
+            <Button className="culture-tools-primary" type="submit">
               开始综合解析
-            </button>
+            </Button>
           </form>
 
           <section className="culture-tools-result-panel">
@@ -528,7 +532,7 @@ export function CultureToolsPage() {
             >
               <SectionHeading step="01" title="查字" hint="一次可解析 1 至 20 个汉字" />
               <Field label="汉字">
-                <input
+                <Input
                   value={hanziText}
                   onChange={(event) => {
                     ++hanziRequest.current;
@@ -538,9 +542,9 @@ export function CultureToolsPage() {
                   }}
                 />
               </Field>
-              <button className="culture-tools-primary" type="submit" disabled={hanziLoading}>
+              <Button className="culture-tools-primary" type="submit" disabled={hanziLoading}>
                 {hanziLoading ? '正在查字…' : '解析汉字'}
-              </button>
+              </Button>
             </form>
             <div className="culture-tools-divider" />
             <form
@@ -570,7 +574,7 @@ export function CultureToolsPage() {
               </Field>
               <div className="culture-tools-fields is-three">
                 <Field label="康熙笔画">
-                  <input
+                  <Input
                     type="number"
                     min={1}
                     value={selectStrokes}
@@ -591,16 +595,16 @@ export function CultureToolsPage() {
                   </select>
                 </Field>
                 <Field label="拼音">
-                  <input
+                  <Input
                     value={selectPinyin}
                     onChange={(event) => setSelectPinyin(event.target.value)}
                     placeholder="如 qing"
                   />
                 </Field>
               </div>
-              <button className="culture-tools-primary is-secondary" type="submit">
+              <Button className="culture-tools-primary is-secondary" type="submit">
                 筛选可用字
-              </button>
+              </Button>
             </form>
           </div>
 
@@ -633,7 +637,7 @@ export function CultureToolsPage() {
                 <h3>符合条件的字</h3>
                 <div>
                   {selectedChars.map((item) => (
-                    <button
+                    <Button
                       key={item.char}
                       type="button"
                       title={item.definition ?? undefined}
@@ -646,7 +650,7 @@ export function CultureToolsPage() {
                       <small>
                         {item.kangxiStrokes}画 · {item.wuxing ?? '待定'}
                       </small>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -665,7 +669,7 @@ export function CultureToolsPage() {
           >
             <SectionHeading step="01" title="输入内容" hint="支持数字、英文字母和常见分隔符" />
             <Field label="数字或字母">
-              <input
+              <Input
                 value={numberText}
                 onChange={(event) => setNumberText(event.target.value)}
                 placeholder="例如：13800138000 或 粤B·A1235"
@@ -684,16 +688,16 @@ export function CultureToolsPage() {
               </select>
             </Field>
             <Field label="想重点了解什么">
-              <textarea
+              <Textarea
                 value={numberQuestion}
                 onChange={(event) => setNumberQuestion(event.target.value)}
                 placeholder="例如：这个号码在工作沟通和长期使用上有什么特点？"
                 rows={3}
               />
             </Field>
-            <button className="culture-tools-primary" type="submit">
+            <Button className="culture-tools-primary" type="submit">
               解析数字能量
-            </button>
+            </Button>
             <p className="culture-tools-footnote">
               数字能量属于传统文化参考，实际选择仍以资费、安全性和使用便利为先。
             </p>
@@ -732,13 +736,13 @@ export function CultureToolsPage() {
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
   return (
-    <label className="culture-tools-field">
+    <Label className="culture-tools-field">
       <span>
         {label}
         {hint ? <small>{hint}</small> : null}
       </span>
       {children}
-    </label>
+    </Label>
   );
 }
 

@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   queryHuangjiReference,
   type HuangjiAnimalPlantReference,
@@ -245,7 +247,7 @@ export function HuangjiReferenceTable({
       </summary>
       <div className="traditional-classic-body traditional-huangji-reference-body">
         <div className="traditional-huangji-reference-controls">
-          <label>
+          <Label>
             <span>选择资料</span>
             <select
               value={table}
@@ -257,11 +259,11 @@ export function HuangjiReferenceTable({
                 </option>
               ))}
             </select>
-          </label>
+          </Label>
           {table === 'historical-era' ? (
-            <label>
+            <Label>
               <span>经辰序号</span>
-              <input
+              <Input
                 type="number"
                 min={MIN_SHI_INDEX}
                 max={MAX_SHI_INDEX}
@@ -272,7 +274,7 @@ export function HuangjiReferenceTable({
                 aria-describedby="huangji-reference-shi-index-help"
               />
               <small id="huangji-reference-shi-index-help">请输入2149—2208之间的整数</small>
-            </label>
+            </Label>
           ) : null}
         </div>
         {table === 'historical-era' && !validHistoricalIndex ? (

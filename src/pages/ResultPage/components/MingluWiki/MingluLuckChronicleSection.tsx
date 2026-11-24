@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { MingluLuckChronicleSectionData } from 'mingyu-core/minglu';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   data: MingluLuckChronicleSectionData;
@@ -90,7 +91,7 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
           </div>
           <div className="minglu-luck-tabs-bar">
             {cycles.map((c, idx) => (
-              <button
+              <Button
                 type="button"
                 key={idx}
                 className={`minglu-luck-tab-btn ${selectedCycleIndex === idx ? 'is-active' : ''}`}
@@ -108,7 +109,7 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
                 {hasValue(c.lifeStage) && c.entryType !== '小运' && !c.isXiaoyun && (
                   <span className="text-[10px] opacity-70 block">十二长生：{c.lifeStage}</span>
                 )}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -192,7 +193,7 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
                 【{cycleName}】所列 {activeCycle.annualYears.length} 个流年
               </h4>
               {yearsWithMonths.length > 0 && (
-                <button
+                <Button
                   type="button"
                   className="minglu-btn-toggle-all"
                   onClick={expandAllYearsInCycle}
@@ -200,7 +201,7 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
                   {yearsWithMonths.every((y) => expandedYearSet.has(y.year))
                     ? '收起全部流月明细'
                     : '展开全部流月明细'}
-                </button>
+                </Button>
               )}
             </div>
           )}
@@ -236,13 +237,13 @@ export const MingluLuckChronicleSection: React.FC<Props> = ({ data }) => {
 
                     {y.months.length > 0 && (
                       <div className="flex items-center gap-2">
-                        <button
+                        <Button
                           type="button"
                           className="minglu-btn-expand-months"
                           onClick={() => toggleYearMonths(y.year)}
                         >
                           {isExpanded ? '收起流月' : `查看 ${y.months.length} 个流月`}
-                        </button>
+                        </Button>
                       </div>
                     )}
                   </div>

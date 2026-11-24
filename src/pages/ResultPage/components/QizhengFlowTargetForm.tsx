@@ -1,5 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { parseQizhengFlowTarget, type QizhengFlowTarget } from '@/lib/qizheng-flow-target';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import './QizhengFlowTargetForm.css';
 
 export function QizhengFlowTargetForm({
@@ -57,7 +60,7 @@ export function QizhengFlowTargetForm({
       aria-label="七政流曜目标"
     >
       <div className="qizheng-flow-target-fields">
-        <label>
+        <Label>
           查看范围
           <select
             aria-label="七政查看范围"
@@ -69,11 +72,11 @@ export function QizhengFlowTargetForm({
             <option value="monthly">流月</option>
             <option value="daily">流日</option>
           </select>
-        </label>
+        </Label>
         {mode !== 'natal' ? (
-          <label>
+          <Label>
             年份
-            <input
+            <Input
               aria-label="流曜年份"
               type="number"
               min="1900"
@@ -88,10 +91,10 @@ export function QizhengFlowTargetForm({
                 if (Number(day) > lastDay) setDay(String(lastDay));
               }}
             />
-          </label>
+          </Label>
         ) : null}
         {mode === 'monthly' || mode === 'daily' ? (
-          <label>
+          <Label>
             月份
             <select
               aria-label="流曜月份"
@@ -107,11 +110,11 @@ export function QizhengFlowTargetForm({
                 </option>
               ))}
             </select>
-          </label>
+          </Label>
         ) : null}
         {mode === 'daily' ? (
           <>
-            <label>
+            <Label>
               日期
               <select
                 aria-label="流曜日期"
@@ -124,22 +127,22 @@ export function QizhengFlowTargetForm({
                   </option>
                 ))}
               </select>
-            </label>
-            <label>
+            </Label>
+            <Label>
               目标时刻
-              <input
+              <Input
                 aria-label="流曜时刻"
                 type="time"
                 required
                 value={time}
                 onChange={(event) => setTime(event.target.value)}
               />
-            </label>
+            </Label>
           </>
         ) : null}
-        <button type="submit" className="result-chip result-chip-highlight">
+        <Button type="submit" className="result-chip result-chip-highlight">
           应用时段
-        </button>
+        </Button>
       </div>
       <p className="qizheng-flow-target-note">
         流年以立春为界，流月按公历月、流日按公历日查看周期事件。出生区间会保留各分段的流曜、吊照和行限差异。
@@ -152,3 +155,4 @@ export function QizhengFlowTargetForm({
     </form>
   );
 }
+

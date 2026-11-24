@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import type {
   AstrolabeDynamicRangeBranch,
   AstrolabeDynamicRangeSummary,
@@ -84,43 +86,43 @@ function PromptPages({ summary, readBranch, options }: Props) {
         字符。逐页复制到同一解读对话，各页包含适用的出生时段；完成全部资料后再归纳共通结论。
       </p>
       <div className="result-chip-row">
-        <button
+        <Button
           className="result-chip"
           type="button"
           disabled={loading || last || Boolean(error)}
           onClick={() => void next()}
         >
           {loading ? '正在读取资料' : page ? '下一页资料' : '准备第一页资料'}
-        </button>
+        </Button>
         {page ? (
           <>
-            <button
+            <Button
               className="result-chip"
               type="button"
               disabled={loading}
               onClick={() => void handleCopy()}
             >
               {copyState === '复制提问内容' ? '复制本页资料' : copyState}
-            </button>
-            <button
+            </Button>
+            <Button
               className="result-chip"
               type="button"
               disabled={loading}
               onClick={() => void handleShare()}
             >
               {shareState === '分享提问内容' ? '分享本页资料' : shareState}
-            </button>
+            </Button>
           </>
         ) : null}
         {page || error ? (
-          <button
+          <Button
             className="result-chip"
             type="button"
             disabled={loading}
             onClick={() => void next(true)}
           >
             从第一页重新开始
-          </button>
+          </Button>
         ) : null}
       </div>
       {error ? (
@@ -139,8 +141,7 @@ function PromptPages({ summary, readBranch, options }: Props) {
                 ? '本段资料已到末页，下一页进入下一段。'
                 : '本段还有后续资料。'}
           </p>
-          <textarea
-            className="workspace-ui-control"
+          <Textarea
             aria-label="本页解读资料"
             value={page.text}
             readOnly

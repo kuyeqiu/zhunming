@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import '@/styles/admin.css';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import {
   AdminForbiddenError,
   adminApi,
@@ -10,6 +12,7 @@ import {
   type AdminProductRow,
   type AdminUserRow,
 } from '@/lib/admin-api';
+import '@/styles/admin.css';
 
 type Tab = 'overview' | 'users' | 'orders' | 'products' | 'cdk' | 'audit';
 
@@ -93,7 +96,7 @@ export function AdminPage() {
         </div>
         <nav>
           {TABS.map((item) => (
-            <button
+            <Button
               key={item.id}
               type="button"
               className={tab === item.id ? 'is-active' : ''}
@@ -101,7 +104,7 @@ export function AdminPage() {
             >
               <span>{item.label}</span>
               <small>{item.hint}</small>
-            </button>
+            </Button>
           ))}
         </nav>
         <a className="admin-nav__back" href="/">
@@ -114,9 +117,9 @@ export function AdminPage() {
           <h1>{TABS.find((item) => item.id === tab)?.label}</h1>
           <div className="admin-head__actions">
             {notice ? <span className="admin-notice">{notice}</span> : null}
-            <button type="button" onClick={() => void load(tab)} disabled={loading}>
+            <Button variant="outline" size="sm" type="button" onClick={() => void load(tab)} disabled={loading}>
               {loading ? '读取中…' : '刷新'}
-            </button>
+            </Button>
           </div>
         </header>
 
@@ -143,7 +146,7 @@ export function AdminPage() {
         {tab === 'users' ? (
           <>
             <div className="admin-toolbar">
-              <input
+              <Input
                 type="search"
                 value={query}
                 placeholder="搜索邮箱或称呼"
@@ -152,9 +155,9 @@ export function AdminPage() {
                   if (event.key === 'Enter') void load('users');
                 }}
               />
-              <button type="button" onClick={() => void load('users')}>
+              <Button variant="outline" size="sm" type="button" onClick={() => void load('users')}>
                 查询
-              </button>
+              </Button>
             </div>
             <table className="admin-table">
               <thead>
@@ -186,7 +189,7 @@ export function AdminPage() {
                     <td className="num">{money(row.spentCents)}</td>
                     <td>{day(row.createdAt)}</td>
                     <td className="admin-row-actions">
-                      <button
+                      <Button
                         type="button"
                         onClick={async () => {
                           try {
@@ -201,8 +204,8 @@ export function AdminPage() {
                         }}
                       >
                         {row.role === 'admin' ? '降为用户' : '设为管理'}
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
                         onClick={async () => {
                           try {
@@ -217,7 +220,7 @@ export function AdminPage() {
                         }}
                       >
                         {row.status === 'active' ? '停用' : '启用'}
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -327,34 +330,34 @@ export function AdminPage() {
               }}
             >
               <h2>新增 / 更新商品</h2>
-              <label>
+              <Label>
                 编码
-                <input name="code" required placeholder="member_month" />
-              </label>
-              <label>
+                <Input name="code" required placeholder="member_month" />
+              </Label>
+              <Label>
                 名称
-                <input name="name" required placeholder="会员 · 包月" />
-              </label>
-              <label>
+                <Input name="name" required placeholder="会员 · 包月" />
+              </Label>
+              <Label>
                 类型
                 <select name="kind" defaultValue="membership">
                   <option value="membership">包周期</option>
                   <option value="single">单次</option>
                 </select>
-              </label>
-              <label>
+              </Label>
+              <Label>
                 价格（元）
-                <input name="price" type="number" min="0" step="0.01" defaultValue="29" />
-              </label>
-              <label>
+                <Input name="price" type="number" min="0" step="0.01" defaultValue="29" />
+              </Label>
+              <Label>
                 天数
-                <input name="days" type="number" min="0" defaultValue="30" />
-              </label>
-              <label>
+                <Input name="days" type="number" min="0" defaultValue="30" />
+              </Label>
+              <Label>
                 额度
-                <input name="quota" type="number" min="0" defaultValue="999" />
-              </label>
-              <button type="submit">保存</button>
+                <Input name="quota" type="number" min="0" defaultValue="999" />
+              </Label>
+              <Button variant="outline" size="sm" type="submit">保存</Button>
             </form>
           </>
         ) : null}
@@ -384,15 +387,15 @@ export function AdminPage() {
               }}
             >
               <h2>生成兑换码</h2>
-              <label>
+              <Label>
                 批次名
-                <input name="name" placeholder="双十一" />
-              </label>
-              <label>
+                <Input name="name" placeholder="双十一" />
+              </Label>
+              <Label>
                 数量
-                <input name="count" type="number" min="1" max="200" defaultValue="5" />
-              </label>
-              <label>
+                <Input name="count" type="number" min="1" max="200" defaultValue="5" />
+              </Label>
+              <Label>
                 关联商品
                 <select name="productId" defaultValue={products[0]?.id ?? ''}>
                   <option value="">仅充值余额</option>
@@ -402,20 +405,20 @@ export function AdminPage() {
                     </option>
                   ))}
                 </select>
-              </label>
-              <label>
+              </Label>
+              <Label>
                 面额（点）
-                <input name="credits" type="number" min="0" defaultValue="0" />
-              </label>
-              <label>
+                <Input name="credits" type="number" min="0" defaultValue="0" />
+              </Label>
+              <Label>
                 每码可用次数
-                <input name="maxUses" type="number" min="1" defaultValue="1" />
-              </label>
-              <label>
+                <Input name="maxUses" type="number" min="1" defaultValue="1" />
+              </Label>
+              <Label>
                 有效天数
-                <input name="expiresDays" type="number" min="0" defaultValue="0" />
-              </label>
-              <button type="submit">生成</button>
+                <Input name="expiresDays" type="number" min="0" defaultValue="0" />
+              </Label>
+              <Button variant="outline" size="sm" type="submit">生成</Button>
             </form>
 
             {codes.length > 0 ? (
@@ -484,3 +487,4 @@ export function AdminPage() {
     </div>
   );
 }
+

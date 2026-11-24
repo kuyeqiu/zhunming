@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import { lookup } from 'node:dns/promises';
 import { request as httpsRequest } from 'node:https';
 import path from 'node:path';
@@ -238,7 +239,7 @@ export default defineConfig({
       isDonationBoxEnabled ? 'true' : 'false',
     ),
   },
-  plugins: [react(), aiProxyDevPlugin()],
+  plugins: [react(), tailwindcss(), aiProxyDevPlugin()],
   // 本地开发：把业务后端（账号/订单/权益）代理到 app 服务。
   // 生产环境同源由 server/docker-server.ts 直接处理，不走代理。
   server: {

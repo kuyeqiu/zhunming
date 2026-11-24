@@ -19,6 +19,7 @@ import {
   formatZiweiPromptScopeSummary,
 } from '../ResultPage.helpers';
 import { BaziFortuneLoadingCard } from './skeletons';
+import { Button } from '@/components/ui/button';
 
 export function ZiweiScopeModal(props: {
   chartInput: ChartInput;
@@ -229,14 +230,14 @@ export function ZiweiScopeModal(props: {
           <span className="fortune-modal-quick-label">当前</span>
           <div className="fortune-modal-quick-actions">
             {quickActions.map((item) => (
-              <button
+              <Button
                 type="button"
                 key={item.scope}
                 className={`fortune-modal-quick-btn ${draftScope === item.scope ? 'is-active' : ''}`}
                 onClick={() => handleJumpToCurrent(item.scope)}
               >
                 {item.label}
-              </button>
+              </Button>
             ))}
           </div>
           <span className="result-chip result-chip-highlight">
@@ -255,7 +256,7 @@ export function ZiweiScopeModal(props: {
             </div>
             <div className="fortune-modal-list">
               {decadalOptions.map((item, index) => (
-                <button
+                <Button
                   type="button"
                   key={`${item.label}-${item.startAge}-${item.endAge}`}
                   className={`fortune-modal-item ${
@@ -271,7 +272,7 @@ export function ZiweiScopeModal(props: {
                   <strong>{formatDecadalAgeRange(item)}岁</strong>
                   <span>{item.label}</span>
                   <span>{item.dateStr} 取盘</span>
-                </button>
+                </Button>
               ))}
             </div>
           </section>
@@ -283,7 +284,7 @@ export function ZiweiScopeModal(props: {
                 <small>第一项是大限；选具体流年后，才会展开下一排流月。</small>
               </div>
               <div className="fortune-modal-list">
-                <button
+                <Button
                   type="button"
                   className={`fortune-modal-item fortune-modal-item-overall ${
                     isYearOverallActive ? 'is-selected is-active' : ''
@@ -296,9 +297,9 @@ export function ZiweiScopeModal(props: {
                       ? `${selectedDecadal.label} ${formatDecadalAgeRange(selectedDecadal)}岁`
                       : ''}
                   </span>
-                </button>
+                </Button>
                 {yearOptions.map((item) => (
-                  <button
+                  <Button
                     type="button"
                     key={item.dateStr}
                     className={`fortune-modal-item ${
@@ -318,7 +319,7 @@ export function ZiweiScopeModal(props: {
                     <span>
                       {item.dateStr} 至 {item.endDateStr}
                     </span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             </section>
@@ -331,7 +332,7 @@ export function ZiweiScopeModal(props: {
                 <small>第一项是流年；选具体流月后，才会展开下一排流日。</small>
               </div>
               <div className="fortune-modal-list">
-                <button
+                <Button
                   type="button"
                   className={`fortune-modal-item fortune-modal-item-overall ${
                     isMonthOverallActive ? 'is-selected is-active' : ''
@@ -344,9 +345,9 @@ export function ZiweiScopeModal(props: {
                       ? `${selectedYearItem.ganZhi}年，虚岁${selectedYearItem.age}`
                       : ''}
                   </span>
-                </button>
+                </Button>
                 {monthOptions.map((item) => (
-                  <button
+                  <Button
                     type="button"
                     key={item.dateStr}
                     className={`fortune-modal-item ${
@@ -365,7 +366,7 @@ export function ZiweiScopeModal(props: {
                     <span>
                       {item.dateStr} 至 {item.endDateStr}
                     </span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             </section>
@@ -378,7 +379,7 @@ export function ZiweiScopeModal(props: {
                 <small>第一项是流月；选具体流日时，只写这个流日本身。</small>
               </div>
               <div className="fortune-modal-list">
-                <button
+                <Button
                   type="button"
                   className={`fortune-modal-item fortune-modal-item-overall ${
                     isDayOverallActive ? 'is-selected is-active' : ''
@@ -387,9 +388,9 @@ export function ZiweiScopeModal(props: {
                 >
                   <strong>流月</strong>
                   <span>{selectedMonthItem ? selectedMonthItem.label : ''}</span>
-                </button>
+                </Button>
                 {dayOptions.map((item) => (
-                  <button
+                  <Button
                     type="button"
                     key={item.dateStr}
                     className={`fortune-modal-item ${
@@ -405,7 +406,7 @@ export function ZiweiScopeModal(props: {
                     <strong>{item.label}</strong>
                     <span>{item.ganZhi}</span>
                     <span>{item.day} 日</span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             </section>

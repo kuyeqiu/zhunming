@@ -7,6 +7,7 @@ import { ChartShareModal } from '@/components/ChartShareModal';
 import { ZIWEI_GRID_ORDER } from '../ResultPage.constants';
 import { getZiweiDisplaySurroundedPalaces, joinStarNames } from '../ResultPage.helpers';
 import { ChartStarLine } from './ChartStar';
+import { Button } from '@/components/ui/button';
 
 const ZIWEI_PALACE_CENTER: Record<number, readonly [number, number]> = {
   0: [12.5, 87.5],
@@ -105,7 +106,7 @@ export function ZiweiTraditionalBoard(props: {
           <h3>{boardTitle}</h3>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <button
+          <Button
             type="button"
             className="bazi-share-chart-btn"
             onClick={() => setIsShareModalOpen(true)}
@@ -120,7 +121,7 @@ export function ZiweiTraditionalBoard(props: {
             }}
           >
             分享排盘
-          </button>
+          </Button>
           <span className="result-chip result-chip-highlight">{payload.active_scope.label}</span>
         </div>
       </div>
@@ -340,7 +341,7 @@ export function ZiweiTraditionalBoard(props: {
             ]);
 
             return (
-              <button
+              <Button
                 type="button"
                 className={`ziwei-grid-cell chart-cell ${isActive ? 'is-active is-selected' : ''} ${
                   palace.is_body_palace ? 'is-body-palace' : ''
@@ -392,7 +393,7 @@ export function ZiweiTraditionalBoard(props: {
                     </span>
                   ))}
                 </div>
-              </button>
+              </Button>
             );
           })}
         </div>

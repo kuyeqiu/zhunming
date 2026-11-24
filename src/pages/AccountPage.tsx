@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { appApi, isApiError, type AppAccess, type AppSummary } from '@/lib/app-api';
 import { useSession } from '@/hooks/useSession';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 
 type Mode = 'login' | 'register';
 
@@ -59,18 +62,18 @@ function AccessPanel({
       <p className="ink-acct__lead">账号用于保存解读记录与已购权益，排盘始终免费。</p>
 
       <div className="ink-motif-switch ink-acct__tabs" role="tablist" aria-label="登录或注册">
-        <button type="button" aria-pressed={mode === 'login'} onClick={() => setMode('login')}>
+        <Button variant="outline" size="sm" type="button" aria-pressed={mode === 'login'} onClick={() => setMode('login')}>
           登录
-        </button>
-        <button type="button" aria-pressed={mode === 'register'} onClick={() => setMode('register')}>
+        </Button>
+        <Button variant="outline" size="sm" type="button" aria-pressed={mode === 'register'} onClick={() => setMode('register')}>
           注册
-        </button>
+        </Button>
       </div>
 
       <form className="ink-acct__form" onSubmit={submit}>
-        <label className="ink-field">
+        <Label className="ink-field">
           <span className="ink-field__label">邮箱</span>
-          <input
+          <Input
             type="email"
             name="email"
             autoComplete="email"
@@ -79,12 +82,12 @@ function AccessPanel({
             onChange={(event) => setEmail(event.target.value)}
             placeholder="you@example.com"
           />
-        </label>
+        </Label>
 
         {mode === 'register' ? (
-          <label className="ink-field">
+          <Label className="ink-field">
             <span className="ink-field__label">称呼</span>
-            <input
+            <Input
               type="text"
               name="displayName"
               maxLength={40}
@@ -92,12 +95,12 @@ function AccessPanel({
               onChange={(event) => setDisplayName(event.target.value)}
               placeholder="可留空"
             />
-          </label>
+          </Label>
         ) : null}
 
-        <label className="ink-field">
+        <Label className="ink-field">
           <span className="ink-field__label">密码</span>
-          <input
+          <Input
             type="password"
             name="password"
             autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
@@ -107,7 +110,7 @@ function AccessPanel({
             onChange={(event) => setPassword(event.target.value)}
             placeholder="至少 8 位"
           />
-        </label>
+        </Label>
 
         {error ? (
           <p className="ink-acct__error" role="alert">
@@ -116,9 +119,9 @@ function AccessPanel({
         ) : null}
 
         <div className="ink-acct__actions">
-          <button type="submit" className="ink-btn" disabled={pending}>
+          <Button type="submit" className="ink-btn" disabled={pending}>
             {pending ? '处理中…' : mode === 'login' ? '登入' : '注册并登入'}
-          </button>
+          </Button>
         </div>
       </form>
     </section>
@@ -187,9 +190,9 @@ function AccountView({
               管理后台
             </Link>
           ) : null}
-          <button type="button" className="ink-btn ink-btn--ghost" onClick={onLogout}>
+          <Button variant="ghost" size="sm" type="button" className="ink-btn ink-btn--ghost" onClick={onLogout}>
             退出
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -220,9 +223,9 @@ function AccountView({
       </div>
 
       <form className="ink-acct__redeem" onSubmit={redeem}>
-        <label className="ink-field">
+        <Label className="ink-field">
           <span className="ink-field__label">兑换码</span>
-          <input
+          <Input
             type="text"
             value={code}
             onChange={(event) => setCode(event.target.value)}
@@ -230,10 +233,10 @@ function AccountView({
             autoComplete="off"
             spellCheck={false}
           />
-        </label>
-        <button type="submit" className="ink-btn ink-btn--seal" disabled={pending || !code.trim()}>
+        </Label>
+        <Button type="submit" className="ink-btn ink-btn--seal" disabled={pending || !code.trim()}>
           {pending ? '核销中…' : '兑换'}
-        </button>
+        </Button>
       </form>
       {message ? <p className="ink-acct__ok">{message}</p> : null}
       {error ? (
@@ -324,9 +327,9 @@ export function AccountPage() {
         <p className="ink-acct__error" role="alert">
           {error}
         </p>
-        <button type="button" className="ink-btn" onClick={() => void refresh()}>
+        <Button variant="ghost" size="sm" type="button" className="ink-btn" onClick={() => void refresh()}>
           重试
-        </button>
+        </Button>
       </div>
     );
   }

@@ -11,6 +11,9 @@ import {
 } from '@/lib/ganzhi-calendar';
 import { WorkspaceButton, WorkspaceSurface } from '@/components/workspace/WorkspaceUI';
 import type { AlmanacParticipantInput } from 'mingyu-core/types';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import './GanzhiCalendarPanel.css';
 
 const WEEK_LABELS = ['日', '一', '二', '三', '四', '五', '六'];
@@ -79,7 +82,7 @@ function CalendarCell({
   const termLabel = cell.solarTerms.map(formatTermLabel).join('、');
   const participantAssociation = getParticipantAssociation(cell);
   return (
-    <button
+    <Button
       type="button"
       disabled={cell.date < '1900-01-01' || cell.date > '2100-12-31'}
       className={`ganzhi-calendar-cell${cell.isCurrentMonth ? '' : ' is-outside'}${
@@ -110,7 +113,7 @@ function CalendarCell({
           {participantAssociation.label}
         </span>
       ) : null}
-    </button>
+    </Button>
   );
 }
 
@@ -348,6 +351,7 @@ export function GanzhiCalendarPanel({
           <div className="ganzhi-calendar-month-control">
             <WorkspaceButton
               size="small"
+              variant="outline"
               className="ganzhi-calendar-nav-button"
               aria-label="查看上个月"
               disabled={monthKey === '1900-01'}
@@ -355,9 +359,9 @@ export function GanzhiCalendarPanel({
             >
               ‹
             </WorkspaceButton>
-            <label className="ganzhi-calendar-month-picker">
+            <Label className="ganzhi-calendar-month-picker">
               <span>{monthLabel(monthKey)}</span>
-              <input
+              <Input
                 type="month"
                 value={monthKey}
                 min="1900-01"
@@ -370,9 +374,10 @@ export function GanzhiCalendarPanel({
                   setSelectedDate(getNextSelectedDate(selectedDate, next));
                 }}
               />
-            </label>
+            </Label>
             <WorkspaceButton
               size="small"
+              variant="outline"
               className="ganzhi-calendar-nav-button"
               aria-label="查看下个月"
               disabled={monthKey === '2100-12'}
@@ -381,7 +386,7 @@ export function GanzhiCalendarPanel({
               ›
             </WorkspaceButton>
           </div>
-          <WorkspaceButton size="small" onClick={showToday}>
+          <WorkspaceButton size="small" variant="outline" onClick={showToday}>
             今天
           </WorkspaceButton>
         </header>
@@ -444,3 +449,4 @@ export function GanzhiCalendarPanel({
     </div>
   );
 }
+

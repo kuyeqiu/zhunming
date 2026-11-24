@@ -12,9 +12,9 @@
 # =============================================================================
 set -euo pipefail
 
-APP_DIR=/zhunming-next
-APP_NAME=mingyu-next
-APP_PORT=3200
+APP_DIR="${APP_DIR:-/zhunming-next}"
+APP_NAME="${APP_NAME:-mingyu-next}"
+APP_PORT="${APP_PORT:-3200}"
 TARBALL="${1:-}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 

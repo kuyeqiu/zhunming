@@ -7,6 +7,8 @@ import {
   formatAstrolabeRangeContinuousFact,
 } from '@/lib/astrolabe-birth-range-prompt';
 import { AstrolabeBoard } from './AstrolabeBoard';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 
 type Props = {
   state: ReturnType<typeof useAstrolabeDynamicRange>;
@@ -51,7 +53,7 @@ const BranchDetails = memo(function BranchDetails({
         representativeTime={formatAstrolabeBirthRangeTime(branch.startTimestamp)}
       />
       <div className="result-side-card">
-        <label>
+        <Label>
           查看推运范围{' '}
           <select
             className="result-chip"
@@ -65,7 +67,7 @@ const BranchDetails = memo(function BranchDetails({
               </option>
             ))}
           </select>
-        </label>
+        </Label>
         <p>以下为当前分段首秒和末秒的推运资料；整段数值变化见连续事实。</p>
         <details>
           <summary>首秒推运资料</summary>
@@ -84,7 +86,7 @@ const BranchDetails = memo(function BranchDetails({
         <h3>
           连续事实（当前 {facts.length} 项，全部 {branch.continuous.length} 项）
         </h3>
-        <label>
+        <Label>
           事实分类{' '}
           <select
             className="result-chip"
@@ -105,7 +107,7 @@ const BranchDetails = memo(function BranchDetails({
                 </option>
               ))}
           </select>
-        </label>
+        </Label>
         <p>
           第 {factPage + 1} / {factPages} 页，每页最多 {FACT_PAGE_SIZE} 项。
         </p>
@@ -117,22 +119,22 @@ const BranchDetails = memo(function BranchDetails({
           ))}
         </div>
         <div className="result-chip-row" style={{ marginTop: '1rem' }}>
-          <button
+          <Button
             className="result-chip"
             type="button"
             disabled={factPage === 0}
             onClick={() => setFactPage((page) => page - 1)}
           >
             上一页事实
-          </button>
-          <button
+          </Button>
+          <Button
             className="result-chip"
             type="button"
             disabled={factPage + 1 >= factPages}
             onClick={() => setFactPage((page) => page + 1)}
           >
             下一页事实
-          </button>
+          </Button>
         </div>
       </section>
     </div>
@@ -192,7 +194,7 @@ export const AstrolabeDynamicRangePanel = memo(function AstrolabeDynamicRangePan
             {state.branches
               .slice(page * BRANCH_PAGE_SIZE, (page + 1) * BRANCH_PAGE_SIZE)
               .map((item) => (
-                <button
+                <Button
                   className={
                     item.index === index ? 'result-chip result-chip-highlight' : 'result-chip'
                   }
@@ -203,29 +205,29 @@ export const AstrolabeDynamicRangePanel = memo(function AstrolabeDynamicRangePan
                 >
                   第 {item.index + 1} 段 ·{' '}
                   {formatAstrolabeBirthRangeTime(item.startTimestamp).slice(11)}
-                </button>
+                </Button>
               ))}
           </nav>
           <div className="result-chip-row">
-            <button
+            <Button
               className="result-chip"
               type="button"
               disabled={page === 0}
               onClick={() => choose((page - 1) * BRANCH_PAGE_SIZE)}
             >
               上一页分段
-            </button>
+            </Button>
             <span>
               第 {page + 1} / {Math.ceil(state.branches.length / BRANCH_PAGE_SIZE)} 页
             </span>
-            <button
+            <Button
               className="result-chip"
               type="button"
               disabled={(page + 1) * BRANCH_PAGE_SIZE >= state.branches.length}
               onClick={() => choose((page + 1) * BRANCH_PAGE_SIZE)}
             >
               下一页分段
-            </button>
+            </Button>
           </div>
           {readError ? (
             <p className="error-text" role="alert">
@@ -253,32 +255,32 @@ export function AstrolabeDynamicRangeControls({ state, error }: Props) {
       ) : null}
       <div className="result-chip-row">
         {!state.loading ? (
-          <button
+          <Button
             className="result-chip"
             type="button"
             disabled={!state.key || Boolean(error)}
             onClick={state.start}
           >
             {state.branches.length || state.error ? '重新核对' : '开始核对'}
-          </button>
+          </Button>
         ) : null}
         {state.paused ? (
-          <button className="result-chip" type="button" onClick={() => state.continueCalculation()}>
+          <Button variant="ghost" size="sm" className="result-chip" type="button" onClick={() => state.continueCalculation()}>
             继续一批
-          </button>
+          </Button>
         ) : null}
         {state.loading ? (
           <>
-            <button
+            <Button
               className="result-chip"
               type="button"
               onClick={() => state.continueCalculation(true)}
             >
               计算剩余全部
-            </button>
-            <button className="result-chip" type="button" onClick={state.cancel}>
+            </Button>
+            <Button variant="ghost" size="sm" className="result-chip" type="button" onClick={state.cancel}>
               停止计算
-            </button>
+            </Button>
           </>
         ) : null}
       </div>

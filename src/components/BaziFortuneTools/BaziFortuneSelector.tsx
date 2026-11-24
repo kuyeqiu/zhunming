@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useState } from 'react';
 import type { BaziChartResult } from 'mingyu-core/bazi';
+import { Button } from '@/components/ui/button';
 import {
   getMonthDaysInfo,
   getDayHourBreakdown,
@@ -230,7 +231,7 @@ export function BaziFortuneSelector(props: {
     <section className="fortune-selector-card">
       <div className="fortune-selector-head">
         <span>岁运</span>
-        <button
+        <Button
           type="button"
           className="fortune-today-button"
           aria-label="回到今天"
@@ -239,7 +240,7 @@ export function BaziFortuneSelector(props: {
           onClick={selectToday}
         >
           今
-        </button>
+        </Button>
       </div>
       <div className="fortune-grid">
         <div className="fortune-row">
@@ -247,7 +248,7 @@ export function BaziFortuneSelector(props: {
           <div className="fortune-container">
             {result.luckInfo.cycles.map((cycle, index) => {
               return (
-                <button
+                <Button
                   type="button"
                   key={`${cycle.age}-${cycle.ganZhi}`}
                   className={`fortune-item ${index === resolvedCycleIndex ? 'active' : ''}`}
@@ -256,7 +257,7 @@ export function BaziFortuneSelector(props: {
                   <div className="fortune-year">{cycle.year}</div>
                   <div className="fortune-age">{cycle.age}岁</div>
                   <FortuneGanZhi ganZhi={cycle.ganZhi} dayMaster={result.dayMaster.gan} />
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -267,7 +268,7 @@ export function BaziFortuneSelector(props: {
           <div className="fortune-container">
             {yearOptions.map((item) => {
               return (
-                <button
+                <Button
                   type="button"
                   key={item.year}
                   className={`fortune-item ${item.year === resolvedYear ? 'active' : ''}`}
@@ -276,7 +277,7 @@ export function BaziFortuneSelector(props: {
                   <div className="fortune-year">{item.year}</div>
                   <div className="fortune-age">{item.age}岁</div>
                   <FortuneGanZhi ganZhi={item.ganZhi} dayMaster={result.dayMaster.gan} />
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -288,7 +289,7 @@ export function BaziFortuneSelector(props: {
             {monthOptions.map((item, index) => {
               const monthNumber = index + 1;
               return (
-                <button
+                <Button
                   type="button"
                   key={`${resolvedYear}-${item.month}-${item.ganZhi}`}
                   className={`fortune-item ${monthNumber === resolvedMonth ? 'active' : ''}`}
@@ -302,7 +303,7 @@ export function BaziFortuneSelector(props: {
                     {formatBaziMonthStart(item)}
                   </div>
                   <FortuneGanZhi ganZhi={item.ganZhi} dayMaster={result.dayMaster.gan} />
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -313,7 +314,7 @@ export function BaziFortuneSelector(props: {
           <div className="fortune-container">
             {dayOptions.map((item) => {
               return (
-                <button
+                <Button
                   type="button"
                   key={item.solarDate}
                   className={`fortune-item ${item.day === resolvedDay ? 'active' : ''}`}
@@ -322,7 +323,7 @@ export function BaziFortuneSelector(props: {
                   <div className="fortune-year">{item.solarLabel}</div>
                   <div className="fortune-age">{item.lunar}</div>
                   <FortuneGanZhi ganZhi={item.ganZhi} dayMaster={result.dayMaster.gan} />
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -332,7 +333,7 @@ export function BaziFortuneSelector(props: {
           <div className="row-title">流时</div>
           <div className="fortune-container">
             {hourOptions.map((item, index) => (
-              <button
+              <Button
                 type="button"
                 key={`${selectedDayOption?.solarDate}-${item.label}`}
                 className={`fortune-item ${index === resolvedHourIndex ? 'active' : ''}`}
@@ -342,7 +343,7 @@ export function BaziFortuneSelector(props: {
                 <div className="fortune-year">{item.label}</div>
                 <div className="fortune-age">{formatHourClockRange(index)}</div>
                 <FortuneGanZhi ganZhi={item.ganZhi} dayMaster={result.dayMaster.gan} />
-              </button>
+              </Button>
             ))}
           </div>
         </div>

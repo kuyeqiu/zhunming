@@ -35,6 +35,8 @@ import {
 import { isInstantChartType } from '@/lib/instant-chart';
 import { registerDismissLayer } from '@/lib/dismiss-layer';
 import { INSTANT_CHART_DEFINITIONS } from 'mingyu-core/instant';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 type SidebarView = 'tools' | 'history';
 
@@ -310,7 +312,7 @@ export function WorkspaceShell() {
 
   // 招牌与「全部工具」共用同一个按钮渲染，避免两处漂移
   const renderFeatureButton = (feature: (typeof WORKSPACE_FEATURES)[number]) => (
-    <button
+    <Button
       type="button"
       key={feature.id}
       className={activeFeature === feature.id ? 'is-active' : ''}
@@ -333,32 +335,32 @@ export function WorkspaceShell() {
       <span className="workspace-nav-copy">
         <strong>{feature.label}</strong>
       </span>
-    </button>
+    </Button>
   );
 
   const navigation = (
     <>
       <div className="workspace-brand-row">
-        <button type="button" className="workspace-brand" onClick={() => navigate('/')}>
+        <Button variant="ghost" size="sm" type="button" className="workspace-brand" onClick={() => navigate('/')}>
           <span className="workspace-brand-seal" aria-hidden="true">
             命
           </span>
           <span>
             <strong>准命</strong>
           </span>
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           className="workspace-drawer-close"
           onClick={() => setIsDrawerOpen(false)}
           aria-label="关闭侧栏"
         >
           ×
-        </button>
+        </Button>
       </div>
 
       <div className="workspace-sidebar-switch" role="tablist" aria-label="侧栏内容">
-        <button
+        <Button
           type="button"
           role="tab"
           aria-selected={sidebarView === 'tools'}
@@ -366,8 +368,8 @@ export function WorkspaceShell() {
           onClick={() => setSidebarView('tools')}
         >
           工具
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           role="tab"
           aria-selected={sidebarView === 'history'}
@@ -375,13 +377,13 @@ export function WorkspaceShell() {
           onClick={() => setSidebarView('history')}
         >
           历史
-        </button>
+        </Button>
       </div>
 
       {sidebarView === 'tools' ? (
         <nav className="workspace-tool-sections" aria-label="排盘、占问与古籍工具">
           <div className="workspace-nav-list workspace-home-nav-list">
-            <button
+            <Button
               type="button"
               className={isHomeRoute ? 'is-active' : ''}
               onClick={() => {
@@ -396,8 +398,8 @@ export function WorkspaceShell() {
               <span className="workspace-nav-copy">
                 <strong>首页</strong>
               </span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className={location.pathname === '/cases' ? 'is-active' : ''}
               onClick={() => {
@@ -412,8 +414,8 @@ export function WorkspaceShell() {
               <span className="workspace-nav-copy">
                 <strong>案例</strong>
               </span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className={location.pathname === '/culture-tools' ? 'is-active' : ''}
               onClick={() => {
@@ -428,14 +430,14 @@ export function WorkspaceShell() {
               <span className="workspace-nav-copy">
                 <strong>文字与数理</strong>
               </span>
-            </button>
+            </Button>
           </div>
           <section className="workspace-tool-section workspace-featured" key="featured">
             <div className="workspace-nav-label">招牌</div>
             <div className="workspace-nav-list">
               {FEATURED_FEATURE_IDS.map((id) => renderFeatureButton(getWorkspaceFeature(id)))}
             </div>
-            <button
+            <Button
               type="button"
               className="workspace-more-tools"
               aria-expanded={isAllToolsOpen}
@@ -447,7 +449,7 @@ export function WorkspaceShell() {
               <span>
                 {isAllToolsOpen ? '收起全部工具' : `全部工具（${orderedFeatures.length - FEATURED_FEATURE_IDS.length}）`}
               </span>
-            </button>
+            </Button>
           </section>
 
           {isAllToolsOpen
@@ -463,7 +465,7 @@ export function WorkspaceShell() {
                 <div className="workspace-nav-list">
                   {visibleFeatures.map((feature) => renderFeatureButton(feature))}
                   {group.id === 'divination' && features.length > 5 ? (
-                    <button
+                    <Button
                       type="button"
                       className="workspace-more-tools"
                       onClick={() => setIsMoreDivinationOpen((value) => !value)}
@@ -476,7 +478,7 @@ export function WorkspaceShell() {
                           ? '收起其他占问'
                           : `更多占问（${features.length - 5}）`}
                       </span>
-                    </button>
+                    </Button>
                   ) : null}
                 </div>
               </section>
@@ -487,7 +489,7 @@ export function WorkspaceShell() {
       ) : (
         <section className="workspace-case-browser" aria-label="占问历史">
           <div className="workspace-case-tools">
-            <input
+            <Input
               type="search"
               value={historySearch}
               placeholder="搜索历史"
@@ -511,7 +513,7 @@ export function WorkspaceShell() {
                     ? instantChartLabelMap[record.instantType]
                     : feature!.label;
                 return (
-                  <button
+                  <Button
                     type="button"
                     key={record.id}
                     className={activeDivinationRecordId === record.id ? 'is-active' : ''}
@@ -533,7 +535,7 @@ export function WorkspaceShell() {
                         · {formatCaseDate(record.updatedAt)}
                       </small>
                     </span>
-                  </button>
+                  </Button>
                 );
               })
             ) : (
@@ -543,7 +545,7 @@ export function WorkspaceShell() {
               </div>
             )}
           </div>
-          <button
+          <Button
             type="button"
             className={`workspace-manage-cases${location.pathname === '/records' ? ' is-active' : ''}`}
             onClick={() => {
@@ -552,12 +554,12 @@ export function WorkspaceShell() {
             }}
           >
             管理历史
-          </button>
+          </Button>
         </section>
       )}
 
       <div className="workspace-sidebar-footer">
-        <button
+        <Button
           type="button"
           className={location.pathname === '/account' ? 'is-active' : ''}
           onClick={() => {
@@ -566,8 +568,8 @@ export function WorkspaceShell() {
           }}
         >
           我的
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           className={location.pathname === '/tutorial' ? 'is-active' : ''}
           onClick={() => {
@@ -576,8 +578,8 @@ export function WorkspaceShell() {
           }}
         >
           使用说明
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => {
             setIsDrawerOpen(false);
@@ -585,7 +587,7 @@ export function WorkspaceShell() {
           }}
         >
           设置
-        </button>
+        </Button>
       </div>
     </>
   );
@@ -594,16 +596,11 @@ export function WorkspaceShell() {
     <TermExplanationProvider>
       <div className="workspace-shell" onScrollCapture={handleWorkspaceScroll}>
         {/* 顶栏取代常驻侧栏；工具全集仍在抽屉里（下面的 workspace-mobile-drawer） */}
-        <InkTopBar
-          onOpenTools={() => {
-            setSidebarView('tools');
-            setIsDrawerOpen(true);
-          }}
-        />
+        <InkTopBar />
         <aside className="workspace-sidebar">{navigation}</aside>
         <header className="workspace-mobile-header">
           {isResultAssistant ? (
-            <button
+            <Button
               type="button"
               className="workspace-mobile-back"
               onClick={() => navigate(assistantReturnPath)}
@@ -612,9 +609,9 @@ export function WorkspaceShell() {
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M15 18l-6-6 6-6" />
               </svg>
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               type="button"
               className="workspace-mobile-menu"
               onClick={() => {
@@ -626,25 +623,25 @@ export function WorkspaceShell() {
               <span />
               <span />
               <span />
-            </button>
+            </Button>
           )}
           <strong>{pageTitle}</strong>
           {location.pathname === '/cases' ? (
-            <button
+            <Button
               type="button"
               className="workspace-mobile-header-action"
               onClick={() => navigate('/cases?new=1')}
             >
               新建
-            </button>
+            </Button>
           ) : location.pathname !== '/records' ? (
-            <button
+            <Button
               type="button"
               className="workspace-mobile-header-action"
               onClick={() => navigate('/records?tab=divination')}
             >
               历史
-            </button>
+            </Button>
           ) : (
             <span className="workspace-mobile-header-spacer" aria-hidden="true" />
           )}
@@ -666,7 +663,7 @@ export function WorkspaceShell() {
           {activeFeature && !isInstantResult && !isResultAssistant ? (
             <nav className="workspace-case-tabbar" aria-label="案例档案">
               <div className="workspace-case-tabs" role="tablist" aria-label="快速切换案例">
-                <button
+                <Button
                   ref={activeCaseId === null ? activeCaseTabRef : undefined}
                   type="button"
                   role="tab"
@@ -683,11 +680,11 @@ export function WorkspaceShell() {
                     <strong>临时档案</strong>
                     <small>不指定案例</small>
                   </span>
-                </button>
+                </Button>
                 {quickSwitchCases.map((record) => {
                   const isActive = activeCaseId === record.id;
                   return (
-                    <button
+                    <Button
                       ref={isActive ? activeCaseTabRef : undefined}
                       type="button"
                       role="tab"
@@ -710,12 +707,12 @@ export function WorkspaceShell() {
                           ★
                         </span>
                       ) : null}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
               <div className="workspace-case-tab-actions">
-                <button
+                <Button
                   type="button"
                   className="workspace-case-tab-new"
                   onClick={createCase}
@@ -723,8 +720,8 @@ export function WorkspaceShell() {
                   title="新建案例"
                 >
                   ＋
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   className="workspace-case-tab-manage"
                   onClick={() => navigate('/cases')}
@@ -736,7 +733,7 @@ export function WorkspaceShell() {
                   </span>
                   <span className="workspace-case-tab-manage-text">案例管理</span>
                   <span className="workspace-case-tab-manage-mobile-text">案例</span>
-                </button>
+                </Button>
               </div>
             </nav>
           ) : null}

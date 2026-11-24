@@ -1,0 +1,269 @@
+/* ═══════════════════════════════════════════════════════════════
+   结果页三栏工作台（drafts/result-page 定稿移植）
+   排盘 │ 解读 │ AI —— 1px 细线分隔、栏宽可拖、栏内字号随栏宽缩放
+   仅在 .result-tab-stage.result-workbench 下生效。
+   ═══════════════════════════════════════════════════════════════ */
+
+.result-tab-stage.result-workbench {
+  --w-left: 400px;
+  --w-right: 400px;
+  --w-min: 260px;
+  --w-max: 820px;
+  --rw-line: hsl(0 0% 88%);
+  --rw-ink: hsl(0 0% 7%);
+  --rw-ink-med: hsl(0 0% 27%);
+  --rw-ink-light: hsl(0 0% 45%);
+  --rw-ink-faint: hsl(0 0% 63%);
+  --rw-cinnabar: hsl(357 58% 39%);
+  --rw-cinnabar-soft: hsl(357 58% 39% / 0.07);
+  --rw-sunk: hsl(0 0% 97%);
+}
+
+@media (min-width: 980px) {
+  .result-tab-stage.result-workbench {
+    display: grid;
+    /* 无解读栏：盘面 + 手柄 + AI */
+    grid-template-columns: minmax(0, 1fr) 5px minmax(280px, var(--w-right));
+    gap: 0;
+    align-items: stretch;
+    overflow: hidden;
+    min-height: 0;
+    flex: 1;
+  }
+
+  /* 有解读栏（bazi 单人盘）：盘面 + 手柄 + 解读 + 手柄 + AI */
+  .result-tab-stage.result-workbench.has-reading {
+    grid-template-columns:
+      minmax(240px, var(--w-left)) 5px minmax(0, 1fr) 5px
+      minmax(280px, var(--w-right));
+  }
+
+  .result-workbench > .result-tab-pane {
+    height: 100%;
+    min-height: 0;
+    grid-area: auto;
+    min-width: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .result-workbench > .result-tab-pane::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+  .result-workbench > .result-tab-pane.is-inactive {
+    display: none;
+  }
+
+  .result-workbench > .workspace-result-chart-pane {
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-right: 1px solid var(--rw-line);
+    container-type: inline-size;
+  }
+
+  .result-workbench > .workspace-result-assistant-pane {
+    position: static;
+    overflow: hidden;
+    border-left: 1px solid var(--rw-line);
+  }
+
+  /* ── 栏序 ── */
+  .result-workbench > .workspace-result-chart-pane.is-active:first-of-type {
+    grid-column: 1;
+  }
+  .result-workbench > .rw-rh-l { grid-column: 2; }
+  .result-workbench.has-reading > .workspace-result-reading-pane { grid-column: 3; }
+  .result-workbench > .rw-rh-r { grid-column: 4; }
+  .result-workbench > .workspace-result-assistant-pane { grid-column: 5; }
+  /* 无解读栏 */
+  .result-workbench:not(.has-reading) > .rw-rh-r { grid-column: 2; }
+  .result-workbench:not(.has-reading) > .workspace-result-assistant-pane { grid-column: 3; }
+
+  /* ── 拖拽手柄 ── */
+  .rw-rh {
+    position: relative;
+    cursor: col-resize;
+    background: var(--rw-line);
+    transition: background 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+    z-index: 2;
+  }
+  .rw-rh::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 34px;
+    margin: -17px 0 0 -1.5px;
+    border-left: 1px dashed var(--rw-ink-faint);
+  }
+  .rw-rh:hover,
+  .rw-rh.on {
+    background: var(--rw-cinnabar);
+  }
+  .rw-rh:hover::before,
+  .rw-rh.on::before {
+    border-color: #fff;
+  }
+  body.rw-resizing {
+    cursor: col-resize;
+    user-select: none;
+  }
+  body.rw-resizing .result-tab-pane {
+    pointer-events: none;
+  }
+
+  /* ── 解读栏 ── */
+  .workspace-result-reading-pane {
+    container-type: inline-size;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: #fff;
+  }
+}
+
+/* 解读栏排版：字号随栏宽（容器查询） */
+@container (min-width: 0) {
+  .workspace-result-reading-pane .rw-read {
+    font-size: clamp(15px, 1.7cqi, 20px);
+  }
+}
+
+.rw-read {
+  width: 100%;
+  padding: 2.2em max(26px, 3.6cqw) 5em;
+  color: var(--rw-ink-med);
+  font-family: var(--ink-font-serif, 'Mingyu Serif', 'Noto Serif SC', serif);
+  line-height: 1.95;
+  letter-spacing: 0.02em;
+}
+
+.rw-verdict {
+  margin: 0 0 2em;
+  padding-bottom: 1.2em;
+  border-bottom: 2px solid var(--rw-ink);
+}
+.rw-verdict-title {
+  margin: 0;
+  font-size: 1.68em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  color: var(--rw-ink);
+}
+.rw-verdict-title em {
+  font-style: normal;
+  color: var(--rw-cinnabar);
+}
+.rw-verdict-use {
+  margin: 0.6em 0 0;
+  font-size: 0.82em;
+  letter-spacing: 0.06em;
+}
+.rw-verdict-use b {
+  color: var(--rw-cinnabar);
+  font-weight: 600;
+}
+.rw-verdict-meta {
+  margin: 0.5em 0 0;
+  font-size: 0.76em;
+  color: var(--rw-ink-faint);
+  letter-spacing: 0.05em;
+}
+
+.rw-section {
+  margin: 0 0 2.4em;
+}
+.rw-sec-title {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin: 0 0 0.85em;
+  font-size: 1em;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: var(--rw-ink);
+}
+.rw-sec-title::before {
+  content: '';
+  width: 0.5em;
+  height: 0.5em;
+  background: var(--rw-cinnabar);
+  flex: 0 0 auto;
+}
+.rw-book-badge {
+  color: var(--rw-cinnabar);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  font-size: 0.86em;
+  border: 1px solid var(--rw-cinnabar);
+  padding: 0.1em 0.55em;
+}
+.rw-p {
+  margin: 0 0 0.7em;
+  font-size: 1em;
+  line-height: 1.95;
+  color: var(--rw-ink-med);
+  white-space: pre-wrap;
+}
+.rw-p:last-child {
+  margin-bottom: 0;
+}
+.rw-p b,
+.rw-p strong {
+  color: var(--rw-ink);
+  font-weight: 600;
+}
+.rw-verse {
+  color: var(--rw-ink-light);
+  font-size: 0.92em;
+}
+.rw-verse a {
+  color: var(--rw-cinnabar);
+}
+
+/* 旺衰/格局/取用/所忌 四联 */
+.rw-statline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9em, 1fr));
+  border-top: 1px solid var(--rw-ink);
+  border-bottom: 1px solid var(--rw-line);
+  margin-bottom: 1.1em;
+}
+.rw-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15em;
+  padding: 0.75em 0.9em;
+  border: 0;
+  border-left: 1px dashed var(--rw-line);
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: default;
+}
+.rw-stat:first-child {
+  border-left: 0;
+}
+.rw-stat.is-clickable-term {
+  cursor: pointer;
+}
+.rw-stat span {
+  font-size: 0.72em;
+  letter-spacing: 0.2em;
+  color: var(--rw-ink-faint);
+}
+.rw-stat strong {
+  font-size: 1.06em;
+  font-weight: 600;
+  color: var(--rw-ink);
+  letter-spacing: 0.06em;
+}
+.rw-stat small {
+  font-size: 0.72em;
+  color: var(--rw-ink-light);
+  line-height: 1.6;
+}

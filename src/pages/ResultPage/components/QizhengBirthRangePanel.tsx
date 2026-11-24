@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import type { QizhengBirthRange, QizhengFlowBirthRange, QizhengResult } from 'mingyu-core/qizheng';
 import { formatQizhengFlowRangeFacts } from '@/lib/qizheng-birth-range-prompt';
+import { Button } from '@/components/ui/button';
 import type {
   QizhengBirthRangeProgress,
   UseQizhengBirthRangeResult,
@@ -231,14 +232,14 @@ function renderProgress(
       <div style={{ alignItems: 'center', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
         <span aria-live="polite">{loading ? formatProgress(progress) : error}</span>
         {loading ? (
-          <button type="button" className="result-chip" onClick={cancel}>
+          <Button variant="ghost" size="sm" type="button" className="result-chip" onClick={cancel}>
             取消计算
-          </button>
+          </Button>
         ) : null}
         {error ? (
-          <button type="button" className="result-chip result-chip-highlight" onClick={retry}>
+          <Button variant="ghost" size="sm" type="button" className="result-chip result-chip-highlight" onClick={retry}>
             重试
-          </button>
+          </Button>
         ) : null}
       </div>
     </div>
@@ -298,7 +299,7 @@ function renderBranchSelector(
       style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}
     >
       {branches.map((branch, index) => (
-        <button
+        <Button
           key={`${branch.startTimestamp}-${branch.endTimestamp}`}
           type="button"
           role="tab"
@@ -307,7 +308,7 @@ function renderBranchSelector(
           onClick={() => onSelect(index)}
         >
           时段 {index + 1} · {branch.sampleCount} 秒
-        </button>
+        </Button>
       ))}
     </div>
   );

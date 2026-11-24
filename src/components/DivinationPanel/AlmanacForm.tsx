@@ -1,5 +1,8 @@
 import { ALMANAC_TOPIC_OPTIONS } from 'mingyu-core/divination/config';
 import { DropdownSelect } from '@/components/DropdownSelect';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { WorkspaceButton } from '@/components/workspace/WorkspaceUI';
 import type { DivinationDraft } from '@/lib/divination/engine';
 import type { PersonalHistoryRecord } from '@/lib/history-records';
@@ -273,18 +276,18 @@ export function AlmanacForm({
       <section className="almanac-form-section">
         <div className="almanac-form-section-head">
           <strong>择日事项</strong>
-          <button
+          <Button
             type="button"
             className={supplementaryInfoCount ? 'is-active' : ''}
             aria-haspopup="dialog"
             onClick={onOpenSupplementaryInfo}
           >
             补充要求{supplementaryInfoCount ? ' · 已填写' : ''}
-          </button>
+          </Button>
         </div>
         <div className="almanac-topic-grid" role="group" aria-label="择日事项">
           {ALMANAC_TOPIC_OPTIONS.map((item) => (
-            <button
+            <Button
               key={item.value}
               type="button"
               className={draft.almanacTopic === item.value ? 'is-active' : ''}
@@ -292,7 +295,7 @@ export function AlmanacForm({
               onClick={() => updateDraft('almanacTopic', item.value)}
             >
               {item.label}
-            </button>
+            </Button>
           ))}
         </div>
       </section>
@@ -301,41 +304,41 @@ export function AlmanacForm({
         <div className="almanac-form-section-head">
           <strong>日期范围</strong>
           <div className="almanac-quick-ranges" role="group" aria-label="快速选择日期范围">
-            <button type="button" onClick={() => setQuickRange(7)}>
+            <Button variant="outline" size="sm" type="button" onClick={() => setQuickRange(7)}>
               7天
-            </button>
-            <button type="button" onClick={() => setQuickRange(21)}>
+            </Button>
+            <Button variant="outline" size="sm" type="button" onClick={() => setQuickRange(21)}>
               21天
-            </button>
-            <button type="button" onClick={() => setQuickRange(30)}>
+            </Button>
+            <Button variant="outline" size="sm" type="button" onClick={() => setQuickRange(30)}>
               30天
-            </button>
-            <button type="button" onClick={() => setQuickRange(90)}>
+            </Button>
+            <Button variant="outline" size="sm" type="button" onClick={() => setQuickRange(90)}>
               90天
-            </button>
-            <button type="button" onClick={() => setQuickRange(180)}>
+            </Button>
+            <Button variant="outline" size="sm" type="button" onClick={() => setQuickRange(180)}>
               180天
-            </button>
+            </Button>
           </div>
         </div>
         <div className="almanac-date-fields">
           <div className="form-item">
-            <label htmlFor="almanac-start-date-input">开始日期</label>
-            <input
+            <Label htmlFor="almanac-start-date-input">开始日期</Label>
+            <Input
               id="almanac-start-date-input"
               type="date"
-              className="form-input"
+             
               value={draft.almanacStartDate}
               onChange={(event) => setStartDate(event.target.value)}
             />
           </div>
           <span aria-hidden="true">至</span>
           <div className="form-item">
-            <label htmlFor="almanac-end-date-input">结束日期</label>
-            <input
+            <Label htmlFor="almanac-end-date-input">结束日期</Label>
+            <Input
               id="almanac-end-date-input"
               type="date"
-              className="form-input"
+             
               min={draft.almanacStartDate || undefined}
               value={draft.almanacEndDate}
               onChange={(event) => updateDraft('almanacEndDate', event.target.value)}
@@ -346,7 +349,7 @@ export function AlmanacForm({
           <span>日期</span>
           <div role="group" aria-label="周末偏好">
             {WEEKEND_PREFERENCE_OPTIONS.map((item) => (
-              <button
+              <Button
                 key={item.value}
                 type="button"
                 className={
@@ -356,13 +359,13 @@ export function AlmanacForm({
                 onClick={() => setWeekendPreference(item.value)}
               >
                 {item.label}
-              </button>
+              </Button>
             ))}
           </div>
           <span>时段</span>
           <div role="group" aria-label="时段条件">
             {TIME_PREFERENCE_OPTIONS.map((item) => (
-              <button
+              <Button
                 key={item.value}
                 type="button"
                 className={draft.almanacTimePreferences?.includes(item.value) ? 'is-active' : ''}
@@ -370,7 +373,7 @@ export function AlmanacForm({
                 onClick={() => toggleTimePreference(item.value)}
               >
                 {item.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -428,10 +431,10 @@ export function AlmanacForm({
                 <div className="almanac-participant-editor">
                   <div className="form-row-flex">
                     <div className="form-item">
-                      <label htmlFor={`${participant.id}-name-input`}>称呼</label>
-                      <input
+                      <Label htmlFor={`${participant.id}-name-input`}>称呼</Label>
+                      <Input
                         id={`${participant.id}-name-input`}
-                        className="form-input"
+                       
                         value={participant.name}
                         placeholder="例如：本人"
                         onChange={(event) =>
@@ -440,7 +443,7 @@ export function AlmanacForm({
                       />
                     </div>
                     <div className="form-item">
-                      <label htmlFor={`${participant.id}-gender-select`}>性别</label>
+                      <Label htmlFor={`${participant.id}-gender-select`}>性别</Label>
                       <DropdownSelect
                         id={`${participant.id}-gender-select`}
                         value={participant.gender}
@@ -452,7 +455,7 @@ export function AlmanacForm({
                   </div>
                   <div className="form-row-flex">
                     <div className="form-item">
-                      <label htmlFor={`${participant.id}-input-mode-select`}>日期方式</label>
+                      <Label htmlFor={`${participant.id}-input-mode-select`}>日期方式</Label>
                       <DropdownSelect
                         id={`${participant.id}-input-mode-select`}
                         value={getAlmanacParticipantInputMode(participant)}
@@ -468,7 +471,7 @@ export function AlmanacForm({
                     </div>
                     {getAlmanacParticipantInputMode(participant) !== 'pillars' ? (
                       <div className="form-item">
-                        <label htmlFor={`${participant.id}-time-select`}>时辰</label>
+                        <Label htmlFor={`${participant.id}-time-select`}>时辰</Label>
                         <DropdownSelect
                           id={`${participant.id}-time-select`}
                           value={participant.timeIndex}
@@ -503,12 +506,12 @@ export function AlmanacForm({
                     <div className="form-row-flex has-third-item">
                       {(['year', 'month', 'day'] as const).map((key) => (
                         <div className="form-item" key={key}>
-                          <label htmlFor={`${participant.id}-${key}-input`}>
+                          <Label htmlFor={`${participant.id}-${key}-input`}>
                             {key === 'year' ? '年' : key === 'month' ? '月' : '日'}
-                          </label>
-                          <input
+                          </Label>
+                          <Input
                             id={`${participant.id}-${key}-input`}
-                            className="form-input"
+                           
                             inputMode="numeric"
                             value={participant[key]}
                             onChange={(event) =>
@@ -523,13 +526,13 @@ export function AlmanacForm({
                       ))}
                     </div>
                   )}
-                  <button
+                  <Button
                     type="button"
                     className="almanac-participant-remove"
                     onClick={() => removeParticipant(participant.id)}
                   >
                     移除此人
-                  </button>
+                  </Button>
                 </div>
               </details>
             ))}

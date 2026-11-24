@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { WorkspaceButton, WorkspaceDialog } from './workspace/WorkspaceUI';
 import { DropdownSelect } from './DropdownSelect';
 import { fetchAiModels } from '@/lib/ai/stream-client';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import {
   AI_PROVIDER_PRESETS,
   getServerBuiltinAiLabel,
@@ -79,19 +82,19 @@ export function AiSettingsModal({ settings, onApply, onClose }: AiSettingsModalP
 
       <div className="workspace-ui-dialog-body ai-settings-grid">
         <section className="ai-settings-section">
-          <label className="ai-settings-switch">
+          <Label className="ai-settings-switch">
             <span>
               <strong>启用 AI 解读</strong>
               <small>关闭后页面仍显示提示词复制模式。</small>
             </span>
-            <input
+            <Input
               type="checkbox"
               checked={draft.enabled}
               onChange={(event) =>
                 setDraft((current) => ({ ...current, enabled: event.target.checked }))
               }
             />
-          </label>
+          </Label>
 
           <p className="workspace-setting-note">
             发送 AI 解读会将当前排盘资料和问题提供给所选 AI 服务；自定义接口经准命服务转发。
@@ -99,20 +102,24 @@ export function AiSettingsModal({ settings, onApply, onClose }: AiSettingsModalP
 
           {builtinEnabled ? (
             <div className="ai-settings-mode-row">
-              <button
+              <Button
                 type="button"
-                className={`ai-settings-mode-btn ${draft.mode === 'builtin' ? 'is-active' : ''}`}
+                variant={draft.mode === 'builtin' ? 'secondary' : 'outline'}
+                size="sm"
+                className="ai-settings-mode-btn"
                 onClick={() => setDraft((current) => ({ ...current, mode: 'builtin' }))}
               >
                 {builtinLabel}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className={`ai-settings-mode-btn ${draft.mode === 'custom' ? 'is-active' : ''}`}
+                variant={draft.mode === 'custom' ? 'secondary' : 'outline'}
+                size="sm"
+                className="ai-settings-mode-btn"
                 onClick={() => setDraft((current) => ({ ...current, mode: 'custom' }))}
               >
                 自行配置
-              </button>
+              </Button>
             </div>
           ) : null}
         </section>
@@ -133,21 +140,19 @@ export function AiSettingsModal({ settings, onApply, onClose }: AiSettingsModalP
               />
             </div>
 
-            <label className="workspace-ui-field">
+            <Label className="workspace-ui-field">
               <span>接口地址</span>
-              <input
-                className="workspace-ui-control"
+              <Input
                 value={draft.baseUrl}
                 onChange={(event) =>
                   setDraft((current) => ({ ...current, baseUrl: event.target.value }))
                 }
               />
-            </label>
+            </Label>
 
-            <label className="workspace-ui-field">
+            <Label className="workspace-ui-field">
               <span>API Key</span>
-              <input
-                className="workspace-ui-control"
+              <Input
                 type="password"
                 value={draft.apiKey}
                 placeholder="仅自行配置时填写，保存在当前设备"
@@ -155,19 +160,18 @@ export function AiSettingsModal({ settings, onApply, onClose }: AiSettingsModalP
                   setDraft((current) => ({ ...current, apiKey: event.target.value }))
                 }
               />
-            </label>
+            </Label>
 
-            <label className="workspace-ui-field">
+            <Label className="workspace-ui-field">
               <span>模型</span>
-              <input
-                className="workspace-ui-control"
+              <Input
                 value={draft.model}
                 placeholder="点击获取模型后选择，或手动填写"
                 onChange={(event) =>
                   setDraft((current) => ({ ...current, model: event.target.value }))
                 }
               />
-            </label>
+            </Label>
 
             <div className="ai-settings-model-actions">
               <WorkspaceButton size="small" onClick={handleFetchModels} disabled={!canFetchModels}>
@@ -179,14 +183,15 @@ export function AiSettingsModal({ settings, onApply, onClose }: AiSettingsModalP
             {models.length ? (
               <div className="ai-settings-model-list workspace-ui-choice-grid">
                 {models.map((model) => (
-                  <button
+                  <Button
                     type="button"
-                    className={`workspace-ui-choice ${draft.model === model ? 'is-active' : ''}`}
+                    variant={draft.model === model ? 'secondary' : 'outline'}
+                    size="sm"
                     onClick={() => setDraft((current) => ({ ...current, model }))}
                     key={model}
                   >
                     {model}
-                  </button>
+                  </Button>
                 ))}
               </div>
             ) : null}

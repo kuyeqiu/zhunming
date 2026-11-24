@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { AstrolabeScopeMode } from '@/lib/query-state';
 import { getDefaultAstrolabeScopeDate } from '@/lib/astrolabe-scope';
 import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
+import { Button } from '@/components/ui/button';
 
 const astrolabeScopeLabelMap: Record<AstrolabeScopeMode, string> = {
   natal: '本命',
@@ -198,14 +199,14 @@ export function AstrolabeScopeModal(props: {
           <span className="fortune-modal-quick-label">当前</span>
           <div className="fortune-modal-quick-actions">
             {quickActions.map((item) => (
-              <button
+              <Button
                 type="button"
                 key={item.scope}
                 className={`fortune-modal-quick-btn ${draftScope === item.scope ? 'is-active' : ''}`}
                 onClick={() => applyCurrentScope(item.scope)}
               >
                 {item.label}
-              </button>
+              </Button>
             ))}
           </div>
           <span className="result-chip result-chip-highlight">
@@ -224,7 +225,7 @@ export function AstrolabeScopeModal(props: {
             </div>
             <div className="fortune-modal-list">
               {yearOptions.map((year) => (
-                <button
+                <Button
                   type="button"
                   key={year}
                   className={`fortune-modal-item ${
@@ -239,7 +240,7 @@ export function AstrolabeScopeModal(props: {
                   <span>
                     {year === current.year ? '今年' : year > current.year ? '未来' : '过往'}
                   </span>
-                </button>
+                </Button>
               ))}
             </div>
           </section>
@@ -251,7 +252,7 @@ export function AstrolabeScopeModal(props: {
                 <small>第一项是流年；选具体月份后，可继续下钻到流日。</small>
               </div>
               <div className="fortune-modal-list">
-                <button
+                <Button
                   type="button"
                   className={`fortune-modal-item fortune-modal-item-overall ${
                     draftScope === 'yearly' ? 'is-selected is-active' : ''
@@ -260,9 +261,9 @@ export function AstrolabeScopeModal(props: {
                 >
                   <strong>流年</strong>
                   <span>{draftYear}年</span>
-                </button>
+                </Button>
                 {monthOptions.map((month) => (
-                  <button
+                  <Button
                     type="button"
                     key={month}
                     className={`fortune-modal-item ${
@@ -278,7 +279,7 @@ export function AstrolabeScopeModal(props: {
                   >
                     <strong>{month}月</strong>
                     <span>{`${draftYear}-${String(month).padStart(2, '0')}`}</span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             </section>
@@ -291,7 +292,7 @@ export function AstrolabeScopeModal(props: {
                 <small>第一项是流月；选具体日期时，只写这个流日本身。</small>
               </div>
               <div className="fortune-modal-list">
-                <button
+                <Button
                   type="button"
                   className={`fortune-modal-item fortune-modal-item-overall ${
                     draftScope === 'monthly' ? 'is-selected is-active' : ''
@@ -302,9 +303,9 @@ export function AstrolabeScopeModal(props: {
                   <span>
                     {draftYear}年{draftMonth}月
                   </span>
-                </button>
+                </Button>
                 {dayOptions.map((day) => (
-                  <button
+                  <Button
                     type="button"
                     key={day}
                     className={`fortune-modal-item ${
@@ -321,7 +322,7 @@ export function AstrolabeScopeModal(props: {
                     <span>
                       {String(draftMonth).padStart(2, '0')}/{String(day).padStart(2, '0')}
                     </span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             </section>

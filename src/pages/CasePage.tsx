@@ -32,6 +32,8 @@ import {
 import type { PersonRole } from '@/lib/input-labels';
 import { DropdownSelect } from '@/components/DropdownSelect';
 import { registerDismissLayer } from '@/lib/dismiss-layer';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 type CaseSortMode = 'recent' | 'name' | 'birth';
 
@@ -301,9 +303,8 @@ export function CasePage() {
       >
         <WorkspaceSurface variant="plain" className="case-page-section">
           <div className="case-page-toolbar">
-            <input
+            <Input
               type="search"
-              className="workspace-ui-control"
               value={searchText}
               placeholder="搜索姓名、日期或出生地"
               aria-label="搜索案例"
@@ -329,7 +330,7 @@ export function CasePage() {
                   className={`case-card${activeCaseId === record.id ? ' is-active' : ''}`}
                   key={record.id}
                 >
-                  <button
+                  <Button
                     type="button"
                     className="case-card-open"
                     onClick={() => openCase(record)}
@@ -357,9 +358,9 @@ export function CasePage() {
                       <span>{formatBirthTime(record)}</span>
                       {record.input.birthPlace ? <span>{record.input.birthPlace}</span> : null}
                     </div>
-                  </button>
+                  </Button>
                   <div className="case-card-menu" onClick={(event) => event.stopPropagation()}>
-                    <button
+                    <Button
                       type="button"
                       className="case-card-menu-trigger"
                       aria-label={`管理案例 ${record.name}`}
@@ -370,10 +371,10 @@ export function CasePage() {
                       }
                     >
                       ···
-                    </button>
+                    </Button>
                     {openMenuCaseId === record.id ? (
                       <div className="case-card-menu-popover" role="menu">
-                        <button
+                        <Button
                           type="button"
                           role="menuitem"
                           onClick={() => {
@@ -382,8 +383,8 @@ export function CasePage() {
                           }}
                         >
                           编辑资料
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           role="menuitem"
                           onClick={() => {
@@ -392,8 +393,8 @@ export function CasePage() {
                           }}
                         >
                           {record.pinned ? '取消置顶' : '置顶案例'}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           role="menuitem"
                           className="is-danger"
@@ -403,7 +404,7 @@ export function CasePage() {
                           }}
                         >
                           删除案例
-                        </button>
+                        </Button>
                       </div>
                     ) : null}
                   </div>

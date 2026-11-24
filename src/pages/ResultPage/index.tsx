@@ -1,5 +1,8 @@
 import { QimenBirthRangeNavigator } from './components/QimenBirthRangeNavigator';
 import { parseBaziReverseSource, formatBirthTimeInterval } from '@/lib/bazi-reverse-input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import {
   Suspense,
   lazy,
@@ -96,6 +99,8 @@ import { buildLifetimePrompt } from 'mingyu-core/divination/qimen';
 import { useQimenLifetimeCalculation } from './hooks/useQimenLifetimeCalculation';
 import { usePromptCopyShare } from '@/hooks/usePromptCopyShare';
 import { BaziChartBoard } from './components/BaziChartBoard';
+import { BaziReadingPanel } from './components/BaziReadingPanel';
+import { ResultPaneResizer } from './components/ResultPaneResizer';
 import { BaziBirthRangePanel, BirthRangeNavigator } from './components/BaziBirthRangePanel';
 import {
   buildBaziZiweiRangeReadingSubject,
@@ -454,7 +459,10 @@ export function ResultPage({ assistantOnly = false }: ResultPageProps) {
       : { question: '', supplementaryInfo: '' };
   }, [isInstantResult, searchParams]);
   const initialQuestion = buildWorkspaceLaunchQuestion(
-    launchState.initialQuestion || instantHistoryContext.question,
+    launchState.initialQuestion ||
+      instantHistoryContext.question ||
+      searchParams.get('q') ||
+      '',
     launchState.initialSupplementaryInfo || instantHistoryContext.supplementaryInfo,
   );
   const promptState = useMemo(() => parsePromptState(searchParams), [searchParams]);
@@ -834,6 +842,9 @@ export function ResultPage({ assistantOnly = false }: ResultPageProps) {
     const marker = `${inputSearch}\u0000${promptState.promptSource}\u0000${question}`;
     if (!question || appliedLaunchQuestionRef.current === marker) return;
     appliedLaunchQuestionRef.current = marker;
+
+    // AI 模式下还要进聊天输入框（即时盘入口没有 prompt 草稿面）
+    setInspirationText(question);
 
     if (promptState.promptSource === 'bazi' || promptState.promptSource === 'bazi-ziwei') {
       writePromptDraft(baziDraftStorageKey, question);
@@ -3180,6 +3191,15 @@ export function ResultPage({ assistantOnly = false }: ResultPageProps) {
       </small>
     </div>
   ) : null;
+  // 解读中栏：仅八字单人盘、非即时盘、非时辰区间模式，且桌面分栏布局时启用
+  const showBaziReadingPane =
+    showEmbeddedAssistant &&
+    !isInstantResult &&
+    inputState.analysisMode === 'single' &&
+    activeChartTab === 'bazi' &&
+    !baziBirthRange.requested &&
+    Boolean(baziResult);
+
   const aiComposerTools = (
     <>
       <div
@@ -3257,14 +3277,14 @@ export function ResultPage({ assistantOnly = false }: ResultPageProps) {
                               ? '命录'
                               : '排盘';
               return (
-                <button
+                <Button
                   type="button"
                   key={tab}
                   className={`workspace-ui-tab ${activeChartTab === tab ? 'is-active' : ''}`}
                   onClick={() => switchTab(tab)}
                 >
                   {label}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -3272,9 +3292,11 @@ export function ResultPage({ assistantOnly = false }: ResultPageProps) {
       ) : null}
 
       <div
-        className={`result-tab-stage${showEmbeddedAssistant ? ' workspace-result-split' : ''}${
-          isAssistantPage ? ' workspace-result-assistant-stage' : ''
-        }`}
+        className={`result-tab-stage${
+          showEmbeddedAssistant
+            ? ` workspace-result-split result-workbench${showBaziReadingPane ? ' has-reading' : ''}`
+            : ''
+        }${isAssistantPage ? ' workspace-result-assistant-stage' : ''}`}
       >
         <div
           className={`result-tab-pane workspace-result-chart-pane ${
@@ -3316,6 +3338,7 @@ export function ResultPage({ assistantOnly = false }: ResultPageProps) {
                         result={baziResult}
                         isInstant={isInstantResult}
                         timeBasisLabel={instantTimeBasisLabel}
+                        variant={showBaziReadingPane ? 'board' : 'full'}
                       />
                     ) : null}
                   </>
@@ -3601,6 +3624,21 @@ export function ResultPage({ assistantOnly = false }: ResultPageProps) {
           ) : null}
         </div>
 
+        {showEmbeddedAssistant ? <ResultPaneResizer side="left" /> : null}
+
+        {showBaziReadingPane && baziResult ? (
+          <div
+            className="result-tab-pane workspace-result-reading-pane is-active"
+            aria-label="八字解读"
+          >
+            <BaziReadingPanel result={baziResult} name={inputState.name || '当前命盘'} />
+          </div>
+        ) : null}
+
+        {showEmbeddedAssistant && showBaziReadingPane ? (
+          <ResultPaneResizer side="right" />
+        ) : null}
+
         <div
           className={`result-tab-pane workspace-result-assistant-pane ${
             isAiEnabled ? 'is-ai-mode' : 'is-prompt-mode'
@@ -3754,16 +3792,15 @@ export function ResultPage({ assistantOnly = false }: ResultPageProps) {
                     {promptScopeField}
                   </div>
 
-                  <label className="workspace-ui-field workspace-prompt-question-input">
+                  <Label className="workspace-ui-field workspace-prompt-question-input">
                     <span>输入问题</span>
-                    <textarea
-                      className="workspace-ui-control"
+                    <Textarea
                       rows={4}
                       value={activePromptQuestionDraft}
                       onChange={(event) => handlePromptQuestionDraftChange(event.target.value)}
                       placeholder={activePromptQuestionPlaceholder}
                     />
-                  </label>
+                  </Label>
 
                   {(promptState.promptSource === 'ziwei' ||
                     promptState.promptSource === 'bazi-ziwei') &&

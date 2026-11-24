@@ -18,6 +18,8 @@ import type { ReadingSubjectSnapshot } from '@/lib/ai/reading-subject';
 import type { ReadingMemorySeed } from '@/lib/ai/reading-workflow';
 import { registerDismissLayer } from '@/lib/dismiss-layer';
 import { WorkspaceButton } from './workspace/WorkspaceUI';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 
 interface AiChatPanelProps {
   /** AI 上下文提示（排盘数据 + 设置摘要，不含用户问题） */
@@ -558,11 +560,11 @@ function AiChatPanelImpl({
               aria-expanded={isHistoryOpen}
               disabled={isBusy}
             >
-              历史{historySessions.length ? ` ${historySessions.length}` : ''}
+              历史{historySessions.length ? `${historySessions.length}` : ''}
             </WorkspaceButton>
             {isHistoryOpen ? (
               <div className="ai-chat-history-shell">
-                <button
+                <Button
                   className="ai-chat-history-backdrop"
                   type="button"
                   onClick={() => setIsHistoryOpen(false)}
@@ -578,7 +580,7 @@ function AiChatPanelImpl({
                       <strong id="ai-chat-history-title">历史对话</strong>
                       <span>最多保留 20 条</span>
                     </div>
-                    <button
+                    <Button
                       className="ai-chat-history-close"
                       type="button"
                       onClick={() => setIsHistoryOpen(false)}
@@ -586,7 +588,7 @@ function AiChatPanelImpl({
                       title="关闭"
                     >
                       ×
-                    </button>
+                    </Button>
                   </div>
                   {historySessions.length ? (
                     <div className="ai-chat-history-list">
@@ -595,7 +597,7 @@ function AiChatPanelImpl({
                           className={`ai-chat-history-item${session.id === activeSessionId ? ' is-active' : ''}`}
                           key={session.id}
                         >
-                          <button
+                          <Button
                             className="ai-chat-history-main"
                             type="button"
                             onClick={() => handleSelectSession(session)}
@@ -607,8 +609,8 @@ function AiChatPanelImpl({
                                 ? ` · ${session.turns.length} 条消息`
                                 : ' · 待完成'}
                             </span>
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             className="ai-chat-history-delete"
                             type="button"
                             onClick={(event) => handleDeleteSession(event, session.id)}
@@ -616,7 +618,7 @@ function AiChatPanelImpl({
                             title="删除对话"
                           >
                             删除
-                          </button>
+                          </Button>
                         </div>
                       ))}
                     </div>
@@ -724,13 +726,13 @@ function AiChatPanelImpl({
                   <small>已保留成功生成的资料，重试只补生成失败的部分。</small>
                 </div>
                 {onRetryReadingResources ? (
-                  <button
+                  <Button
                     type="button"
                     className="ai-chat-retry-btn"
                     onClick={onRetryReadingResources}
                   >
                     重新生成资料
-                  </button>
+                  </Button>
                 ) : null}
               </div>
             ) : null}
@@ -746,9 +748,9 @@ function AiChatPanelImpl({
                   </small>
                 </div>
                 {canRetry ? (
-                  <button type="button" className="ai-chat-retry-btn" onClick={handleRetry}>
+                  <Button variant="ghost" size="sm" type="button" className="ai-chat-retry-btn" onClick={handleRetry}>
                     重新生成
-                  </button>
+                  </Button>
                 ) : null}
               </div>
             ) : null}
@@ -759,16 +761,16 @@ function AiChatPanelImpl({
                   <span>已生成内容保留在当前对话中。</span>
                 </div>
                 {canRetry ? (
-                  <button type="button" className="ai-chat-retry-btn" onClick={handleRetry}>
+                  <Button variant="ghost" size="sm" type="button" className="ai-chat-retry-btn" onClick={handleRetry}>
                     重新生成
-                  </button>
+                  </Button>
                 ) : null}
               </div>
             ) : null}
             {composerTools ? <div className="ai-chat-composer-tools">{composerTools}</div> : null}
             <div className="ai-chat-input-row">
               <div className="ai-chat-input-shell">
-                <textarea
+                <Textarea
                   ref={inputRef}
                   className="ai-chat-input"
                   value={inputValue}
@@ -778,7 +780,7 @@ function AiChatPanelImpl({
                   rows={workspaceMode ? 4 : 1}
                   disabled={!isContextReady}
                 />
-                <button
+                <Button
                   className="ai-chat-send-btn"
                   type="button"
                   onClick={isBusy ? cancel : handleSend}
@@ -804,10 +806,10 @@ function AiChatPanelImpl({
                       <path d="m5 12 7-7 7 7" />
                     </svg>
                   )}
-                </button>
+                </Button>
               </div>
               {onOpenInspiration ? (
-                <button
+                <Button
                   className="ai-chat-inspire-btn"
                   type="button"
                   onClick={onOpenInspiration}
@@ -826,7 +828,7 @@ function AiChatPanelImpl({
                   >
                     <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
                   </svg>
-                </button>
+                </Button>
               ) : null}
             </div>
           </div>

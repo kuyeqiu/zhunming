@@ -1,6 +1,7 @@
 import { QimenBirthRangeNavigator } from './QimenBirthRangeNavigator';
 import { memo, useMemo, useState } from 'react';
 import type { QimenLifetimeData, QimenTopic, QimenLifetimeStage } from '@/types/divination';
+import { Button } from '@/components/ui/button';
 
 export interface QimenLifetimeBoardProps {
   title: string;
@@ -178,7 +179,7 @@ export const QimenLifetimeBoard = memo(function QimenLifetimeBoard({
           <div className="traditional-qimen-actions">
             <span className="toolbar-title">主题聚焦：</span>
             {TOPIC_OPTIONS.map((opt) => (
-              <button
+              <Button
                 type="button"
                 key={opt.id}
                 className={`traditional-qimen-btn ${activeTopic === opt.id && activeStageIndex === null ? 'is-active' : ''}`}
@@ -188,7 +189,7 @@ export const QimenLifetimeBoard = memo(function QimenLifetimeBoard({
                 }}
               >
                 {opt.label}
-              </button>
+              </Button>
             ))}
           </div>
           <span className="traditional-qimen-tip">
@@ -346,13 +347,13 @@ export const QimenLifetimeBoard = memo(function QimenLifetimeBoard({
               <h3>
                 {selectedPalace.name}（{selectedPalace.element}）深度合参
               </h3>
-              <button
+              <Button
                 type="button"
                 className="inspector-close"
                 onClick={() => setSelectedGong(null)}
               >
                 关闭
-              </button>
+              </Button>
             </div>
             <div className="inspector-body">
               <p>

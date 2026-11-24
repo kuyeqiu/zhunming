@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { INK_MOTIF_LABELS, InkMotif, type InkMotifName } from './InkArt';
+import { Button } from '@/components/ui/button';
 
 const MOTIF_STORAGE_KEY = 'mingyu.ink.motif';
 
@@ -90,23 +91,23 @@ export function InkHero({
         </div>
       </div>
 
-      <button type="button" className="ink-scroll-hint" onClick={onStart}>
+      <Button variant="ghost" size="sm" type="button" className="ink-scroll-hint" onClick={onStart}>
         <span>展卷起盘</span>
         <span className="ink-scroll-hint__line" aria-hidden="true" />
-      </button>
+      </Button>
 
       {showMotifSwitch ? (
         <div className="ink-motif-switch" style={{ marginTop: '26px' }} role="group" aria-label="画境切换">
           <span>画境</span>
           {motifs.map((name) => (
-            <button
+            <Button
               key={name}
               type="button"
               aria-pressed={name === motif}
               onClick={() => setMotif(name)}
             >
               {INK_MOTIF_LABELS[name]}
-            </button>
+            </Button>
           ))}
         </div>
       ) : null}

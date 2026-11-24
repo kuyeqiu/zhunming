@@ -1,6 +1,14 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { registerDismissLayer } from '@/lib/dismiss-layer';
+import type { ReactNode } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { cn } from 'cn';
 
 export type DropdownSelectOption<T extends string = string> = {
   value: T;
@@ -8,14 +16,6 @@ export type DropdownSelectOption<T extends string = string> = {
   triggerLabel?: string;
   group?: string;
   disabled?: boolean;
-};
-
-type DropdownPosition = {
-  left: number;
-  top: number;
-  width: number;
-  maxHeight: number;
-  placement: 'above' | 'below';
 };
 
 type DropdownSelectProps<T extends string> = {
@@ -32,21 +32,11 @@ type DropdownSelectProps<T extends string> = {
   onFavoriteChange?: (value: T) => void;
 };
 
-function findEnabledOption<T extends string>(
-  options: readonly DropdownSelectOption<T>[],
-  startIndex: number,
-  direction: 1 | -1,
-) {
-  if (options.length === 0) return -1;
-
-  for (let offset = 0; offset < options.length; offset += 1) {
-    const index = (startIndex + offset * direction + options.length) % options.length;
-    if (!options[index]?.disabled) return index;
-  }
-
-  return -1;
-}
-
+/**
+ * 下拉选择器：shadcn Select（@base-ui/react）实现，外观走 base-nova 预设。
+ * API 与旧实现一致：分组按相邻 option.group 前缀渲染，trigger 显示 triggerLabel，
+ * 每项右侧可挂「设为默认」星标（onFavoriteChange）。
+ */
 export function DropdownSelect<T extends string>({
   id,
   value,
@@ -60,258 +50,97 @@ export function DropdownSelect<T extends string>({
   favoriteLabel = '默认项',
   onFavoriteChange,
 }: DropdownSelectProps<T>) {
-  const generatedId = useId();
-  const triggerId = id ?? `dropdown-select-${generatedId}`;
-  const menuId = `${triggerId}-menu`;
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const selectedIndex = Math.max(
-    0,
-    options.findIndex((option) => option.value === value),
-  );
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(selectedIndex);
-  const [position, setPosition] = useState<DropdownPosition | null>(null);
-  const selectedOption = options[selectedIndex] ?? options[0];
-  const longestLabelLength = useMemo(
-    () => options.reduce((length, option) => Math.max(length, option.label.length), 0),
-    [options],
-  );
+  const selectedLabel = (current: T) => {
+    const option = options.find((item) => item.value === current);
+    return option?.triggerLabel ?? option?.label ?? '';
+  };
 
-  const updatePosition = useCallback(() => {
-    const trigger = triggerRef.current;
-    if (!trigger) return;
+  const groups: { name?: string; items: ReactNode[] }[] = [];
+  for (const option of options) {
+    const favoriteButton = onFavoriteChange ? (
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label={`${option.label}设为${favoriteLabel}`}
+        aria-pressed={option.value === favoriteValue}
+        title={
+          option.value === favoriteValue
+            ? `当前${favoriteLabel}`
+            : `设为${favoriteLabel}`
+        }
+        disabled={option.disabled}
+        onPointerDown={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        }}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onFavoriteChange(option.value);
+        }}
+        className={cn(
+          'pointer-events-auto ml-auto flex size-4 shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent text-[13px] leading-none text-muted-foreground transition-colors hover:text-foreground disabled:opacity-45',
+          option.value === favoriteValue && 'text-foreground',
+        )}
+      >
+        <span aria-hidden="true">
+          {option.value === favoriteValue ? '★' : '☆'}
+        </span>
+      </button>
+    ) : null;
 
-    const rect = trigger.getBoundingClientRect();
-    const visualViewport = window.visualViewport;
-    const viewportLeft = visualViewport?.offsetLeft ?? 0;
-    const viewportTop = visualViewport?.offsetTop ?? 0;
-    const viewportWidth = visualViewport?.width ?? document.documentElement.clientWidth;
-    const viewportHeight = visualViewport?.height ?? window.innerHeight;
-    const viewportRight = viewportLeft + viewportWidth;
-    const viewportBottom = viewportTop + viewportHeight;
-    const maxViewportWidth = Math.max(160, viewportWidth - 16);
-    const width = Math.min(
-      Math.max(rect.width, 160, longestLabelLength * 14 + (onFavoriteChange ? 82 : 48)),
-      Math.min(onFavoriteChange ? 320 : 280, maxViewportWidth),
+    const item = (
+      <SelectItem
+        key={option.value}
+        value={option.value}
+        disabled={option.disabled}
+        className={onFavoriteChange ? 'pr-8' : undefined}
+      >
+        <span>{option.label}</span>
+        {favoriteButton}
+      </SelectItem>
     );
-    const maxHeight = Math.min(320, Math.max(160, Math.floor(viewportHeight * 0.5)));
-    const estimatedHeight = Math.min(maxHeight, options.length * 40 + 12);
-    const spaceBelow = viewportBottom - rect.bottom - 8;
-    const spaceAbove = rect.top - viewportTop - 8;
-    const placement =
-      spaceBelow < Math.min(estimatedHeight, 160) && spaceAbove > spaceBelow ? 'above' : 'below';
-    const left = Math.min(
-      Math.max(viewportLeft + 8, rect.left),
-      Math.max(viewportLeft + 8, viewportRight - width - 8),
-    );
-    const availableHeight = placement === 'above' ? spaceAbove : spaceBelow;
-
-    setPosition({
-      left,
-      top: placement === 'above' ? rect.top - 6 : rect.bottom + 6,
-      width,
-      maxHeight: Math.max(48, Math.min(maxHeight, availableHeight)),
-      placement,
-    });
-  }, [longestLabelLength, onFavoriteChange, options.length]);
-
-  const openMenu = useCallback(() => {
-    if (disabled || options.length === 0) return;
-    setActiveIndex(findEnabledOption(options, selectedIndex, 1));
-    updatePosition();
-    setIsOpen(true);
-  }, [disabled, options, selectedIndex, updatePosition]);
-
-  const closeMenu = useCallback(() => {
-    setIsOpen(false);
-  }, []);
-
-  const selectOption = useCallback(
-    (index: number) => {
-      const option = options[index];
-      if (!option || option.disabled) return;
-      onChange(option.value);
-      setActiveIndex(index);
-      closeMenu();
-      triggerRef.current?.focus({ preventScroll: true });
-    },
-    [closeMenu, onChange, options],
-  );
-
-  useEffect(() => {
-    if (!isOpen) return undefined;
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as Node;
-      if (triggerRef.current?.contains(target) || menuRef.current?.contains(target)) return;
-      closeMenu();
-    };
-    const handleViewportChange = () => updatePosition();
-    const visualViewport = window.visualViewport;
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    const resizeObserver = new ResizeObserver(handleViewportChange);
-    if (triggerRef.current) resizeObserver.observe(triggerRef.current);
-    window.addEventListener('resize', handleViewportChange);
-    window.addEventListener('scroll', handleViewportChange, true);
-    visualViewport?.addEventListener('resize', handleViewportChange);
-    visualViewport?.addEventListener('scroll', handleViewportChange);
-    return () => {
-      resizeObserver.disconnect();
-      document.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('resize', handleViewportChange);
-      window.removeEventListener('scroll', handleViewportChange, true);
-      visualViewport?.removeEventListener('resize', handleViewportChange);
-      visualViewport?.removeEventListener('scroll', handleViewportChange);
-    };
-  }, [closeMenu, isOpen, updatePosition]);
-
-  useEffect(() => {
-    if (!isOpen) return undefined;
-    return registerDismissLayer(() => {
-      closeMenu();
-    });
-  }, [closeMenu, isOpen]);
-
-  useEffect(() => {
-    if (isOpen) setActiveIndex(selectedIndex);
-  }, [isOpen, selectedIndex]);
-
-  useEffect(() => {
-    if (!isOpen || activeIndex < 0) return;
-
-    const menu = menuRef.current;
-    const option = menu?.querySelectorAll<HTMLElement>('[role="option"]')[activeIndex];
-    if (!menu || !option) return;
-    const menuRect = menu.getBoundingClientRect();
-    const optionRect = option.getBoundingClientRect();
-    if (optionRect.top < menuRect.top) menu.scrollTop -= menuRect.top - optionRect.top;
-    else if (optionRect.bottom > menuRect.bottom)
-      menu.scrollTop += optionRect.bottom - menuRect.bottom;
-  }, [activeIndex, isOpen]);
-
-  function moveActiveIndex(direction: 1 | -1) {
-    const nextIndex = findEnabledOption(options, activeIndex + direction, direction);
-    if (nextIndex >= 0) setActiveIndex(nextIndex);
-  }
-
-  function handleKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-      event.preventDefault();
-      if (!isOpen) {
-        openMenu();
-      } else {
-        moveActiveIndex(event.key === 'ArrowDown' ? 1 : -1);
-      }
-      return;
+    if (option.group && groups[groups.length - 1]?.name !== option.group) {
+      groups.push({ name: option.group, items: [item] });
+    } else {
+      groups[groups.length - 1]?.items.push(item) ??
+        groups.push({ items: [item] });
     }
-
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      if (isOpen) selectOption(activeIndex);
-      else openMenu();
-      return;
-    }
-
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      closeMenu();
-      return;
-    }
-
-    if (event.key === 'Tab') closeMenu();
   }
 
   return (
-    <>
-      <button
-        id={triggerId}
-        ref={triggerRef}
-        type="button"
-        role="combobox"
+    <Select
+      value={value}
+      onValueChange={(next) => {
+        if (next !== null) onChange(next as T);
+      }}
+      disabled={disabled}
+      name={id}
+    >
+      <SelectTrigger
+        id={id}
         aria-label={ariaLabel}
-        aria-controls={menuId}
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-        aria-activedescendant={isOpen ? `${menuId}-option-${activeIndex}` : undefined}
-        className={`workspace-ui-dropdown-trigger ${variant === 'field' ? 'is-field' : ''}`}
-        disabled={disabled}
-        onClick={() => (isOpen ? closeMenu() : openMenu())}
-        onKeyDown={handleKeyDown}
+        className={cn(variant === 'field' ? 'w-full' : 'w-full')}
       >
-        {prefix ? <span className="workspace-ui-dropdown-prefix">{prefix}</span> : null}
-        <span className="workspace-ui-dropdown-value">
-          {selectedOption?.triggerLabel ?? selectedOption?.label ?? ''}
-        </span>
-      </button>
-
-      {isOpen && position
-        ? createPortal(
-            <div
-              id={menuId}
-              ref={menuRef}
-              role="listbox"
-              aria-label={ariaLabel}
-              className={`workspace-ui-dropdown-menu is-${position.placement}`}
-              style={{
-                left: position.left,
-                top: position.top,
-                width: position.width,
-                maxHeight: position.maxHeight,
-              }}
-            >
-              {options.map((option, index) => (
-                <div
-                  className={`workspace-ui-dropdown-entry ${onFavoriteChange ? 'has-favorite' : ''}`}
-                  key={option.value}
-                >
-                  {option.group && option.group !== options[index - 1]?.group ? (
-                    <div className="workspace-ui-dropdown-group" role="presentation">
-                      {option.group}
-                    </div>
-                  ) : null}
-                  <button
-                    id={`${menuId}-option-${index}`}
-                    type="button"
-                    role="option"
-                    aria-selected={option.value === value}
-                    className={`workspace-ui-dropdown-option ${index === activeIndex ? 'is-active' : ''}`}
-                    disabled={option.disabled}
-                    onPointerDown={(event) => event.preventDefault()}
-                    onMouseEnter={() => setActiveIndex(index)}
-                    onClick={() => selectOption(index)}
-                  >
-                    <span>{option.label}</span>
-                    {option.value === value ? <span aria-hidden="true">✓</span> : null}
-                  </button>
-                  {onFavoriteChange ? (
-                    <button
-                      type="button"
-                      className={`workspace-ui-dropdown-favorite ${option.value === favoriteValue ? 'is-favorite' : ''}`}
-                      aria-label={`${option.label}设为${favoriteLabel}`}
-                      aria-pressed={option.value === favoriteValue}
-                      title={
-                        option.value === favoriteValue
-                          ? `当前${favoriteLabel}`
-                          : `设为${favoriteLabel}`
-                      }
-                      disabled={option.disabled}
-                      onPointerDown={(event) => event.preventDefault()}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onFavoriteChange(option.value);
-                      }}
-                    >
-                      <span aria-hidden="true">{option.value === favoriteValue ? '★' : '☆'}</span>
-                    </button>
-                  ) : null}
-                </div>
-              ))}
-            </div>,
-            document.body,
-          )
-        : null}
-    </>
+        {prefix ? (
+          <span className="shrink-0 text-[0.85em] font-medium text-muted-foreground">
+            {prefix}
+          </span>
+        ) : null}
+        <SelectValue>{(current: T) => selectedLabel(current)}</SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {groups.map((group, index) =>
+          group.name ? (
+            <SelectGroup key={`${group.name}-${index}`}>
+              <SelectLabel>{group.name}</SelectLabel>
+              {group.items}
+            </SelectGroup>
+          ) : (
+            <SelectGroup key={`group-${index}`}>{group.items}</SelectGroup>
+          ),
+        )}
+      </SelectContent>
+    </Select>
   );
 }

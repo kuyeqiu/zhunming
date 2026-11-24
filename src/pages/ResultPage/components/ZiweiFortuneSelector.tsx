@@ -10,6 +10,7 @@ import type { DecadalTimelineOption } from 'mingyu-core/ziwei';
 import { formatMonthDayLabel, splitGanZhi } from '../ResultPage.helpers';
 import { useZiweiFortuneOptionsWorker } from '../hooks/useZiweiFortuneOptionsWorker';
 import { BaziFortuneLoadingCard } from './skeletons';
+import { Button } from '@/components/ui/button';
 
 export function ZiweiFortuneSelector(props: {
   chartInput: ChartInput;
@@ -112,7 +113,7 @@ export function ZiweiFortuneSelector(props: {
             {decadalOptions.map((item, index) => {
               const isActive = selectedScope === 'decadal' && selectedDateStr === item.dateStr;
               return (
-                <button
+                <Button
                   type="button"
                   key={`${item.label}-${item.startAge}`}
                   className={`fortune-item ${isActive ? 'active' : ''}`}
@@ -126,7 +127,7 @@ export function ZiweiFortuneSelector(props: {
                   <div className="fortune-vertical-group">
                     <div className="fortune-text-chip">{formatMonthDayLabel(item.dateStr)}</div>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -139,7 +140,7 @@ export function ZiweiFortuneSelector(props: {
               const [gan, zhi] = splitGanZhi(item.ganZhi);
               const isActive = selectedScope === 'yearly' && selectedDateStr === item.dateStr;
               return (
-                <button
+                <Button
                   type="button"
                   key={item.dateStr}
                   className={`fortune-item ${isActive ? 'active' : ''}`}
@@ -158,7 +159,7 @@ export function ZiweiFortuneSelector(props: {
                       <span className="main-char">{zhi}</span>
                     </div>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -171,7 +172,7 @@ export function ZiweiFortuneSelector(props: {
               const [gan, zhi] = splitGanZhi(item.ganZhi);
               const isActive = selectedScope === 'monthly' && selectedDateStr === item.dateStr;
               return (
-                <button
+                <Button
                   type="button"
                   key={item.dateStr}
                   className={`fortune-item ${isActive ? 'active' : ''}`}
@@ -190,7 +191,7 @@ export function ZiweiFortuneSelector(props: {
                       <span className="main-char">{zhi}</span>
                     </div>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -203,7 +204,7 @@ export function ZiweiFortuneSelector(props: {
               const [gan, zhi] = splitGanZhi(item.ganZhi);
               const isActive = selectedScope === 'daily' && selectedDateStr === item.dateStr;
               return (
-                <button
+                <Button
                   type="button"
                   key={item.dateStr}
                   className={`fortune-item ${isActive ? 'active' : ''}`}
@@ -219,7 +220,7 @@ export function ZiweiFortuneSelector(props: {
                       <span className="main-char">{zhi}</span>
                     </div>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>

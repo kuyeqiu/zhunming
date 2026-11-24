@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { WorkspaceButton, WorkspaceDialog } from './workspace/WorkspaceUI';
+import { Button } from '@/components/ui/button';
 import {
   DEFAULT_WORKSPACE_PREFERENCES,
   HOME_MODE_DEFINITIONS,
@@ -145,13 +146,13 @@ export function WorkspaceSettingsModal({
             })}
           </div>
 
-          <button type="button" className="workspace-ai-setting-entry" onClick={onOpenAiSettings}>
+          <Button variant="ghost" size="sm" type="button" className="workspace-ai-setting-entry" onClick={onOpenAiSettings}>
             <span>
               <strong>AI 解读设置</strong>
               <small>启用内置服务或配置自己的模型</small>
             </span>
             <span aria-hidden="true">›</span>
-          </button>
+          </Button>
         </section>
 
         <section className="workspace-settings-section workspace-order-section">

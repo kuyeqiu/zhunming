@@ -16,6 +16,7 @@ import { MingluCrossSynthesisSection } from './MingluCrossSynthesisSection';
 import { MingluGlossarySection } from './MingluGlossarySection';
 import { scrollToMingluAnchor } from './MingluLink';
 import { formatMingluPatternCopy } from './minglu-copy';
+import { Button } from '@/components/ui/button';
 import './minglu.css';
 
 interface MingluWikiViewProps {
@@ -95,7 +96,7 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
     md += `\n## 四、柱间作用关系\n`;
     article.interactionsSection.forEach((item) => {
       md += `- 【${item.category}】${item.name}${item.conditionStatus ? `（${item.conditionStatus}）` : ''}：${item.influence}\n`;
-      if (item.conditionEvidence?.length) md += `  ${item.conditionEvidence.join('；')}\n`;
+      if (item.conditionEvidence?.length) md += `${item.conditionEvidence.join('；')}\n`;
     });
 
     md += `\n## 五、全息神煞\n`;
@@ -121,7 +122,7 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
       {/* 命录顶部工具栏 */}
       <header className="minglu-wiki-toolbar">
         <div className="minglu-toolbar-left">
-          <button
+          <Button
             type="button"
             className="minglu-mobile-toc-toggle"
             onClick={() => setIsMobileTocOpen(!isMobileTocOpen)}
@@ -129,7 +130,7 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
             aria-expanded={isMobileTocOpen}
           >
             目录 ({article.tableOfContents.length})
-          </button>
+          </Button>
           <div className="minglu-toolbar-title-wrap">
             <h1 className="minglu-toolbar-title">命录 · 百科全书大报告</h1>
             <span className="minglu-toolbar-subtitle">
@@ -141,22 +142,22 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
         </div>
 
         <div className="minglu-toolbar-actions">
-          <button
+          <Button
             type="button"
             className="minglu-toolbar-btn is-copy"
             onClick={handleCopyMarkdownReport}
             title="复制完整 Markdown 报告文本"
           >
             {copySuccess ? '已复制完整报告' : '复制 Markdown 报告'}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             className="minglu-toolbar-btn is-print"
             onClick={handlePrint}
             title="打印或导出 PDF 视图"
           >
             打印 / 导出 PDF
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -312,3 +313,4 @@ export const MingluWikiView: React.FC<MingluWikiViewProps> = ({ article }) => {
     </div>
   );
 };
+

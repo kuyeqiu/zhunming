@@ -9,6 +9,7 @@ import type {
   UseAstrolabeBirthRangeResult,
 } from '@/hooks/useAstrolabeBirthRange';
 import { AstrolabeBoard } from './AstrolabeBoard';
+import { Button } from '@/components/ui/button';
 
 const BEIJING_OFFSET_MILLISECONDS = 8 * 60 * 60 * 1_000;
 
@@ -250,14 +251,14 @@ function renderProgress(
       <div style={{ alignItems: 'center', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
         <span aria-live="polite">{loading ? formatProgress(progress) : error}</span>
         {loading ? (
-          <button type="button" className="result-chip" onClick={cancel}>
+          <Button variant="ghost" size="sm" type="button" className="result-chip" onClick={cancel}>
             取消计算
-          </button>
+          </Button>
         ) : null}
         {error ? (
-          <button type="button" className="result-chip result-chip-highlight" onClick={retry}>
+          <Button variant="ghost" size="sm" type="button" className="result-chip result-chip-highlight" onClick={retry}>
             重试
-          </button>
+          </Button>
         ) : null}
       </div>
     </div>
@@ -314,7 +315,7 @@ function renderBranchSelector(
       style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}
     >
       {branches.map((branch, index) => (
-        <button
+        <Button
           key={`${branch.startTimestamp}-${branch.endTimestamp}`}
           type="button"
           role="tab"
@@ -323,7 +324,7 @@ function renderBranchSelector(
           onClick={() => onSelect(index)}
         >
           时段 {index + 1} · {branch.sampleCount} 秒
-        </button>
+        </Button>
       ))}
     </div>
   );

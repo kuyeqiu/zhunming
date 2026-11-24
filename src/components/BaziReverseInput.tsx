@@ -17,6 +17,8 @@ import {
   type BaziReverseResolvedInput,
   type BaziReverseSource,
 } from '@/lib/bazi-reverse-input';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import './BaziReverseInput.css';
 
 const currentBeijingYear = new Date(Date.now() + 8 * 60 * 60 * 1000).getUTCFullYear();
@@ -139,10 +141,9 @@ export function BaziReverseInput({ onSelect, source, onInvalidate }: BaziReverse
 
       <div className="bazi-reverse-input-fields">
         {PILLAR_FIELDS.map((field) => (
-          <label className="workspace-ui-field" key={field.key}>
+          <Label className="workspace-ui-field" key={field.key}>
             <span>{field.label}</span>
             <select
-              className="workspace-ui-control"
               value={pillars[field.key]}
               data-testid={`bazi-reverse-${field.key}`}
               disabled={
@@ -163,15 +164,14 @@ export function BaziReverseInput({ onSelect, source, onInvalidate }: BaziReverse
                 </option>
               ))}
             </select>
-          </label>
+          </Label>
         ))}
       </div>
 
       <div className="bazi-reverse-input-years">
-        <label className="workspace-ui-field">
+        <Label className="workspace-ui-field">
           <span>查询起始年</span>
-          <input
-            className="workspace-ui-control"
+          <Input
             value={startYear}
             type="text"
             inputMode="numeric"
@@ -182,11 +182,10 @@ export function BaziReverseInput({ onSelect, source, onInvalidate }: BaziReverse
               onInvalidate?.();
             }}
           />
-        </label>
-        <label className="workspace-ui-field">
+        </Label>
+        <Label className="workspace-ui-field">
           <span>查询结束年</span>
-          <input
-            className="workspace-ui-control"
+          <Input
             value={endYear}
             type="text"
             inputMode="numeric"
@@ -197,7 +196,7 @@ export function BaziReverseInput({ onSelect, source, onInvalidate }: BaziReverse
               onInvalidate?.();
             }}
           />
-        </label>
+        </Label>
       </div>
       {!hasValidYearRange ? (
         <p className="bazi-reverse-input-note">
@@ -272,3 +271,4 @@ export function BaziReverseInput({ onSelect, source, onInvalidate }: BaziReverse
     </div>
   );
 }
+

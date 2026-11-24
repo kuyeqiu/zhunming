@@ -68,6 +68,14 @@ html {
 
 /* 水墨：宣纸底 + 焦墨字 + 朱砂唯一点缀。
    surface 一律向纸靠拢，避免纯白卡片把版面割裂成「后台表格」。 */
+/* ink 主题：页底不再用红/紫径向光斑，改为极淡墨灰，避免整屏泛粉 */
+:root[data-accent-theme='ink'] {
+  background:
+    radial-gradient(circle at top left, rgba(74, 72, 67, 0.06), transparent 34%),
+    radial-gradient(circle at top right, rgba(74, 72, 67, 0.05), transparent 32%),
+    linear-gradient(180deg, var(--surface-page) 0%, var(--surface-page-end) 100%) !important;
+}
+
 :root[data-accent-theme='ink'] {
   --text-primary: #2e2c28;
   --text-strong: #181715;
@@ -79,30 +87,39 @@ html {
   --accent: #9e2a2b;
   --accent-strong: #8b2425;
   --accent-deep: #6d1c1d;
-  --accent-soft: rgba(158, 42, 43, 0.1);
-  --accent-soft-strong: rgba(158, 42, 43, 0.16);
-  --accent-surface: rgba(247, 244, 236, 0.9);
-  --accent-surface-solid: #f7f4ec;
+  /* 朱砂只做小面积印记：选中态、徽标改用淡墨灰底，
+     整屏不再因红色低频铺开而泛粉 */
+  --accent-soft: rgba(74, 72, 67, 0.1);
+  --accent-soft-strong: rgba(74, 72, 67, 0.16);
+  --accent-surface: rgba(244, 243, 240, 0.9);
+  --accent-surface-solid: #f4f3f0;
   --secondary: #6d6a62;
   --secondary-strong: #4a4843;
   --secondary-soft: rgba(74, 72, 67, 0.12);
   --secondary-soft-strong: rgba(74, 72, 67, 0.18);
-  --highlight-soft: rgba(234, 230, 220, 0.6);
-  --surface-page: #f4f2ec;
-  --surface-page-end: #efebe1;
-  --surface-base: #fbfaf6;
-  --surface-base-rgb: 251 250 246;
-  --surface-panel: rgba(249, 247, 241, 0.9);
-  --surface-elevated: rgba(251, 250, 246, 0.96);
-  --surface-elevated-strong: rgba(253, 252, 249, 0.98);
-  --surface-soft: rgba(246, 243, 236, 0.94);
-  --surface-soft-solid: #f6f3ec;
-  --surface-muted: rgba(240, 236, 226, 0.96);
-  --surface-muted-solid: #f0ece2;
-  --surface-overlay: rgba(251, 250, 246, 0.84);
+  --highlight-soft: rgba(240, 239, 235, 0.6);
+  /* 纸底向冷净纸白收敛，压低黄粉调 */
+  --surface-page: #f8f7f4;
+  --surface-page-end: #f1f0ec;
+  --surface-base: #fdfdfc;
+  --surface-base-rgb: 253 253 252;
+  --surface-soft: rgba(248, 248, 246, 0.94);
+  --surface-soft-solid: #f8f8f6;
+  --surface-muted: rgba(245, 245, 243, 0.96);
+  --surface-muted-solid: #f5f5f3;
+  /* 默认主题留下的紫粉件也换成中性/朱砂 */
+  --border-contrast: rgba(158, 42, 43, 0.26);
+  --shadow-lg: 0 24px 70px rgba(24, 23, 21, 0.1);
+  --shadow-md: 0 16px 38px rgba(24, 23, 21, 0.07);
+  --shadow-card: 0 18px 50px rgba(24, 23, 21, 0.07);
+  --shadow-sm: 0 1px 3px rgba(24, 23, 21, 0.14);
+  --backdrop-scrim: rgba(24, 23, 21, 0.42);
+  --surface-panel: rgba(253, 252, 250, 0.9);
+  --surface-elevated: rgba(253, 253, 252, 0.96);
+  --surface-elevated-strong: rgba(254, 254, 253, 0.98);
+  --surface-overlay: rgba(253, 253, 252, 0.84);
   --border-soft: rgba(74, 72, 67, 0.14);
   --border-strong: rgba(74, 72, 67, 0.22);
-  --border-contrast: rgba(158, 42, 43, 0.22);
 }
 
 * {
@@ -142,6 +159,22 @@ body.has-workspace-dialog {
   display: grid;
   place-items: center;
   padding: 24px;
+}
+
+@keyframes route-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.route-loading-spinner {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 2px solid var(--border-soft);
+  border-top-color: var(--text-strong);
+  animation: route-loading-spin 0.7s linear infinite;
 }
 
 @keyframes skeleton-shimmer {

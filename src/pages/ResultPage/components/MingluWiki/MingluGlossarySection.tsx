@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { MingluGlossaryEntry } from 'mingyu-core/minglu';
 import { scrollToMingluAnchor } from './MingluLink';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   entries: MingluGlossaryEntry[];
@@ -63,17 +65,17 @@ export const MingluGlossarySection: React.FC<Props> = ({ entries, navigation }) 
       <div className="minglu-glossary-filter-bar">
         <div className="minglu-glossary-categories">
           {categories.map((c) => (
-            <button
+            <Button
               type="button"
               key={c}
               className={`minglu-category-btn ${filterCategory === c ? 'is-active' : ''}`}
               onClick={() => setFilterCategory(c)}
             >
               {c}
-            </button>
+            </Button>
           ))}
         </div>
-        <input
+        <Input
           type="text"
           className="minglu-glossary-search-input"
           placeholder="搜索词条名称或释义..."

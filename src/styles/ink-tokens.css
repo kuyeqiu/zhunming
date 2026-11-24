@@ -1678,7 +1678,8 @@
   margin-left: auto;
 }
 
-.ink-topbar__actions button {
+.ink-topbar__actions button,
+.ink-topbar__account {
   padding: 5px 2px;
   border: 0;
   border-bottom: 1px solid transparent;
@@ -1687,13 +1688,20 @@
   font-family: inherit;
   font-size: 0.85rem;
   letter-spacing: 0.18em;
+  text-decoration: none;
   cursor: pointer;
   transition: all var(--ink-dur-base) var(--ink-ease);
 }
 
-.ink-topbar__actions button:hover {
+.ink-topbar__actions button:hover,
+.ink-topbar__account:hover {
   color: var(--cinnabar);
   border-bottom-color: var(--cinnabar-line);
+}
+
+.ink-topbar__account.is-active {
+  color: var(--ink-deep);
+  border-bottom-color: var(--cinnabar);
 }
 
 /* 窄屏：导航项压缩，避免与品牌挤在一起 */
@@ -1871,19 +1879,23 @@
   height: 100%;
 }
 
-/* 问题输入：无边框，只有一道底线，聚焦时转亮 */
+/* 问题输入：无边框，只有一道底线，聚焦时转亮。
+   用 !important 压掉 shadcn textarea 的 border/ring/rounded/padding——
+   它在 Tailwind utilities 层，unlayered 规则已被组件级样式覆盖。 */
 .workspace-home-hero-ask {
   position: relative;
   width: min(560px, 82vw);
 }
 
 .workspace-home-hero-question {
-  width: 100%;
-  padding: 10px 2px;
-  border: 0;
-  border-bottom: 1px solid rgba(243, 241, 233, 0.28);
-  border-radius: 0;
-  background: transparent;
+  width: 100% !important;
+  min-height: 0 !important;
+  padding: 10px 2px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(243, 241, 233, 0.28) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
   color: #f4f2ec;
   font-family: var(--ink-font-serif);
   font-size: 16px; /* ≥16px，避免 iOS 聚焦时页面缩放 */
@@ -1902,8 +1914,10 @@
   letter-spacing: 0.12em;
 }
 
-.workspace-home-hero-question:focus {
-  border-bottom-color: rgba(243, 241, 233, 0.75);
+.workspace-home-hero-question:focus,
+.workspace-home-hero-question:focus-visible {
+  border-bottom-color: rgba(243, 241, 233, 0.75) !important;
+  box-shadow: none !important;
 }
 
 /* 唯一的操作提示：常驻（这是进入整站的入口说明），离场时随标题一起淡出 */

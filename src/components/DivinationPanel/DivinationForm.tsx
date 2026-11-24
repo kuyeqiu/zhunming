@@ -33,6 +33,10 @@ import {
   isBaziReverseSource,
 } from '@/lib/divination/time-input';
 import { DropdownSelect } from '@/components/DropdownSelect';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   SupplementaryInfoModal,
   type SupplementaryInfoModalField,
@@ -252,8 +256,8 @@ function PromptSelectionFields({
       </div>
       <div className="divination-prompt-selection-grid">
         <div className="form-item">
-          <label htmlFor="divination-prompt-topic-select">解读主题</label>
-          <div className="divination-select-shell">
+          <Label htmlFor="divination-prompt-topic-select">解读主题</Label>
+          <div >
             <DropdownSelect
               id="divination-prompt-topic-select"
               value={topicId}
@@ -267,8 +271,8 @@ function PromptSelectionFields({
         </div>
         {subtopicOptions.length ? (
           <div className="form-item">
-            <label htmlFor="divination-prompt-subtopic-select">主题细项</label>
-            <div className="divination-select-shell">
+            <Label htmlFor="divination-prompt-subtopic-select">主题细项</Label>
+            <div >
               <DropdownSelect
                 id="divination-prompt-subtopic-select"
                 value={selectedSubtopic}
@@ -280,10 +284,10 @@ function PromptSelectionFields({
         ) : null}
         {scopeOptions.length > 1 ? (
           <div className="form-item">
-            <label htmlFor="divination-prompt-scope-select">
+            <Label htmlFor="divination-prompt-scope-select">
               {draft.method === 'taiyi' ? '太乙计式' : '分析范围'}
-            </label>
-            <div className="divination-select-shell">
+            </Label>
+            <div >
               <DropdownSelect
                 id="divination-prompt-scope-select"
                 value={selectedScope}
@@ -580,15 +584,16 @@ export function DivinationForm({
           {!isMethodLocked ? (
             <div className="divination-method-grid">
               {GENERAL_DIVINATION_METHOD_OPTIONS.map((item) => (
-                <button
+                <Button
                   key={item.value}
                   type="button"
-                  className={`divination-method-btn ${draft.method === item.value ? 'is-active' : ''}`}
+                  variant={draft.method === item.value ? 'secondary' : 'outline'}
+                  className="h-auto min-h-14 flex-col items-start justify-start gap-0.5 whitespace-normal px-3 py-2.5 text-left font-normal"
                   onClick={() => updateMethod(item.value)}
                 >
-                  <strong>{item.label}</strong>
-                  <span>{item.description}</span>
-                </button>
+                  <span className="text-sm font-medium leading-tight">{item.label}</span>
+                  <span className="text-xs leading-snug text-muted-foreground">{item.description}</span>
+                </Button>
               ))}
             </div>
           ) : null}
@@ -634,15 +639,16 @@ export function DivinationForm({
         {!isMethodLocked ? (
           <div className="divination-method-grid">
             {GENERAL_DIVINATION_METHOD_OPTIONS.map((item) => (
-              <button
+              <Button
                 key={item.value}
                 type="button"
-                className={`divination-method-btn ${draft.method === item.value ? 'is-active' : ''}`}
+                variant={draft.method === item.value ? 'secondary' : 'outline'}
+                className="h-auto min-h-14 flex-col items-start justify-start gap-0.5 whitespace-normal px-3 py-2.5 text-left font-normal"
                 onClick={() => updateMethod(item.value)}
               >
-                <strong>{item.label}</strong>
-                <span>{item.description}</span>
-              </button>
+                <span className="text-sm font-medium leading-tight">{item.label}</span>
+                <span className="text-xs leading-snug text-muted-foreground">{item.description}</span>
+              </Button>
             ))}
           </div>
         ) : null}
@@ -650,14 +656,14 @@ export function DivinationForm({
         <div className="person-info-form">
           <div className="form-row">
             <div className="form-item">
-              <label htmlFor="divination-question-input">{questionLabel}</label>
+              <Label htmlFor="divination-question-input">{questionLabel}</Label>
               <div className="divination-question-field">
-                <textarea
+                <Textarea
                   ref={questionInputRef}
                   id="divination-question-input"
                   rows={5}
                   value={draft.question}
-                  className="form-input divination-textarea"
+                  className="divination-textarea"
                   placeholder={questionPlaceholder}
                   onChange={(event) => {
                     updateDraft('questionSource', 'custom');
@@ -669,8 +675,8 @@ export function DivinationForm({
                   <div className="divination-desktop-question-controls">
                     {draft.method === 'meihua' ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="meihua-method-select">起卦方式</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="meihua-method-select">起卦方式</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="meihua-method-select"
                             value={draft.meihuaMethod}
@@ -685,8 +691,8 @@ export function DivinationForm({
 
                     {draft.method === 'xiaoliuren' ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="xiaoliuren-rule-select">起课口径</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="xiaoliuren-rule-select">起课口径</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="xiaoliuren-rule-select"
                             value={draft.xiaoliurenRule ?? 'common'}
@@ -703,8 +709,8 @@ export function DivinationForm({
                     ) : null}
                     {draft.method === 'jinkoujue' ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="jinkoujue-method-select">起课方式</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="jinkoujue-method-select">起课方式</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="jinkoujue-method-select"
                             value={draft.jinkoujueMethod}
@@ -722,8 +728,8 @@ export function DivinationForm({
 
                     {draft.method === 'huangji' ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="huangji-method-select">起盘方式</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="huangji-method-select">起盘方式</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="huangji-method-select"
                             value={huangjiMethod}
@@ -740,8 +746,8 @@ export function DivinationForm({
 
                     {isHuangjiSixDay ? (
                       <div className="form-item divination-inline-field divination-huangji-model-field">
-                        <label htmlFor="huangji-six-day-model-select">换算模型</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="huangji-six-day-model-select">换算模型</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="huangji-six-day-model-select"
                             value={huangjiSixDayCalendarModel}
@@ -759,12 +765,12 @@ export function DivinationForm({
 
                     {draft.method === 'meihua' && draft.meihuaMethod === 'number' ? (
                       <div className="form-item divination-inline-field divination-inline-number-field">
-                        <label htmlFor="meihua-number-input">起卦数字</label>
-                        <input
+                        <Label htmlFor="meihua-number-input">起卦数字</Label>
+                        <Input
                           id="meihua-number-input"
                           type="text"
                           inputMode="numeric"
-                          className="form-input"
+                         
                           placeholder="例如 123"
                           value={draft.meihuaNumber}
                           onChange={(event) =>
@@ -776,12 +782,12 @@ export function DivinationForm({
 
                     {draft.method === 'meihua' && draft.meihuaMethod === 'sound' ? (
                       <div className="form-item divination-inline-field divination-inline-number-field">
-                        <label htmlFor="meihua-sound-count-input">声音数</label>
-                        <input
+                        <Label htmlFor="meihua-sound-count-input">声音数</Label>
+                        <Input
                           id="meihua-sound-count-input"
                           type="text"
                           inputMode="numeric"
-                          className="form-input"
+                         
                           placeholder="例如 3"
                           value={draft.meihuaSoundCount}
                           onChange={(event) =>
@@ -797,11 +803,11 @@ export function DivinationForm({
                     {draft.method === 'meihua' && draft.meihuaMethod === 'character' ? (
                       <>
                         <div className="form-item divination-inline-field">
-                          <label htmlFor="meihua-character-text-input">起卦文字</label>
-                          <input
+                          <Label htmlFor="meihua-character-text-input">起卦文字</Label>
+                          <Input
                             id="meihua-character-text-input"
                             type="text"
-                            className="form-input"
+                           
                             placeholder="例如 今日动静如何"
                             value={draft.meihuaCharacterText}
                             onChange={(event) => updateMeihuaCharacterText(event.target.value)}
@@ -809,13 +815,13 @@ export function DivinationForm({
                         </div>
                         {meihuaCharacterCount >= 4 && meihuaCharacterCount <= 10 ? (
                           <div className="form-item divination-inline-field">
-                            <label htmlFor="meihua-character-tones-input">
+                            <Label htmlFor="meihua-character-tones-input">
                               传统平上去入声数（非普通话声调）
-                            </label>
-                            <input
+                            </Label>
+                            <Input
                               id="meihua-character-tones-input"
                               type="text"
-                              className="form-input"
+                             
                               placeholder="4-10字填写，如 1,4,3,3"
                               value={draft.meihuaCharacterTones}
                               onChange={(event) =>
@@ -826,12 +832,12 @@ export function DivinationForm({
                         ) : null}
                         {[2, 3].includes(meihuaCharacterCount) ? (
                           <div className="form-item divination-inline-field">
-                            <label htmlFor="meihua-character-strokes-input">各字笔画数</label>
-                            <input
+                            <Label htmlFor="meihua-character-strokes-input">各字笔画数</Label>
+                            <Input
                               id="meihua-character-strokes-input"
                               type="text"
                               inputMode="numeric"
-                              className="form-input"
+                             
                               placeholder="2-3字填写，如 7,8"
                               value={draft.meihuaCharacterStrokeCounts}
                               onChange={(event) =>
@@ -846,12 +852,12 @@ export function DivinationForm({
                         {meihuaCharacterCount === 1 ? (
                           <>
                             <div className="form-item divination-inline-field">
-                              <label htmlFor="meihua-character-left-strokes-input">左侧笔画</label>
-                              <input
+                              <Label htmlFor="meihua-character-left-strokes-input">左侧笔画</Label>
+                              <Input
                                 id="meihua-character-left-strokes-input"
                                 type="text"
                                 inputMode="numeric"
-                                className="form-input"
+                               
                                 placeholder="单字分笔"
                                 value={draft.meihuaCharacterLeftStrokes}
                                 onChange={(event) =>
@@ -863,12 +869,12 @@ export function DivinationForm({
                               />
                             </div>
                             <div className="form-item divination-inline-field">
-                              <label htmlFor="meihua-character-right-strokes-input">右侧笔画</label>
-                              <input
+                              <Label htmlFor="meihua-character-right-strokes-input">右侧笔画</Label>
+                              <Input
                                 id="meihua-character-right-strokes-input"
                                 type="text"
                                 inputMode="numeric"
-                                className="form-input"
+                               
                                 placeholder="单字分笔"
                                 value={draft.meihuaCharacterRightStrokes}
                                 onChange={(event) =>
@@ -887,8 +893,8 @@ export function DivinationForm({
                     {draft.method === 'meihua' && draft.meihuaMethod === 'direction' ? (
                       <>
                         <div className="form-item divination-inline-field">
-                          <label htmlFor="meihua-direction-select">方位</label>
-                          <div className="divination-select-shell divination-desktop-select-shell">
+                          <Label htmlFor="meihua-direction-select">方位</Label>
+                          <div className="divination-desktop-select-shell">
                             <DropdownSelect
                               id="meihua-direction-select"
                               value={draft.meihuaDirection}
@@ -903,8 +909,8 @@ export function DivinationForm({
                           </div>
                         </div>
                         <div className="form-item divination-inline-field">
-                          <label htmlFor="meihua-object-type-select">所见物类</label>
-                          <div className="divination-select-shell divination-desktop-select-shell">
+                          <Label htmlFor="meihua-object-type-select">所见物类</Label>
+                          <div className="divination-desktop-select-shell">
                             <DropdownSelect
                               id="meihua-object-type-select"
                               value={draft.meihuaObjectType}
@@ -923,12 +929,12 @@ export function DivinationForm({
 
                     {draft.method === 'jinkoujue' && draft.jinkoujueMethod === 'number' ? (
                       <div className="form-item divination-inline-field divination-inline-number-field">
-                        <label htmlFor="jinkoujue-number-input">起课数字</label>
-                        <input
+                        <Label htmlFor="jinkoujue-number-input">起课数字</Label>
+                        <Input
                           id="jinkoujue-number-input"
                           type="text"
                           inputMode="numeric"
-                          className="form-input"
+                         
                           placeholder="例如 7"
                           value={draft.jinkoujueNumber}
                           onChange={(event) =>
@@ -940,8 +946,8 @@ export function DivinationForm({
 
                     {draft.method === 'jinkoujue' && draft.jinkoujueMethod === 'branch' ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="jinkoujue-branch-select">地分</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="jinkoujue-branch-select">地分</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="jinkoujue-branch-select"
                             value={draft.jinkoujueBranch}
@@ -954,8 +960,8 @@ export function DivinationForm({
 
                     {draft.method === 'liuyao' ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="liuyao-template-select">问题范围</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="liuyao-template-select">问题范围</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="liuyao-template-select"
                             value={draft.liuyaoTemplate}
@@ -973,8 +979,8 @@ export function DivinationForm({
 
                     {draft.method === 'liuyao' ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="liuyao-method-select">起卦方式</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="liuyao-method-select">起卦方式</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="liuyao-method-select"
                             value={liuyaoMethod}
@@ -992,8 +998,8 @@ export function DivinationForm({
 
                     {draft.method === 'liuren' ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="liuren-template-select">问题范围</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="liuren-template-select">问题范围</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="liuren-template-select"
                             value={draft.liurenTemplate}
@@ -1011,8 +1017,8 @@ export function DivinationForm({
 
                     {draft.method === 'tarot' ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="tarot-spread-select">牌阵</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="tarot-spread-select">牌阵</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="tarot-spread-select"
                             value={draft.tarotSpread}
@@ -1027,8 +1033,8 @@ export function DivinationForm({
 
                     {draft.method === 'lenormand' ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="lenormand-spread-select">牌阵</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="lenormand-spread-select">牌阵</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="lenormand-spread-select"
                             value={draft.lenormandSpread}
@@ -1043,8 +1049,8 @@ export function DivinationForm({
 
                     {isTimeBasedDivination ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="divination-time-mode-select">{timeActionLabel}时间</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="divination-time-mode-select">{timeActionLabel}时间</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="divination-time-mode-select"
                             value={effectiveDivinationTimeMode}
@@ -1062,8 +1068,8 @@ export function DivinationForm({
 
                     {supportsTrueSolarTime ? (
                       <div className="form-item divination-inline-field">
-                        <label htmlFor="divination-time-standard-select">时间口径</label>
-                        <div className="divination-select-shell divination-desktop-select-shell">
+                        <Label htmlFor="divination-time-standard-select">时间口径</Label>
+                        <div className="divination-desktop-select-shell">
                           <DropdownSelect
                             id="divination-time-standard-select"
                             value={divinationTimeStandard}
@@ -1081,22 +1087,22 @@ export function DivinationForm({
                   </div>
 
                   <div className="divination-desktop-question-actions">
-                    <button
+                    <Button
                       type="button"
-                      className="workspace-ui-choice"
+                      variant="outline" size="sm"
                       onClick={onOpenInspiration}
                     >
                       问题灵感
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
-                      className={`workspace-ui-choice ${supplementaryInfoCount ? 'is-active' : ''}`}
+                      variant={supplementaryInfoCount ? 'secondary' : 'outline'} size="sm"
                       aria-haspopup="dialog"
                       aria-expanded={isSupplementaryInfoModalOpen}
                       onClick={() => setIsSupplementaryInfoModalOpen(true)}
                     >
                       补充信息{supplementaryInfoCount ? ` · ${supplementaryInfoCount}项` : ''}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -1294,18 +1300,18 @@ export function DivinationForm({
                 ) : null}
 
                 <div className="divination-mobile-aux-actions">
-                  <button type="button" className="workspace-ui-choice" onClick={onOpenInspiration}>
+                  <Button type="button" variant="outline" size="sm" onClick={onOpenInspiration}>
                     问题灵感
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
-                    className={`workspace-ui-choice ${supplementaryInfoCount ? 'is-active' : ''}`}
+                    variant={supplementaryInfoCount ? 'secondary' : 'outline'} size="sm"
                     aria-haspopup="dialog"
                     aria-expanded={isSupplementaryInfoModalOpen}
                     onClick={() => setIsSupplementaryInfoModalOpen(true)}
                   >
                     补充信息{supplementaryInfoCount ? ` · ${supplementaryInfoCount}` : ''}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -1317,7 +1323,7 @@ export function DivinationForm({
           draft.method !== 'wuyun' ? (
             <div className="form-row-flex divination-subject-fields">
               <div className="form-item">
-                <label htmlFor="divination-gender-select">性别（可选）</label>
+                <Label htmlFor="divination-gender-select">性别（可选）</Label>
                 <DropdownSelect
                   id="divination-gender-select"
                   value={draft.gender ?? ''}
@@ -1327,13 +1333,13 @@ export function DivinationForm({
                 />
               </div>
               <div className="form-item">
-                <label htmlFor="divination-birth-year-input">出生年份（可选）</label>
-                <input
+                <Label htmlFor="divination-birth-year-input">出生年份（可选）</Label>
+                <Input
                   id="divination-birth-year-input"
                   type="text"
                   inputMode="numeric"
                   maxLength={4}
-                  className="form-input"
+                 
                   placeholder="例如 1998"
                   value={draft.birthYear}
                   onChange={(event) =>
@@ -1347,12 +1353,12 @@ export function DivinationForm({
           {draft.method === 'meihua' && draft.meihuaMethod === 'number' ? (
             <div className="form-row divination-mobile-only">
               <div className="form-item">
-                <label htmlFor="meihua-number-input-mobile">起卦数字</label>
-                <input
+                <Label htmlFor="meihua-number-input-mobile">起卦数字</Label>
+                <Input
                   id="meihua-number-input-mobile"
                   type="text"
                   inputMode="numeric"
-                  className="form-input"
+                 
                   placeholder="例如 123"
                   value={draft.meihuaNumber}
                   onChange={(event) =>
@@ -1366,12 +1372,12 @@ export function DivinationForm({
           {draft.method === 'meihua' && draft.meihuaMethod === 'sound' ? (
             <div className="form-row divination-mobile-only">
               <div className="form-item">
-                <label htmlFor="meihua-sound-count-input-mobile">声音数</label>
-                <input
+                <Label htmlFor="meihua-sound-count-input-mobile">声音数</Label>
+                <Input
                   id="meihua-sound-count-input-mobile"
                   type="text"
                   inputMode="numeric"
-                  className="form-input"
+                 
                   placeholder="例如 3"
                   value={draft.meihuaSoundCount}
                   onChange={(event) =>
@@ -1385,11 +1391,11 @@ export function DivinationForm({
           {draft.method === 'meihua' && draft.meihuaMethod === 'character' ? (
             <div className="form-row divination-mobile-only">
               <div className="form-item">
-                <label htmlFor="meihua-character-text-input-mobile">起卦文字</label>
-                <input
+                <Label htmlFor="meihua-character-text-input-mobile">起卦文字</Label>
+                <Input
                   id="meihua-character-text-input-mobile"
                   type="text"
-                  className="form-input"
+                 
                   placeholder="例如 今日动静如何"
                   value={draft.meihuaCharacterText}
                   onChange={(event) => updateMeihuaCharacterText(event.target.value)}
@@ -1397,13 +1403,13 @@ export function DivinationForm({
               </div>
               {meihuaCharacterCount >= 4 && meihuaCharacterCount <= 10 ? (
                 <div className="form-item">
-                  <label htmlFor="meihua-character-tones-input-mobile">
+                  <Label htmlFor="meihua-character-tones-input-mobile">
                     传统平上去入声数（非普通话声调）
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="meihua-character-tones-input-mobile"
                     type="text"
-                    className="form-input"
+                   
                     placeholder="4-10字填写，如 1,4,3,3"
                     value={draft.meihuaCharacterTones}
                     onChange={(event) => updateDraft('meihuaCharacterTones', event.target.value)}
@@ -1412,12 +1418,12 @@ export function DivinationForm({
               ) : null}
               {[2, 3].includes(meihuaCharacterCount) ? (
                 <div className="form-item">
-                  <label htmlFor="meihua-character-strokes-input-mobile">各字笔画数</label>
-                  <input
+                  <Label htmlFor="meihua-character-strokes-input-mobile">各字笔画数</Label>
+                  <Input
                     id="meihua-character-strokes-input-mobile"
                     type="text"
                     inputMode="numeric"
-                    className="form-input"
+                   
                     placeholder="2-3字填写，如 7,8"
                     value={draft.meihuaCharacterStrokeCounts}
                     onChange={(event) =>
@@ -1432,12 +1438,12 @@ export function DivinationForm({
               {meihuaCharacterCount === 1 ? (
                 <div className="form-row-flex">
                   <div className="form-item">
-                    <label htmlFor="meihua-character-left-strokes-input-mobile">左侧笔画</label>
-                    <input
+                    <Label htmlFor="meihua-character-left-strokes-input-mobile">左侧笔画</Label>
+                    <Input
                       id="meihua-character-left-strokes-input-mobile"
                       type="text"
                       inputMode="numeric"
-                      className="form-input"
+                     
                       value={draft.meihuaCharacterLeftStrokes}
                       onChange={(event) =>
                         updateDraft(
@@ -1448,12 +1454,12 @@ export function DivinationForm({
                     />
                   </div>
                   <div className="form-item">
-                    <label htmlFor="meihua-character-right-strokes-input-mobile">右侧笔画</label>
-                    <input
+                    <Label htmlFor="meihua-character-right-strokes-input-mobile">右侧笔画</Label>
+                    <Input
                       id="meihua-character-right-strokes-input-mobile"
                       type="text"
                       inputMode="numeric"
-                      className="form-input"
+                     
                       value={draft.meihuaCharacterRightStrokes}
                       onChange={(event) =>
                         updateDraft(
@@ -1471,7 +1477,7 @@ export function DivinationForm({
           {draft.method === 'meihua' && draft.meihuaMethod === 'direction' ? (
             <div className="form-row-flex divination-mobile-only">
               <div className="form-item">
-                <label htmlFor="meihua-direction-select-mobile">方位</label>
+                <Label htmlFor="meihua-direction-select-mobile">方位</Label>
                 <DropdownSelect
                   id="meihua-direction-select-mobile"
                   value={draft.meihuaDirection}
@@ -1482,7 +1488,7 @@ export function DivinationForm({
                 />
               </div>
               <div className="form-item">
-                <label htmlFor="meihua-object-type-select-mobile">所见物类</label>
+                <Label htmlFor="meihua-object-type-select-mobile">所见物类</Label>
                 <DropdownSelect
                   id="meihua-object-type-select-mobile"
                   value={draft.meihuaObjectType}
@@ -1498,12 +1504,12 @@ export function DivinationForm({
           {draft.method === 'jinkoujue' && draft.jinkoujueMethod === 'number' ? (
             <div className="form-row divination-mobile-only">
               <div className="form-item">
-                <label htmlFor="jinkoujue-number-input-mobile">起课数字</label>
-                <input
+                <Label htmlFor="jinkoujue-number-input-mobile">起课数字</Label>
+                <Input
                   id="jinkoujue-number-input-mobile"
                   type="text"
                   inputMode="numeric"
-                  className="form-input"
+                 
                   placeholder="例如 7"
                   value={draft.jinkoujueNumber}
                   onChange={(event) =>
@@ -1517,7 +1523,7 @@ export function DivinationForm({
           {draft.method === 'jinkoujue' && draft.jinkoujueMethod === 'branch' ? (
             <div className="form-row divination-mobile-only">
               <div className="form-item">
-                <label htmlFor="jinkoujue-branch-select-mobile">地分</label>
+                <Label htmlFor="jinkoujue-branch-select-mobile">地分</Label>
                 <DropdownSelect
                   id="jinkoujue-branch-select-mobile"
                   value={draft.jinkoujueBranch}
@@ -1580,7 +1586,7 @@ export function DivinationForm({
               {visibleLiuyaoYaos.length < 6 && liuyaoMethod === 'manual' ? (
                 <div className="liuyao-cast-actions">
                   {LIUYAO_YAO_OPTIONS.map((item) => (
-                    <button
+                    <Button
                       type="button"
                       className="manual-choice-button"
                       key={item.value}
@@ -1588,7 +1594,7 @@ export function DivinationForm({
                     >
                       <span>{item.label.split(' · ')[1]}</span>
                       <strong>{item.value}</strong>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               ) : null}
@@ -1621,16 +1627,18 @@ export function DivinationForm({
 
           {draft.method === 'tarot' ? (
             <div className="divination-extra-panel manual-entry-panel">
-              <div className="manual-mode-switch" role="group" aria-label="塔罗抽牌方式">
+              <div className="manual-mode-switch flex flex-wrap gap-2" role="group" aria-label="塔罗抽牌方式">
                 {MANUAL_METHOD_OPTIONS.map((item) => (
-                  <button
+                  <Button
                     type="button"
-                    className={tarotMethod === item.value ? 'is-active' : ''}
+                    variant={tarotMethod === item.value ? 'secondary' : 'outline'}
+                    size="sm"
+
                     key={item.value}
                     onClick={() => updateDraft('tarotMethod', item.value)}
                   >
                     {item.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
               {tarotMethod === 'interactive' ? (
@@ -1682,16 +1690,18 @@ export function DivinationForm({
 
           {draft.method === 'lenormand' ? (
             <div className="divination-extra-panel manual-entry-panel">
-              <div className="manual-mode-switch" role="group" aria-label="雷诺曼抽牌方式">
+              <div className="manual-mode-switch flex flex-wrap gap-2" role="group" aria-label="雷诺曼抽牌方式">
                 {MANUAL_METHOD_OPTIONS.map((item) => (
-                  <button
+                  <Button
                     type="button"
-                    className={lenormandMethod === item.value ? 'is-active' : ''}
+                    variant={lenormandMethod === item.value ? 'secondary' : 'outline'}
+                    size="sm"
+
                     key={item.value}
                     onClick={() => updateDraft('lenormandMethod', item.value)}
                   >
                     {item.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
               {lenormandMethod === 'interactive' ? (
@@ -1741,30 +1751,34 @@ export function DivinationForm({
 
           {draft.method === 'ssgw' ? (
             <div className="divination-extra-panel manual-entry-panel ssgw-manual-panel">
-              <div className="manual-mode-switch" role="group" aria-label="灵签求签方式">
-                <button
+              <div className="manual-mode-switch flex flex-wrap gap-2" role="group" aria-label="灵签求签方式">
+                <Button
                   type="button"
-                  className={ssgwMethod === 'random' ? 'is-active' : ''}
+                  variant={ssgwMethod === 'random' ? 'secondary' : 'outline'}
+                  size="sm"
+
                   onClick={() => updateDraft('ssgwMethod', 'random')}
                 >
                   自动求签
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
-                  className={ssgwMethod === 'manual' ? 'is-active' : ''}
+                  variant={ssgwMethod === 'manual' ? 'secondary' : 'outline'}
+                  size="sm"
+
                   onClick={() => updateDraft('ssgwMethod', 'manual')}
                 >
                   录入签号
-                </button>
+                </Button>
               </div>
               {ssgwMethod === 'manual' ? (
                 <div className="form-item ssgw-number-field">
-                  <label htmlFor="ssgw-number-input">签号（1-92）</label>
-                  <input
+                  <Label htmlFor="ssgw-number-input">签号（1-92）</Label>
+                  <Input
                     id="ssgw-number-input"
                     type="text"
                     inputMode="numeric"
-                    className="form-input"
+                   
                     placeholder="例如 36"
                     value={ssgwNumber}
                     onChange={(event) =>
@@ -1782,11 +1796,11 @@ export function DivinationForm({
           {draft.method === 'zhuge' ? (
             <div className="divination-extra-panel manual-entry-panel">
               <div className="form-item">
-                <label htmlFor="zhuge-text-input">随念写下三个汉字</label>
-                <input
+                <Label htmlFor="zhuge-text-input">随念写下三个汉字</Label>
+                <Input
                   id="zhuge-text-input"
                   type="text"
-                  className="form-input"
+                 
                   placeholder="例如 定乾坤"
                   value={draft.zhugeText}
                   onChange={(event) => updateDraft('zhugeText', event.target.value)}
@@ -1800,24 +1814,28 @@ export function DivinationForm({
 
           {draft.method === 'kongming' ? (
             <div className="divination-extra-panel manual-entry-panel">
-              <div className="manual-mode-switch" role="group" aria-label="孔明神卦起卦方式">
-                <button
+              <div className="manual-mode-switch flex flex-wrap gap-2" role="group" aria-label="孔明神卦起卦方式">
+                <Button
                   type="button"
-                  className={kongmingMethod === 'random' ? 'is-active' : ''}
+                  variant={kongmingMethod === 'random' ? 'secondary' : 'outline'}
+                  size="sm"
+
                   onClick={() => updateDraft('kongmingMethod', 'random')}
                 >
                   自动起卦
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
-                  className={kongmingMethod === 'manual' ? 'is-active' : ''}
+                  variant={kongmingMethod === 'manual' ? 'secondary' : 'outline'}
+                  size="sm"
+
                   onClick={() => {
                     updateDraft('kongmingMethod', 'manual');
                     if (kongmingMethod !== 'manual') updateDraft('kongmingPattern', '-----');
                   }}
                 >
                   手动取象
-                </button>
+                </Button>
               </div>
               {kongmingMethod === 'manual' ? (
                 <>
@@ -1834,10 +1852,11 @@ export function DivinationForm({
                                 ['○', '反面', '阴'],
                               ] as const
                             ).map(([symbol, face, polarity]) => (
-                              <button
+                              <Button
                                 key={symbol}
                                 type="button"
-                                className={selected === symbol ? 'is-active' : ''}
+                                variant={selected === symbol ? 'secondary' : 'outline'}
+                                size="sm"
                                 aria-pressed={selected === symbol}
                                 aria-label={`第${index + 1}枚，${face}，${polarity}`}
                                 onClick={() => {
@@ -1846,9 +1865,9 @@ export function DivinationForm({
                                   updateDraft('kongmingPattern', next.join(''));
                                 }}
                               >
-                                <strong>{face}</strong>
-                                <small>{polarity}</small>
-                              </button>
+                                <span className="font-medium">{face}</span>
+                                <span className="text-xs text-muted-foreground">{polarity}</span>
+                              </Button>
                             ))}
                           </div>
                         </fieldset>
@@ -1897,12 +1916,12 @@ export function DivinationForm({
               <div className="divination-extra-panel divination-time-panel">
                 <div className="form-row">
                   <div className="form-item">
-                    <label htmlFor="taiyi-year-input">{timeActionLabel}年份</label>
-                    <input
+                    <Label htmlFor="taiyi-year-input">{timeActionLabel}年份</Label>
+                    <Input
                       id="taiyi-year-input"
                       type="text"
                       inputMode="numeric"
-                      className="form-input"
+                     
                       placeholder="例如 2026"
                       value={draft.taiyiYear}
                       onChange={(event) =>
@@ -1916,43 +1935,43 @@ export function DivinationForm({
               <div className="divination-extra-panel divination-time-panel">
                 <div className={`form-row-flex ${isHuangjiSixDay ? 'has-third-item' : ''}`}>
                   <div className="form-item">
-                    <label htmlFor="custom-divination-date-input">
+                    <Label htmlFor="custom-divination-date-input">
                       {isHuangjiSixDay ? '目标日期' : `${timeActionLabel}日期`}
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="custom-divination-date-input"
                       type="date"
-                      className="form-input"
+                     
                       value={draft.customDivinationDate ?? ''}
                       onChange={(event) => updateDraft('customDivinationDate', event.target.value)}
                     />
                   </div>
                   <div className="form-item">
-                    <label htmlFor="custom-divination-time-input">
+                    <Label htmlFor="custom-divination-time-input">
                       {isHuangjiSixDay
                         ? '目标时间（所选时区）'
                         : `${timeActionLabel}时间（北京时间）`}
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="custom-divination-time-input"
                       type="time"
                       step="1"
-                      className="form-input"
+                     
                       value={draft.customDivinationTime ?? ''}
                       onChange={(event) => updateDraft('customDivinationTime', event.target.value)}
                     />
                   </div>
                   {isHuangjiSixDay ? (
                     <div className="form-item">
-                      <label htmlFor="huangji-six-day-timezone-input">时区（UTC偏移）</label>
-                      <input
+                      <Label htmlFor="huangji-six-day-timezone-input">时区（UTC偏移）</Label>
+                      <Input
                         id="huangji-six-day-timezone-input"
                         type="number"
                         min="-12"
                         max="14"
                         step="any"
                         inputMode="decimal"
-                        className="form-input"
+                       
                         value={draft.huangjiSixDayTimezone ?? ''}
                         onChange={(event) =>
                           updateDraft('huangjiSixDayTimezone', event.target.value)
@@ -1965,13 +1984,13 @@ export function DivinationForm({
                   <>
                     <div className="form-row-flex">
                       <div className="form-item">
-                        <label htmlFor="huangji-six-day-epoch-date-input">
+                        <Label htmlFor="huangji-six-day-epoch-date-input">
                           校定历元日期（当地子半）
-                        </label>
-                        <input
+                        </Label>
+                        <Input
                           id="huangji-six-day-epoch-date-input"
                           type="date"
-                          className="form-input"
+                         
                           value={draft.huangjiSixDayEpochDate ?? ''}
                           onChange={(event) =>
                             updateDraft('huangjiSixDayEpochDate', event.target.value)
@@ -1996,13 +2015,13 @@ export function DivinationForm({
             <div className="divination-extra-panel divination-time-panel">
               <div className="form-row-flex">
                 <div className="form-item">
-                  <label htmlFor="wuyun-year-input">目标年份</label>
-                  <input
+                  <Label htmlFor="wuyun-year-input">目标年份</Label>
+                  <Input
                     id="wuyun-year-input"
                     type="text"
                     inputMode="numeric"
                     maxLength={4}
-                    className="form-input"
+                   
                     placeholder="例如 2026"
                     value={draft.wuyunYear ?? ''}
                     onChange={(event) =>
@@ -2011,12 +2030,12 @@ export function DivinationForm({
                   />
                 </div>
                 <div className="form-item">
-                  <label htmlFor="wuyun-year-ganzhi-input">目标年干支（可选）</label>
-                  <input
+                  <Label htmlFor="wuyun-year-ganzhi-input">目标年干支（可选）</Label>
+                  <Input
                     id="wuyun-year-ganzhi-input"
                     type="text"
                     maxLength={2}
-                    className="form-input"
+                   
                     placeholder="例如 丙午"
                     value={draft.wuyunYearGanZhi ?? ''}
                     onChange={(event) =>
@@ -2035,16 +2054,19 @@ export function DivinationForm({
             <div className="divination-extra-panel divination-time-panel divination-solar-place-panel">
               <div className="form-row">
                 <div className="form-item">
-                  <label htmlFor="divination-birth-place-input">起局地点</label>
-                  <button
+                  <Label htmlFor="divination-birth-place-input">起局地点</Label>
+                  <Button
                     id="divination-birth-place-input"
                     type="button"
-                    className="form-input address-trigger"
+                    variant="outline"
+                    className="h-8 w-full justify-between px-3 font-normal"
                     onClick={onOpenBirthPlace}
                   >
-                    <span>{draft.birthPlace || '请选择起局地点'}</span>
-                    <span className="address-trigger-arrow">选择</span>
-                  </button>
+                    <span className={draft.birthPlace ? '' : 'text-muted-foreground'}>
+                      {draft.birthPlace || '请选择起局地点'}
+                    </span>
+                    <span className="text-muted-foreground">选择</span>
+                  </Button>
                   <small className="workspace-ui-field-hint">
                     按地点经度校正当前时间或自定时间
                   </small>
@@ -2057,16 +2079,16 @@ export function DivinationForm({
             <div className="divination-extra-panel">
               <div className="form-row-flex">
                 <div className="form-item">
-                  <label htmlFor="astrolabe-name-input">称呼</label>
-                  <input
+                  <Label htmlFor="astrolabe-name-input">称呼</Label>
+                  <Input
                     id="astrolabe-name-input"
-                    className="form-input"
+                   
                     value={draft.astrolabeName}
                     onChange={(event) => updateDraft('astrolabeName', event.target.value)}
                   />
                 </div>
                 <div className="form-item">
-                  <label htmlFor="astrolabe-gender-select">性别</label>
+                  <Label htmlFor="astrolabe-gender-select">性别</Label>
                   <DropdownSelect
                     id="astrolabe-gender-select"
                     value={draft.astrolabeGender}
@@ -2085,10 +2107,10 @@ export function DivinationForm({
                   ['astrolabeDay', '日'],
                 ].map(([key, label]) => (
                   <div className="form-item" key={key}>
-                    <label htmlFor={`${key}-input`}>{label}</label>
-                    <input
+                    <Label htmlFor={`${key}-input`}>{label}</Label>
+                    <Input
                       id={`${key}-input`}
-                      className="form-input"
+                     
                       inputMode="numeric"
                       value={String(draft[key as keyof DivinationDraft])}
                       onChange={(event) =>
@@ -2103,10 +2125,10 @@ export function DivinationForm({
               </div>
               <div className="form-row-flex">
                 <div className="form-item">
-                  <label htmlFor="astrolabe-hour-input">小时</label>
-                  <input
+                  <Label htmlFor="astrolabe-hour-input">小时</Label>
+                  <Input
                     id="astrolabe-hour-input"
-                    className="form-input"
+                   
                     inputMode="numeric"
                     value={draft.astrolabeHour}
                     onChange={(event) =>
@@ -2115,10 +2137,10 @@ export function DivinationForm({
                   />
                 </div>
                 <div className="form-item">
-                  <label htmlFor="astrolabe-minute-input">分钟</label>
-                  <input
+                  <Label htmlFor="astrolabe-minute-input">分钟</Label>
+                  <Input
                     id="astrolabe-minute-input"
-                    className="form-input"
+                   
                     inputMode="numeric"
                     value={draft.astrolabeMinute}
                     onChange={(event) =>
@@ -2129,28 +2151,28 @@ export function DivinationForm({
               </div>
               <div className="form-row-flex has-third-item">
                 <div className="form-item">
-                  <label htmlFor="astrolabe-latitude-input">纬度</label>
-                  <input
+                  <Label htmlFor="astrolabe-latitude-input">纬度</Label>
+                  <Input
                     id="astrolabe-latitude-input"
-                    className="form-input"
+                   
                     value={draft.astrolabeLatitude}
                     onChange={(event) => updateDraft('astrolabeLatitude', event.target.value)}
                   />
                 </div>
                 <div className="form-item">
-                  <label htmlFor="astrolabe-longitude-input">经度</label>
-                  <input
+                  <Label htmlFor="astrolabe-longitude-input">经度</Label>
+                  <Input
                     id="astrolabe-longitude-input"
-                    className="form-input"
+                   
                     value={draft.astrolabeLongitude}
                     onChange={(event) => updateDraft('astrolabeLongitude', event.target.value)}
                   />
                 </div>
                 <div className="form-item">
-                  <label htmlFor="astrolabe-timezone-input">时区</label>
-                  <input
+                  <Label htmlFor="astrolabe-timezone-input">时区</Label>
+                  <Input
                     id="astrolabe-timezone-input"
-                    className="form-input"
+                   
                     value={draft.astrolabeTimezone}
                     onChange={(event) => updateDraft('astrolabeTimezone', event.target.value)}
                   />

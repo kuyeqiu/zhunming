@@ -7,6 +7,7 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
+import { Button } from '@/components/ui/button';
 import { AstrolabeChart } from '@/components/AstrolabeChart';
 import { lookupMetaphysicsTerm } from '@/lib/metaphysics-terms';
 import {
@@ -199,13 +200,13 @@ function TraditionalBoardShell(props: {
         </div>
         <div className="traditional-board-head-actions">
           {actions}
-          <button type="button" className="traditional-action-btn" onClick={onShare}>
+          <Button variant="ghost" size="sm" type="button" className="traditional-action-btn" onClick={onShare}>
             分享排盘
-          </button>
+          </Button>
           {onRestart ? (
-            <button type="button" className="traditional-action-btn" onClick={onRestart}>
+            <Button variant="ghost" size="sm" type="button" className="traditional-action-btn" onClick={onRestart}>
               重新占问
-            </button>
+            </Button>
           ) : null}
         </div>
       </div>
@@ -246,7 +247,7 @@ function TraditionalFacts(props: {
   if (!visibleItems.length) return null;
 
   return (
-    <div className={`traditional-fact-grid${props.className ? ` ${props.className}` : ''}`}>
+    <div className={`traditional-fact-grid${props.className ? `${props.className}` : ''}`}>
       {visibleItems.map(([label, value]) => (
         <div
           key={label}
@@ -600,14 +601,14 @@ function LiuyaoCategoryClassicsSection() {
       </div>
       <div className="traditional-category-tabs">
         {chapters.map((ch) => (
-          <button
+          <Button
             key={ch.category}
             type="button"
             className={`traditional-category-tab-btn ${ch.category === activeCat ? 'is-active' : ''}`}
             onClick={() => setActiveCat(ch.category)}
           >
             {ch.title.replace('黄金策 · ', '')}
-          </button>
+          </Button>
         ))}
       </div>
       <div className="traditional-category-content">
@@ -2116,7 +2117,7 @@ function QimenTraditionalBoard({
         <span className="yongshen-bar-label">事类用神快速定位：</span>
         <div className="yongshen-chips">
           {QIMEN_YONG_SHEN_LIST.map((item) => (
-            <button
+            <Button
               key={item.id}
               type="button"
               className={`yongshen-chip ${activeYongShen === item.id ? 'is-active' : ''}`}
@@ -2125,7 +2126,7 @@ function QimenTraditionalBoard({
             >
               <span>{item.icon}</span>
               <strong>{item.label}</strong>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -2133,21 +2134,21 @@ function QimenTraditionalBoard({
       {/* 快捷视图切换与交互引导 */}
       <div className="traditional-qimen-toolbar">
         <div className="traditional-qimen-actions">
-          <button
+          <Button
             type="button"
             className={`traditional-qimen-btn ${showChangSheng ? 'is-active' : ''}`}
             onClick={() => setShowChangSheng((prev) => !prev)}
           >
             长生状态
-          </button>
+          </Button>
           {isHourScope ? (
-            <button
+            <Button
               type="button"
               className={`traditional-qimen-btn ${showAnGan ? 'is-active' : ''}`}
               onClick={() => setShowAnGan((prev) => !prev)}
             >
               暗干排布
-            </button>
+            </Button>
           ) : null}
         </div>
         <span className="traditional-qimen-tip">
@@ -2339,14 +2340,14 @@ function QimenTraditionalBoard({
               </strong>
               <small>（基于天盘六仪、八门、九星与八神落宫生克断诀）</small>
             </div>
-            <button
+            <Button
               type="button"
               className="inspector-close-btn"
               onClick={() => setActiveYongShen(null)}
               aria-label="关闭用神合参"
             >
               ✕
-            </button>
+            </Button>
           </div>
 
           <div className="inspector-grid">
@@ -2382,14 +2383,14 @@ function QimenTraditionalBoard({
                 {inspectorMeta.luoShuNumber}数）
               </small>
             </div>
-            <button
+            <Button
               type="button"
               className="inspector-close-btn"
               onClick={() => setSelectedGong(null)}
               aria-label="关闭合参详情"
             >
               ✕
-            </button>
+            </Button>
           </div>
 
           <div className="inspector-grid">
@@ -2554,14 +2555,14 @@ function TarotTraditionalBoard({
           >
             <span className="traditional-card-index">#{index + 1}</span>
             <span className="traditional-card-position">{card.position}</span>
-            <button
+            <Button
               type="button"
               className="traditional-term-link traditional-card-name"
               onClick={() => openTerm(card.name)}
               title="点击查看牌义典籍解析"
             >
               {card.name}
-            </button>
+            </Button>
             <div className="traditional-card-tags">
               <span
                 className={`traditional-card-orientation${card.reversed ? ' is-reversed' : ' is-upright'}`}
@@ -2635,14 +2636,14 @@ function LenormandTraditionalBoard({
               <span className="traditional-lenormand-id">#{card.id}</span>
               <span className="traditional-lenormand-pos">{card.position}</span>
             </div>
-            <button
+            <Button
               type="button"
               className="traditional-term-link traditional-lenormand-name"
               onClick={() => openTerm(card.name)}
               title="点击查看雷诺曼牌义解析"
             >
               {card.name}
-            </button>
+            </Button>
             {card.house ? (
               <span className="traditional-lenormand-house">落第{card.house}宫</span>
             ) : null}
@@ -2855,22 +2856,22 @@ function AlmanacTraditionalBoard({
         ])}
       />
       <div className="traditional-almanac-toolbar">
-        <button
+        <Button
           type="button"
           className={statusFilter === 'all' ? 'is-active' : ''}
           onClick={() => applyStatusFilter('all')}
         >
           全部 <span>{data.days.length}</span>
-        </button>
+        </Button>
         {ALMANAC_STATUS_OPTIONS.map((item) => (
-          <button
+          <Button
             key={item.value}
             type="button"
             className={`${getAlmanacStatusClass(item.value)} ${statusFilter === item.value ? 'is-active' : ''}`}
             onClick={() => applyStatusFilter(item.value)}
           >
             {item.label} <span>{counts[item.value]}</span>
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -2886,7 +2887,7 @@ function AlmanacTraditionalBoard({
                 day.highlights[0] ??
                 '查看当日资料';
               return (
-                <button
+                <Button
                   key={day.date}
                   type="button"
                   className={`${getAlmanacStatusClass(status)} ${day.date === selectedDay.date ? 'is-active' : ''}`}
@@ -2904,7 +2905,7 @@ function AlmanacTraditionalBoard({
                     <small>{preview}</small>
                   </span>
                   <em>{ALMANAC_STATUS_LABELS[status]}</em>
-                </button>
+                </Button>
               );
             })}
           </nav>

@@ -5,12 +5,8 @@ import App from './App';
 import { registerServiceWorker } from './registerServiceWorker';
 import { registerDeploymentRecovery } from './lib/deployment-recovery';
 import { applyWorkspaceTheme, readWorkspacePreferences } from './lib/workspace';
-import './styles.css';
-import './workspace.css';
-import './workspace-ui.css';
-import './traditional-charts.css';
 // 水墨设计基座：纯增量层（--paper-* / --ink-* / .ink-*），必须最后引入
-import './styles/ink-tokens.css';
+// 结果页三栏工作台（排盘│解读│AI），在最末层覆盖 split 布局
 
 applyWorkspaceTheme(readWorkspacePreferences().theme);
 registerDeploymentRecovery();
@@ -24,3 +20,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 );
 
 registerServiceWorker();
+
+import './tailwind.css';
+import './styles.css';
+import './workspace.css';
+import './workspace-ui.css';
+import './traditional-charts.css';
+import './styles/ink-tokens.css';
+import './styles/result-workbench.css';

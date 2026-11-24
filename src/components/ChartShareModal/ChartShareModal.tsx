@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
 import { shareText } from '@/utils/share-text';
+import { Button } from '@/components/ui/button';
 
 export interface ChartShareModalProps {
   chartTitle: string;
@@ -76,14 +77,14 @@ export function ChartShareModal({
           <h2 id="chart-share-dialog-title">排盘分享卡片</h2>
           <p className="chart-share-subtitle">{chartTitle} · 完整排盘与干支盘面信息</p>
         </div>
-        <button
+        <Button
           type="button"
           className="chart-share-close-btn"
           onClick={onClose}
           aria-label="关闭分享卡片"
         >
           ✕
-        </button>
+        </Button>
       </header>
 
       <div className="workspace-ui-dialog-body chart-share-body">
@@ -117,9 +118,9 @@ export function ChartShareModal({
           <div className="chart-share-content-container">
             <div className="chart-share-content-head">
               <span>排盘明细</span>
-              <button type="button" className="chart-quick-copy" onClick={handleCopy}>
+              <Button variant="ghost" size="sm" type="button" className="chart-quick-copy" onClick={handleCopy}>
                 {copyState === 'copied' ? '已复制' : '复制排盘'}
-              </button>
+              </Button>
             </div>
             <pre className="chart-share-content-text">{chartText}</pre>
           </div>

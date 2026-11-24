@@ -22,7 +22,9 @@ export function DivinationPage() {
     <div
       className={`workspace-focused-page workspace-divination-page${method === 'almanac' ? ' is-almanac' : ''}`}
     >
-      <WorkspaceToolSwitcher current={method} group="divination" ariaLabel="占问工具切换" />
+      {method !== 'almanac' ? (
+        <WorkspaceToolSwitcher current={method} group="divination" ariaLabel="占问工具切换" />
+      ) : null}
       <DivinationPanel
         key={location.key}
         initialMethod={method}

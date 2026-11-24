@@ -1,6 +1,8 @@
 import { memo } from 'react';
 import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
 import type { useBirthPlace } from '@/hooks/useBirthPlace';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export interface BirthPlaceModalProps {
   birthPlace: ReturnType<typeof useBirthPlace>;
@@ -35,10 +37,9 @@ function BirthPlaceModalImpl({
           <div className="draft-selection-tip">当前暂选：{birthPlace.draftSummary}</div>
 
           <div className="birth-place-search">
-            <input
+            <Input
               value={birthPlace.birthPlaceSearch}
               type="text"
-              className="workspace-ui-control"
               placeholder="搜索全国城市及地区"
               onChange={(event) => birthPlace.setBirthPlaceSearch(event.target.value)}
             />
@@ -65,7 +66,7 @@ function BirthPlaceModalImpl({
           ) : birthPlace.birthPlaceSearch ? (
             <div className="search-results">
               {birthPlace.filteredDistrictResults.map((item) => (
-                <button
+                <Button
                   key={item.districtId}
                   type="button"
                   className="search-result-item"
@@ -75,7 +76,7 @@ function BirthPlaceModalImpl({
                   <span className="search-result-sub">
                     {item.provinceLabel} / {item.cityLabel}
                   </span>
-                </button>
+                </Button>
               ))}
               {birthPlace.filteredDistrictResults.length === 0 ? (
                 <div className="search-empty">未找到匹配地区，请换个关键词。</div>
@@ -86,7 +87,7 @@ function BirthPlaceModalImpl({
               <div className="cascade-column">
                 <div className="cascade-title">省份</div>
                 {birthPlace.provinceOptions.map((province) => (
-                  <button
+                  <Button
                     key={province.id}
                     id={`birth-place-province-${province.id}`}
                     type="button"
@@ -94,13 +95,13 @@ function BirthPlaceModalImpl({
                     onClick={() => birthPlace.handleProvinceSelect(province.id)}
                   >
                     {province.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
               <div className="cascade-column">
                 <div className="cascade-title">城市</div>
                 {birthPlace.cityOptions.map((city) => (
-                  <button
+                  <Button
                     key={city.id}
                     id={`birth-place-city-${city.id}`}
                     type="button"
@@ -108,13 +109,13 @@ function BirthPlaceModalImpl({
                     onClick={() => birthPlace.handleCitySelect(city.id)}
                   >
                     {city.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
               <div className="cascade-column">
                 <div className="cascade-title">区县</div>
                 {birthPlace.districtOptions.map((district) => (
-                  <button
+                  <Button
                     key={district.id}
                     id={`birth-place-district-${district.id}`}
                     type="button"
@@ -122,7 +123,7 @@ function BirthPlaceModalImpl({
                     onClick={() => birthPlace.handleDistrictSelect(district.id)}
                   >
                     {district.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>

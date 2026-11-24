@@ -11,6 +11,9 @@ import type { PersonRole } from './InputPage.field-helpers';
 import type { BaziReverseSource } from '@/lib/bazi-reverse-input';
 
 import type { PersonInputMode } from './InputPage.field-helpers';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 export type { PersonInputMode } from './InputPage.field-helpers';
 
 function getTrueSolarTimeLabel(form: QueryInputState, role: PersonRole) {
@@ -59,6 +62,8 @@ export interface PersonFormProps {
   reversePanel?: ReactNode;
   reverseSource?: BaziReverseSource | null;
   allowUnknownTime?: boolean;
+  /** 岁庚专用紧凑版式：输入框收短，不随容器宽度拉伸 */
+  compact?: boolean;
 }
 
 export const PersonForm = memo(function PersonForm({
@@ -78,6 +83,7 @@ export const PersonForm = memo(function PersonForm({
   reversePanel,
   reverseSource = null,
   allowUnknownTime = false,
+  compact = false,
 }: PersonFormProps) {
   const birthTimeValue =
     getPersonValue(form, role, 'birthHour') !== '' &&
@@ -104,7 +110,7 @@ export const PersonForm = memo(function PersonForm({
 
   return (
     <section
-      className={`workspace-ui-form-surface ${role === 'partner' ? 'is-second-person' : ''}`}
+      className={`workspace-ui-form-surface ${role === 'partner' ? 'is-second-person' : ''} ${compact ? 'is-compact' : ''}`}
     >
       <div className="workspace-ui-form-heading">
         <h2>{sectionTitle || getPersonSectionTitle(form.analysisMode, role)}</h2>
@@ -112,25 +118,22 @@ export const PersonForm = memo(function PersonForm({
       </div>
 
       <div className="workspace-ui-form-body">
-        {showNameField ? (
-          <div className="workspace-ui-form-row">
+        {/* 姓名 + 性别共用一行：姓名占大头，性别只给所需宽度 */}
+        <div className="workspace-ui-form-row is-name-gender">
+          {showNameField ? (
             <div className="workspace-ui-field">
-              <label htmlFor={`${role}-name-input`}>姓名</label>
-              <input
+              <Label htmlFor={`${role}-name-input`}>姓名</Label>
+              <Input
                 id={`${role}-name-input`}
                 value={String(getPersonValue(form, role, 'name'))}
                 type="text"
                 placeholder="请输入姓名"
-                className="workspace-ui-control"
                 onChange={(event) => updatePersonField(role, 'name', event.target.value)}
               />
             </div>
-          </div>
-        ) : null}
-
-        <div className="workspace-ui-form-row">
+          ) : null}
           <div className="workspace-ui-field">
-            <label>性别</label>
+            <Label>性别</Label>
             <SegmentedControl
               value={getPersonValue(form, role, 'gender') as 'male' | 'female'}
               options={[
@@ -144,7 +147,7 @@ export const PersonForm = memo(function PersonForm({
 
         <div className="workspace-ui-form-row">
           <div className="workspace-ui-field">
-            <label>日期输入</label>
+            <Label>日期输入</Label>
             <SegmentedControl
               value={effectiveInputMode}
               options={[
@@ -168,7 +171,7 @@ export const PersonForm = memo(function PersonForm({
             <div className="workspace-ui-form-row">
               {isLunar ? (
                 <div className="workspace-ui-field">
-                  <label>月别</label>
+                  <Label>月别</Label>
                   <SegmentedControl
                     value={Boolean(getPersonValue(form, role, 'isLeapMonth'))}
                     options={[
@@ -183,41 +186,38 @@ export const PersonForm = memo(function PersonForm({
 
             <div className="workspace-ui-form-row workspace-ui-date-row">
               <div className="workspace-ui-field">
-                <label htmlFor={`${role}-year-input`}>年</label>
-                <input
+                <Label htmlFor={`${role}-year-input`}>年</Label>
+                <Input
                   id={`${role}-year-input`}
                   value={String(getPersonValue(form, role, 'year'))}
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
                   placeholder="2000"
-                  className="workspace-ui-control"
                   onChange={(event) => updateNumericField(role, 'year', event.target.value)}
                 />
               </div>
               <div className="workspace-ui-field">
-                <label htmlFor={`${role}-month-input`}>月</label>
-                <input
+                <Label htmlFor={`${role}-month-input`}>月</Label>
+                <Input
                   id={`${role}-month-input`}
                   value={String(getPersonValue(form, role, 'month'))}
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
                   placeholder="1-12"
-                  className="workspace-ui-control"
                   onChange={(event) => updateNumericField(role, 'month', event.target.value)}
                 />
               </div>
               <div className="workspace-ui-field">
-                <label htmlFor={`${role}-day-input`}>日</label>
-                <input
+                <Label htmlFor={`${role}-day-input`}>日</Label>
+                <Input
                   id={`${role}-day-input`}
                   value={String(getPersonValue(form, role, 'day'))}
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
                   placeholder="1-31"
-                  className="workspace-ui-control"
                   onChange={(event) => updateNumericField(role, 'day', event.target.value)}
                 />
               </div>
@@ -225,8 +225,8 @@ export const PersonForm = memo(function PersonForm({
 
             {forcePreciseBirthPlace ? null : (
               <div className="workspace-ui-form-row">
-                <label className="workspace-ui-checkbox" htmlFor={`${role}-true-solar-time-input`}>
-                  <input
+                <Label className="workspace-ui-checkbox" htmlFor={`${role}-true-solar-time-input`}>
+                  <Input
                     id={`${role}-true-solar-time-input`}
                     checked={useTrueSolarTime}
                     type="checkbox"
@@ -235,7 +235,7 @@ export const PersonForm = memo(function PersonForm({
                     }
                   />
                   <span>使用真太阳时（需精准时分和出生地）</span>
-                </label>
+                </Label>
               </div>
             )}
 
@@ -243,19 +243,18 @@ export const PersonForm = memo(function PersonForm({
               <>
                 <div className="workspace-ui-form-row">
                   <div className="workspace-ui-field">
-                    <label htmlFor={`${role}-birth-time-input`}>
+                    <Label htmlFor={`${role}-birth-time-input`}>
                       {useTrueSolarTime
                         ? '精准时间'
                         : hasSecondPrecision
                           ? '标准北京时间（精确到秒）'
                           : '标准北京时间（精确到分）'}
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id={`${role}-birth-time-input`}
                       value={birthTimeValue}
                       type="time"
                       step={hasSecondPrecision ? 1 : undefined}
-                      className="workspace-ui-control"
                       onChange={(event) => updateBirthTime(role, event.target.value)}
                     />
                     {useTrueSolarTime && trueSolarTimeLabel ? (
@@ -267,7 +266,7 @@ export const PersonForm = memo(function PersonForm({
             ) : (
               <div className="workspace-ui-form-row">
                 <div className="workspace-ui-field">
-                  <label htmlFor={`${role}-time-index-input`}>时辰</label>
+                  <Label htmlFor={`${role}-time-index-input`}>时辰</Label>
                   <DropdownSelect
                     id={`${role}-time-index-input`}
                     value={String(getPersonValue(form, role, 'timeIndex'))}
@@ -285,16 +284,17 @@ export const PersonForm = memo(function PersonForm({
         {forcePreciseBirthPlace || useTrueSolarTime ? (
           <div className="workspace-ui-form-row">
             <div className="workspace-ui-field">
-              <label htmlFor={`${role}-birth-place-input`}>出生地</label>
-              <button
+              <Label htmlFor={`${role}-birth-place-input`}>出生地</Label>
+              <Button
                 id={`${role}-birth-place-input`}
                 type="button"
-                className="workspace-ui-control address-trigger"
+                variant="outline"
+                className="h-8 w-full justify-between px-3 font-normal"
                 onClick={() => openBirthPlaceModal(role)}
               >
                 <span>{String(getPersonValue(form, role, 'birthPlace')) || '请选择出生地'}</span>
                 <span className="address-trigger-arrow">选择</span>
-              </button>
+              </Button>
             </div>
           </div>
         ) : null}

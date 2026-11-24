@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { MingluTOCItem } from 'mingyu-core/minglu';
+import { Button } from '@/components/ui/button';
 
 interface MingluTOCProps {
   items: MingluTOCItem[];
@@ -41,14 +42,14 @@ export const MingluTableOfContents: React.FC<MingluTOCProps> = ({
                 <span className="minglu-toc-item-text">{item.title}</span>
                 {item.badge && <span className="minglu-toc-badge">{item.badge}</span>}
                 {item.subItems && item.subItems.length > 0 && (
-                  <button
+                  <Button
                     type="button"
                     className="minglu-toc-toggle-btn"
                     onClick={(e) => toggleCollapse(item.id, e)}
                     aria-label={isCollapsed ? '展开子条目' : '折叠子条目'}
                   >
                     {isCollapsed ? '+' : '−'}
-                  </button>
+                  </Button>
                 )}
               </div>
 

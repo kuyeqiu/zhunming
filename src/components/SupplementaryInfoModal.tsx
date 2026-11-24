@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { WorkspaceButton, WorkspaceDialog } from './workspace/WorkspaceUI';
 import { DropdownSelect, type DropdownSelectOption } from './DropdownSelect';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 export type SupplementaryInfoModalField = {
   key: string;
@@ -63,7 +66,7 @@ export function SupplementaryInfoModal({
           }`}
         >
           {fields.map((field) => (
-            <label
+            <Label
               className={`supplementary-info-field${
                 field.fullWidth || (field.rows && field.rows > 3) ? ' is-full-width' : ''
               }`}
@@ -84,7 +87,7 @@ export function SupplementaryInfoModal({
                   }
                 />
               ) : field.type === 'text' ? (
-                <input
+                <Input
                   type="text"
                   className="supplementary-info-input"
                   inputMode={field.inputMode}
@@ -102,7 +105,7 @@ export function SupplementaryInfoModal({
                   }
                 />
               ) : (
-                <textarea
+                <Textarea
                   rows={field.rows ?? 3}
                   value={draftValues[field.key] ?? ''}
                   placeholder={field.placeholder}
@@ -114,7 +117,7 @@ export function SupplementaryInfoModal({
                   }
                 />
               )}
-            </label>
+            </Label>
           ))}
         </div>
 

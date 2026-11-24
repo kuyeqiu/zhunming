@@ -72,6 +72,11 @@ const CalendarPage = lazy(async () => {
   return { default: module.CalendarPage };
 });
 
+const ChartMenuPage = lazy(async () => {
+  const module = await import('./pages/ChartMenuPage');
+  return { default: module.ChartMenuPage };
+});
+
 function buildDefaultFeaturePath(feature: WorkspaceFeatureId) {
   if (!isChartWorkspaceId(feature)) return buildWorkspaceFeaturePath(feature);
   const activeCaseId = readActiveCaseId();
@@ -119,16 +124,7 @@ export default function App() {
       <Suspense
       fallback={
         <div className="route-loading" aria-hidden="true">
-          <div className="route-loading-skeleton">
-            <span className="skeleton-block route-loading-skeleton-title" />
-            <span className="skeleton-block route-loading-skeleton-line" />
-            <span className="skeleton-block route-loading-skeleton-line route-loading-skeleton-line-short" />
-            <div className="route-loading-skeleton-grid">
-              <span className="skeleton-block route-loading-skeleton-card" />
-              <span className="skeleton-block route-loading-skeleton-card" />
-              <span className="skeleton-block route-loading-skeleton-card" />
-            </div>
-          </div>
+          <span className="route-loading-spinner" />
         </div>
       }
     >
@@ -140,7 +136,9 @@ export default function App() {
           <Route path="/" element={<DefaultEntryRoute />} />
           <Route path="/home" element={<DefaultEntryRoute />} />
           <Route element={<WorkspaceShell />}>
+            <Route path="/chart" element={<ChartMenuPage />} />
             <Route path="/chart/:tool" element={<InputPage />} />
+            <Route path="/profile" element={<InputPage mode="profile" />} />
             <Route path="/divination/:method" element={<DivinationPage />} />
             <Route path="/divination/:method/result" element={<DivinationResultPage />} />
             <Route

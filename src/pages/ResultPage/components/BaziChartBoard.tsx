@@ -1,4 +1,5 @@
 import { memo, useCallback, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   calculateKongWangBranches,
   filterCommonBaziShenSha,
@@ -596,8 +597,11 @@ export const BaziChartBoard = memo(function BaziChartBoard(props: {
   result: BaziChartResult;
   isInstant?: boolean;
   timeBasisLabel?: string;
+  /** 'board' = 只渲染排盘盘面（解读区块移到 BaziReadingPanel） */
+  variant?: 'full' | 'board';
 }) {
-  const { title, name, result, isInstant = false, timeBasisLabel } = props;
+  const { title, name, result, isInstant = false, timeBasisLabel, variant = 'full' } = props;
+  const showReadingBlocks = variant !== 'board';
   const [fortuneColumns, setFortuneColumns] = useState<BaziFortuneDisplayColumn[]>([]);
   const [interactionsExpanded, setInteractionsExpanded] = useState(true);
   const [qiongtongExpanded, setQiongtongExpanded] = useState(true);
@@ -946,7 +950,7 @@ export const BaziChartBoard = memo(function BaziChartBoard(props: {
         </div>
       ) : null}
 
-      {!isInstant ? (
+      {!isInstant && showReadingBlocks ? (
         <div className="result-summary-grid result-summary-grid-bazi">
           <div
             className="result-stat-card result-stat-card-accent is-clickable-term"
@@ -997,7 +1001,7 @@ export const BaziChartBoard = memo(function BaziChartBoard(props: {
         </div>
       ) : null}
 
-      {!isInstant ? (
+      {!isInstant && showReadingBlocks ? (
         <details className="traditional-classic-card">
           <summary className="traditional-classic-head">
             <strong>旺衰、格局与取用依据</strong>
@@ -1011,7 +1015,7 @@ export const BaziChartBoard = memo(function BaziChartBoard(props: {
         </details>
       ) : null}
 
-      {functionalUse.length ? (
+      {functionalUse.length && showReadingBlocks ? (
         <section className="traditional-classic-card" aria-label="天干取用作用">
           <div className="traditional-classic-body">
             {functionalUse.map((line) => (
@@ -1029,7 +1033,7 @@ export const BaziChartBoard = memo(function BaziChartBoard(props: {
           >
             <h3>{result.isThreePillars ? '三柱盘（时辰未知）' : '四柱盘'}</h3>
             <div style={{ display: 'flex', gap: '6px' }}>
-              <button
+              <Button
                 type="button"
                 className="bazi-share-chart-btn"
                 onClick={() => setIsShareModalOpen(true)}
@@ -1044,7 +1048,7 @@ export const BaziChartBoard = memo(function BaziChartBoard(props: {
                 }}
               >
                 分享排盘
-              </button>
+              </Button>
             </div>
           </div>
           <div className="bazi-pillars-scroll">
@@ -1202,7 +1206,7 @@ export const BaziChartBoard = memo(function BaziChartBoard(props: {
           </div>
         </div>
 
-        {referenceItems.length > 0 ? (
+        {referenceItems.length > 0 && showReadingBlocks ? (
           <div className="result-side-card bazi-reference-card">
             <div className="result-side-head">
               <h3>基础参考</h3>
@@ -1225,7 +1229,7 @@ export const BaziChartBoard = memo(function BaziChartBoard(props: {
         ) : null}
       </div>
 
-      {qiongtongAdvice ? (
+      {qiongtongAdvice && showReadingBlocks ? (
         <div className="traditional-classic-card bazi-qiongtong-card">
           <div
             className="traditional-classic-head"
@@ -1272,7 +1276,7 @@ export const BaziChartBoard = memo(function BaziChartBoard(props: {
         </div>
       ) : null}
 
-      {ditiansuiAdvice ? (
+      {ditiansuiAdvice && showReadingBlocks ? (
         <div className="traditional-classic-card bazi-ditiansui-card">
           <div
             className="traditional-classic-head"
@@ -1306,7 +1310,7 @@ export const BaziChartBoard = memo(function BaziChartBoard(props: {
         </div>
       ) : null}
 
-      {zipingAdvice ? (
+      {zipingAdvice && showReadingBlocks ? (
         <div className="traditional-classic-card bazi-ziping-card">
           <div
             className="traditional-classic-head"

@@ -1,6 +1,9 @@
 import type { BirthProfile } from 'mingyu-core/profile';
 import type { useBaziRangeCalculations } from '../hooks/useBaziRangeCalculations';
 import { BaziChartBoard } from './BaziChartBoard';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import './BaziBirthRangePanel.css';
 
 type RangeState = ReturnType<typeof useBaziRangeCalculations>;
@@ -27,35 +30,35 @@ export function BirthRangeNavigator({ state }: { state: RangeState }) {
           <p>逐秒查看盘面变化；当前结果对应下方列出的具体出生时间。</p>
         </div>
         <div className="bazi-birth-range-navigation" aria-label="出生区间翻页">
-          <button type="button" onClick={state.previous} disabled={loading || state.index <= 0}>
+          <Button variant="outline" size="sm" type="button" onClick={state.previous} disabled={loading || state.index <= 0}>
             上一条
-          </button>
+          </Button>
           <span role="status" aria-live="polite">
             {state.total > 0
               ? `第 ${(state.index + 1).toLocaleString('zh-CN')} / ${state.total.toLocaleString('zh-CN')} ${isPair ? '组' : '条'}`
               : '等待计算'}
           </span>
-          <button
+          <Button
             type="button"
             onClick={state.next}
             disabled={loading || !page || page.nextIndex === null}
           >
             下一条
-          </button>
+          </Button>
           {loading ? (
-            <button type="button" onClick={state.cancel}>
+            <Button variant="outline" size="sm" type="button" onClick={state.cancel}>
               取消计算
-            </button>
+            </Button>
           ) : null}
           {paused ? (
-            <button type="button" onClick={state.resume}>
+            <Button variant="outline" size="sm" type="button" onClick={state.resume}>
               继续计算
-            </button>
+            </Button>
           ) : null}
           {error ? (
-            <button type="button" onClick={state.retry}>
+            <Button variant="outline" size="sm" type="button" onClick={state.retry}>
               重新计算
-            </button>
+            </Button>
           ) : null}
           {state.total > 1 ? (
             <form
@@ -66,9 +69,9 @@ export function BirthRangeNavigator({ state }: { state: RangeState }) {
                   state.goTo(index);
               }}
             >
-              <label>
+              <Label>
                 条目{' '}
-                <input
+                <Input
                   key={state.index}
                   name="index"
                   type="number"
@@ -79,10 +82,10 @@ export function BirthRangeNavigator({ state }: { state: RangeState }) {
                   required
                   aria-label="跳转到条目"
                 />
-              </label>
-              <button type="submit" disabled={loading}>
+              </Label>
+              <Button variant="outline" size="sm" type="submit" disabled={loading}>
                 跳转
-              </button>
+              </Button>
             </form>
           ) : null}
         </div>
@@ -155,3 +158,4 @@ export function BaziBirthRangePanel({ state }: { state: RangeState }) {
     </div>
   );
 }
+

@@ -17,6 +17,8 @@ import {
   toggleCompatibilityHistoryPin,
 } from '@/lib/history-records';
 import { buildCompatibilityRecordPath, buildDivinationRecordPath } from '@/lib/case-navigation';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 type HistoryTab = 'compatibility' | 'divination';
 
@@ -134,10 +136,10 @@ export function RecordsPage() {
                 }}
               />
             </div>
-            <input
+            <Input
               value={searchText}
               type="search"
-              className="workspace-ui-control records-search-input"
+              className="records-search-input"
               placeholder={searchPlaceholder}
               aria-label={searchPlaceholder}
               onChange={(event) => setSearchText(event.target.value)}
@@ -149,7 +151,7 @@ export function RecordsPage() {
               <div className="workspace-record-list">
                 {filteredCompatibility.map((record) => (
                   <article key={record.id} className="workspace-record-card">
-                    <button
+                    <Button
                       type="button"
                       className="workspace-record-open"
                       onClick={() => navigate(buildCompatibilityRecordPath(record))}
@@ -173,7 +175,7 @@ export function RecordsPage() {
                           <span className="workspace-record-tag">合盘</span>
                         </span>
                       </span>
-                    </button>
+                    </Button>
                     <div className="workspace-record-actions">
                       <WorkspaceButton
                         size="small"
@@ -204,7 +206,7 @@ export function RecordsPage() {
             <div className="workspace-record-list">
               {filteredDivination.map((record) => (
                 <article key={record.id} className="workspace-record-card">
-                  <button
+                  <Button
                     type="button"
                     className="workspace-record-open"
                     onClick={() => navigate(buildDivinationRecordPath(record))}
@@ -238,7 +240,7 @@ export function RecordsPage() {
                         )}
                       </span>
                     </span>
-                  </button>
+                  </Button>
                   <div className="workspace-record-actions">
                     <WorkspaceButton
                       variant="danger"

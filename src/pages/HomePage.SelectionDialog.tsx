@@ -1,5 +1,7 @@
 import { useEffect, useId, useState } from 'react';
 import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import './HomePage.SelectionDialog.css';
 
 export type HomeSelectionOption = {
@@ -64,9 +66,8 @@ export function HomeSelectionDialog(props: {
         </WorkspaceButton>
       </header>
       <div className="home-selection-search">
-        <input
+        <Input
           type="search"
-          className="workspace-ui-control"
           aria-label={props.searchPlaceholder}
           placeholder={props.searchPlaceholder}
           value={search}
@@ -81,7 +82,7 @@ export function HomeSelectionDialog(props: {
                 className={`home-selection-card ${option.value === props.value ? 'is-selected' : ''}`}
                 key={option.value}
               >
-                <button
+                <Button
                   type="button"
                   className="home-selection-option"
                   aria-pressed={option.value === props.value}
@@ -94,9 +95,9 @@ export function HomeSelectionDialog(props: {
                     ) : null}
                   </span>
                   <span className="home-selection-description">{option.description}</span>
-                </button>
+                </Button>
                 {props.onFavoriteChange ? (
-                  <button
+                  <Button
                     type="button"
                     className="home-selection-favorite"
                     aria-label={`${option.label}设为${props.favoriteLabel}`}
@@ -104,7 +105,7 @@ export function HomeSelectionDialog(props: {
                     onClick={() => props.onFavoriteChange?.(option.value)}
                   >
                     {option.value === props.favoriteValue ? '★ 默认' : '☆ 设为默认'}
-                  </button>
+                  </Button>
                 ) : null}
               </div>
             ))}
@@ -116,3 +117,4 @@ export function HomeSelectionDialog(props: {
     </WorkspaceDialog>
   );
 }
+

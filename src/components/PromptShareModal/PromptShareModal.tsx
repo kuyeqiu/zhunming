@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
 import { shareText } from '@/utils/share-text';
+import { Button } from '@/components/ui/button';
 
 export interface PromptShareModalProps {
   promptText: string;
@@ -88,14 +89,14 @@ export function PromptShareModal({
           <h2 id="prompt-share-dialog-title">AI 解读提示词</h2>
           <p className="prompt-share-subtitle">查看、复制或分享本次占问的完整内容</p>
         </div>
-        <button
+        <Button
           type="button"
           className="prompt-share-close-btn"
           onClick={onClose}
           aria-label="关闭分享卡片"
         >
           ✕
-        </button>
+        </Button>
       </header>
 
       <div className="workspace-ui-dialog-body prompt-share-body">
@@ -126,13 +127,13 @@ export function PromptShareModal({
           <div className="share-card-prompt-container">
             <div className="prompt-container-head">
               <span>完整内容</span>
-              <button type="button" className="prompt-quick-copy" onClick={handleCopy}>
+              <Button variant="ghost" size="sm" type="button" className="prompt-quick-copy" onClick={handleCopy}>
                 {copyState === 'copied'
                   ? '已复制'
                   : copyState === 'failed'
                     ? '复制失败，请重试'
                     : '复制全文'}
-              </button>
+              </Button>
             </div>
             <pre className="share-card-prompt-text">{promptText}</pre>
           </div>

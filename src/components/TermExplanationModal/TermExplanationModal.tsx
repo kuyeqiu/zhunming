@@ -2,6 +2,7 @@ import { useState, useCallback, type ReactNode } from 'react';
 import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
 import { lookupMetaphysicsTerm, type MetaphysicsTerm } from '@/lib/metaphysics-terms';
 import { TermExplanationContext, type TermContextData } from './TermExplanationContext';
+import { Button } from '@/components/ui/button';
 
 export interface MetaphysicsTermWithContext extends MetaphysicsTerm {
   context?: TermContextData;
@@ -29,14 +30,14 @@ export function TermExplanationModal({ termInfo, onClose }: TermExplanationModal
             {termInfo.term}
           </h2>
         </div>
-        <button
+        <Button
           type="button"
           className="term-explanation-close-btn"
           onClick={onClose}
           aria-label="关闭释义"
         >
           ✕
-        </button>
+        </Button>
       </header>
 
       <div className="workspace-ui-dialog-body term-explanation-body">
