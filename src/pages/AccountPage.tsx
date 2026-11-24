@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { appApi, isApiError, type AppAccess, type AppSummary } from '@/lib/app-api';
 import { useSession } from '@/hooks/useSession';
+import { InkHexagramAside, InkHexagramDivider } from '@/components/ink/InkHexagram';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -245,6 +246,8 @@ function AccountView({
         </p>
       ) : null}
 
+      <InkHexagramDivider contextKey="account" salt={1} />
+
       <div className="ink-divider ink-divider--left">
         <h2>权 益</h2>
       </div>
@@ -263,6 +266,8 @@ function AccountView({
           ))}
         </ul>
       )}
+
+      <InkHexagramDivider contextKey="account" salt={2} />
 
       <div className="ink-divider ink-divider--left">
         <h2>订 单</h2>
@@ -348,13 +353,19 @@ export function AccountPage() {
           <p className="ink-acct__empty">{summaryError ?? '正在读取账户…'}</p>
         )
       ) : (
-        <AccessPanel
-          login={login}
-          register={register}
-          onDone={() => {
-            void refresh();
-          }}
-        />
+        <div className="ink-acct-stage">
+          <AccessPanel
+            login={login}
+            register={register}
+            onDone={() => {
+              void refresh();
+            }}
+          />
+          <InkHexagramAside
+            contextKey="account-login"
+            caption="入册记岁，历久弥新"
+          />
+        </div>
       )}
     </div>
   );

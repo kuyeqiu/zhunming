@@ -27,4 +27,5 @@ import './workspace.css';
 import './workspace-ui.css';
 import './traditional-charts.css';
 import './styles/ink-tokens.css';
+import './styles/ink-hexagram.css';
 import './styles/result-workbench.css';

@@ -1,0 +1,733 @@
+/* ===========================================================================
+   ink-hexagram.css — 手绘水墨卦象装饰与伴随系统
+   ---------------------------------------------------------------------------
+   以用户手绘水墨爻线（/ink-hexagrams/yang|yin-1..3.webp）动态拼合六十四卦，
+   用于填补各页面留白与空状态，呈现「白底 + 墨迹 + 朱砂点缀」的书卷气韵。
+   =========================================================================== */
+
+/* ---- 基础水墨卦象原子 ---- */
+.ink-hexagram {
+  --ink-hex-width: 152px;
+  --ink-hex-gap: 3px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ink-hex-width);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  line-height: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ink-hexagram--xs {
+  --ink-hex-width: 34px;
+  --ink-hex-gap: 1px;
+}
+
+.ink-hexagram--sm {
+  --ink-hex-width: 78px;
+  --ink-hex-gap: 2px;
+}
+
+.ink-hexagram--md {
+  --ink-hex-width: 136px;
+  --ink-hex-gap: 3px;
+}
+
+.ink-hexagram--lg {
+  --ink-hex-width: 176px;
+  --ink-hex-gap: 4px;
+}
+
+.ink-hexagram--xl {
+  --ink-hex-width: clamp(168px, 15vw, 224px);
+  --ink-hex-gap: 4px;
+}
+
+.ink-hexagram--solid {
+  opacity: 0.94;
+}
+
+.ink-hexagram--soft {
+  opacity: 0.78;
+}
+
+.ink-hexagram--watermark {
+  opacity: 0.24;
+  pointer-events: none;
+}
+
+.ink-hexagram.is-interactive {
+  cursor: pointer;
+  transition:
+    opacity 280ms var(--ink-ease, ease),
+    transform 320ms var(--ink-ease, ease);
+}
+
+.ink-hexagram.is-interactive:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.ink-hexagram.is-interactive:active {
+  transform: scale(0.985);
+}
+
+.ink-hexagram.is-interactive:focus-visible {
+  outline: 1.5px solid var(--cinnabar, #9e2a2b);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
+.ink-hexagram__stack {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ink-hex-gap);
+}
+
+.ink-hexagram__line {
+  display: block;
+  width: 100%;
+  transform: translateX(var(--ink-hex-shift, 0%)) rotate(var(--ink-hex-rot, 0deg))
+    scaleX(var(--ink-hex-flip, 1));
+  will-change: opacity, filter, transform;
+}
+
+.ink-hexagram__line img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+/* 落墨渐显过渡：每次换卦 / 切页时六爻次第晕开 */
+.ink-hexagram__stack.is-animated .ink-hexagram__line {
+  animation: ink-hex-stroke-in 520ms var(--ink-ease-ink, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  animation-delay: var(--ink-hex-delay, 0ms);
+}
+
+@keyframes ink-hex-stroke-in {
+  from {
+    opacity: 0;
+    filter: blur(3.5px);
+    transform: translateX(var(--ink-hex-shift, 0%)) rotate(var(--ink-hex-rot, 0deg))
+      scaleX(calc(var(--ink-hex-flip, 1) * 0.94));
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(var(--ink-hex-shift, 0%)) rotate(var(--ink-hex-rot, 0deg))
+      scaleX(var(--ink-hex-flip, 1));
+  }
+}
+
+/* ---- 通用小操作按钮（换一卦 / 归今日卦） ---- */
+.ink-hex-action-btn {
+  border: 0;
+  background: transparent;
+  padding: 2px 4px;
+  font-family: var(--ink-font-serif, serif);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--ink-light, #8c887f);
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+
+.ink-hex-action-btn:hover {
+  color: var(--ink-deep, #181715);
+}
+
+.ink-hex-action-btn.is-accent {
+  color: var(--cinnabar, #9e2a2b);
+}
+
+.ink-hex-action-btn.is-accent:hover {
+  color: #7c1e1f;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ===========================================================================
+   1. 岁庚页右侧主展示区 (.ink-hex-showcase) — 呼应设计稿未标题-1.png
+   =========================================================================== */
+.ink-hex-showcase {
+  display: grid;
+  gap: 28px;
+  align-content: start;
+  padding-top: 2px;
+}
+
+.ink-hex-showcase__top {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.ink-hex-showcase__art {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 6px 4px;
+}
+
+.ink-hex-showcase__art-hint {
+  font-family: var(--ink-font-serif, serif);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--ink-faint, #b4b0a6);
+}
+
+.ink-hex-showcase__scroll {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 214px;
+  padding: 20px 22px 16px;
+  border: 1px solid rgba(24, 23, 21, 0.14);
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.ink-hex-showcase__scroll-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ink-hex-showcase__kicker {
+  font-family: var(--ink-font-serif, serif);
+  font-size: 11.5px;
+  letter-spacing: 0.26em;
+  color: var(--ink-light, #8c887f);
+}
+
+.ink-hex-showcase__seal {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border: 1px solid rgba(158, 42, 43, 0.48);
+  border-radius: 2px;
+  color: var(--cinnabar, #9e2a2b);
+  font-family: var(--ink-font-serif, serif);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+}
+
+.ink-hex-showcase__title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ink-hex-showcase__name {
+  margin: 0;
+  font-family: 'MingyuLotBrush', var(--ink-font-serif, serif);
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  color: var(--ink-deep, #181715);
+}
+
+.ink-hex-showcase__trigrams {
+  font-family: var(--ink-font-serif, serif);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: var(--ink-light, #8c887f);
+}
+
+.ink-hex-showcase__quote {
+  margin: 0;
+  font-family: var(--ink-font-reading, 'Songti SC', serif);
+  font-size: 14.5px;
+  line-height: 1.95;
+  letter-spacing: 0.06em;
+  color: var(--ink-strong, #2e2c28);
+}
+
+.ink-hex-showcase__scroll-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(24, 23, 21, 0.11);
+}
+
+.ink-hex-showcase__time {
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: var(--ink-light, #8c887f);
+}
+
+.ink-hex-showcase__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---- 今日吉凶区块（书法标题 + 留白大卡） ---- */
+.ink-hex-fortune {
+  display: grid;
+  gap: 14px;
+}
+
+.ink-hex-fortune__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ink-hex-fortune__heading {
+  margin: 0;
+  font-family: 'MingyuLotBrush', var(--ink-font-serif, serif);
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  line-height: 1.15;
+  color: var(--ink-deep, #181715);
+}
+
+.ink-hex-fortune__sub {
+  font-family: var(--ink-font-serif, serif);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: var(--ink-light, #8c887f);
+}
+
+.ink-hex-fortune__card {
+  display: grid;
+  gap: 18px;
+  padding: 22px 24px;
+  border: 1px solid rgba(24, 23, 21, 0.14);
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.ink-hex-fortune__lead {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.ink-hex-fortune__verdict {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  padding: 6px 12px;
+  border: 1.5px solid var(--ink-deep, #181715);
+  border-radius: 2px;
+  font-family: 'MingyuLotBrush', var(--ink-font-serif, serif);
+  font-size: 24px;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  color: var(--ink-deep, #181715);
+}
+
+.ink-hex-fortune__verdict.is-auspicious {
+  border-color: var(--cinnabar, #9e2a2b);
+  color: var(--cinnabar, #9e2a2b);
+  background: rgba(158, 42, 43, 0.035);
+}
+
+.ink-hex-fortune__detail {
+  margin: 2px 0 0;
+  font-family: var(--ink-font-reading, 'Songti SC', serif);
+  font-size: 14.5px;
+  line-height: 1.9;
+  letter-spacing: 0.04em;
+  color: var(--ink-strong, #2e2c28);
+}
+
+.ink-hex-fortune__yiji {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 20px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(24, 23, 21, 0.11);
+}
+
+.ink-hex-fortune__yiji-group {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ink-hex-fortune__yiji-tag {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 2px;
+  font-family: var(--ink-font-serif, serif);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.ink-hex-fortune__yiji-tag.is-yi {
+  border: 1px solid rgba(158, 42, 43, 0.45);
+  color: var(--cinnabar, #9e2a2b);
+  background: rgba(158, 42, 43, 0.04);
+}
+
+.ink-hex-fortune__yiji-tag.is-ji {
+  border: 1px solid rgba(24, 23, 21, 0.22);
+  color: var(--ink-medium, #4a4843);
+  background: rgba(24, 23, 21, 0.03);
+}
+
+.ink-hex-fortune__yiji-list {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink-medium, #4a4843);
+  letter-spacing: 0.04em;
+}
+
+/* 岁庚页双栏比例微调：右侧留足空间让手绘卦象与笺框舒展 */
+.profile-ledger {
+  grid-template-columns: minmax(0, 5.4fr) minmax(0, 6.6fr);
+  gap: 32px;
+}
+
+/* ===========================================================================
+   2. 伴随留白栏 (.ink-hex-aside) — 排盘输入、占问、排盘目录、账户、案例
+   =========================================================================== */
+.ink-hex-aside {
+  position: sticky;
+  top: 84px;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding: 26px 22px 20px;
+  border-left: 1px solid rgba(24, 23, 21, 0.08);
+  text-align: center;
+  color: var(--ink-strong, #2e2c28);
+}
+
+.ink-hex-aside__art {
+  display: grid;
+  place-items: center;
+  padding: 6px 0 4px;
+}
+
+.ink-hex-aside__meta {
+  display: grid;
+  gap: 8px;
+  max-width: 260px;
+}
+
+.ink-hex-aside__title-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ink-hex-aside__title-line strong {
+  font-family: 'MingyuLotBrush', var(--ink-font-serif, serif);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: var(--ink-deep, #181715);
+}
+
+.ink-hex-aside__title-line span {
+  font-family: var(--ink-font-serif, serif);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--ink-light, #8c887f);
+}
+
+.ink-hex-aside__quote {
+  margin: 0;
+  font-family: var(--ink-font-reading, 'Songti SC', serif);
+  font-size: 13px;
+  line-height: 1.85;
+  letter-spacing: 0.05em;
+  color: var(--ink-medium, #4a4843);
+}
+
+.ink-hex-aside__caption {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint, #b4b0a6);
+}
+
+.ink-hex-aside__fortune {
+  width: 100%;
+  max-width: 268px;
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid rgba(24, 23, 21, 0.1);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.72);
+  text-align: left;
+}
+
+.ink-hex-aside__fortune-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ink-hex-aside__fortune-head span {
+  font-family: var(--ink-font-serif, serif);
+  font-size: 11.5px;
+  letter-spacing: 0.22em;
+  color: var(--ink-light, #8c887f);
+}
+
+.ink-hex-aside__fortune-head strong {
+  font-family: 'MingyuLotBrush', var(--ink-font-serif, serif);
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--ink-deep, #181715);
+}
+
+.ink-hex-aside__fortune-head strong.is-auspicious {
+  color: var(--cinnabar, #9e2a2b);
+}
+
+.ink-hex-aside__fortune p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--ink-medium, #4a4843);
+}
+
+.ink-hex-aside__fortune-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(24, 23, 21, 0.1);
+  font-size: 11.5px;
+  color: var(--ink-light, #8c887f);
+}
+
+.ink-hex-aside__foot {
+  width: 100%;
+  max-width: 268px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(24, 23, 21, 0.1);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint, #b4b0a6);
+}
+
+/* ---- 通用双栏留白容器（桌面端左主内容 + 右水墨卦象） ---- */
+.ink-split-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 32px;
+  align-items: start;
+}
+
+.ink-split-stage__main {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
+/* 占问页宽容器让表单与右侧水墨卦象平衡舒展 */
+.workspace-divination-page .ink-split-stage {
+  max-width: 1140px;
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 1fr) 292px;
+  gap: 28px;
+}
+
+/* 账户页登录态双栏（表单左 + 水墨卦象右） */
+.ink-acct-stage {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 440px) minmax(240px, 1fr);
+  gap: 48px;
+  align-items: center;
+  padding: 0 var(--ink-gutter, 28px);
+}
+
+.ink-acct-stage .ink-acct {
+  margin: 0;
+}
+
+.ink-acct-stage .ink-hex-aside {
+  position: static;
+}
+
+/* ===========================================================================
+   3. 章节分隔水墨卦象 (.ink-hex-divider)
+   =========================================================================== */
+.ink-hex-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 26px 0 18px;
+}
+
+.ink-hex-divider__rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(24, 23, 21, 0.14) 50%,
+    transparent 100%
+  );
+}
+
+.ink-hex-divider__center {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink-light, #8c887f);
+  transition: color 200ms ease;
+}
+
+.ink-hex-divider__center:hover {
+  color: var(--ink-deep, #181715);
+}
+
+.ink-hex-divider__label {
+  font-family: var(--ink-font-serif, serif);
+  font-size: 12px;
+  letter-spacing: 0.24em;
+}
+
+/* ===========================================================================
+   4. 空状态水墨卦象 (.ink-hex-empty)
+   =========================================================================== */
+.ink-hex-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 44px 24px;
+  text-align: center;
+}
+
+.ink-hex-empty__hex-name {
+  margin-top: 4px;
+  font-family: var(--ink-font-serif, serif);
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  color: var(--ink-light, #8c887f);
+}
+
+.ink-hex-empty__title {
+  margin: 4px 0 0;
+  font-family: var(--ink-font-serif, serif);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ink-deep, #181715);
+}
+
+.ink-hex-empty__text {
+  margin: 0;
+  max-width: 340px;
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--ink-light, #8c887f);
+}
+
+/* ===========================================================================
+   响应式适配
+   =========================================================================== */
+@media (max-width: 1120px) {
+  .profile-ledger {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .ink-split-stage,
+  .workspace-divination-page .ink-split-stage {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .ink-hex-aside {
+    position: static;
+    border-left: 0;
+    border-top: 1px solid rgba(24, 23, 21, 0.08);
+    padding: 24px 12px 8px;
+  }
+}
+
+@media (max-width: 820px) {
+  .ink-acct-stage {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    max-width: 480px;
+  }
+
+  .ink-acct-stage .ink-acct {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 680px) {
+  .ink-hex-showcase__top {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .ink-hex-showcase__scroll {
+    min-height: 0;
+    padding: 16px 16px 14px;
+  }
+
+  .ink-hex-fortune__card {
+    padding: 16px;
+  }
+
+  .ink-hex-fortune__lead {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ink-hex-fortune__yiji {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ink-hexagram__stack.is-animated .ink-hexagram__line {
+    animation: none !important;
+  }
+}

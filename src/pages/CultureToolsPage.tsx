@@ -33,6 +33,7 @@ import { PromptDeliveryPanel } from '@/components/PromptPreview';
 import { BaziReverseInput } from '@/components/BaziReverseInput';
 import { DropdownSelect, type DropdownSelectOption } from '@/components/DropdownSelect';
 import { WorkspacePage } from '@/components/workspace/WorkspaceUI';
+import { InkHexagramEmpty } from '@/components/ink/InkHexagram';
 import { useActivePersonalCase } from '@/hooks/useActivePersonalCase';
 import { usePromptCopyShare } from '@/hooks/usePromptCopyShare';
 import { sortPersonalCasesForQuickSwitch, type PersonalHistoryRecord } from '@/lib/history-records';
@@ -875,13 +876,20 @@ function BirthSection({
   );
 }
 
+const EMPTY_CONTEXT_MAP: Record<string, string> = {
+  名: 'culture-naming',
+  姓: 'culture-name',
+  字: 'culture-hanzi',
+  数: 'culture-number',
+};
+
 function Empty({ mark, title, text }: { mark: string; title: string; text: string }) {
   return (
-    <div className="culture-tools-empty">
-      <span>{mark}</span>
-      <h3>{title}</h3>
-      <p>{text}</p>
-    </div>
+    <InkHexagramEmpty
+      contextKey={EMPTY_CONTEXT_MAP[mark] ?? 'culture-tools'}
+      title={title}
+      text={text}
+    />
   );
 }
 

@@ -58,7 +58,7 @@ import {
   type SELF_FIELD_MAP,
 } from './InputPage.field-helpers';
 import { parseBaziReverseSource, type BaziReverseResolvedInput } from '@/lib/bazi-reverse-input';
-import { getDailyHexagramLot, getDailyFortune } from '@/lib/hexagram-lot';
+import { InkHexagramAside, InkHexagramShowcase } from '@/components/ink/InkHexagram';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -94,6 +94,17 @@ const REVERSE_SOURCE_INVALIDATING_FIELDS: readonly (keyof typeof SELF_FIELD_MAP)
   'birthMinute',
   'birthSecond',
 ];
+
+const CHART_TOOL_CAPTIONS: Record<ChartWorkspaceId, string> = {
+  bazi: '四柱立命，观岁运之消长',
+  ziwei: '紫微垂象，察十二宫之流转',
+  'bazi-ziwei': '子平紫微互参，两镜相照',
+  'qimen-lifetime': '奇门定局，辨时空之枢机',
+  astrolabe: '仰观星躔，度本命之宫度',
+  qizheng: '七政四余，合日月五星之行',
+  bazhai: '宅居中正，审方位之吉凶',
+  compatibility: '两命合参，观气机之相生',
+};
 
 const CHART_TOOL_CONFIG: Record<ChartWorkspaceId, ChartToolConfig> = {
   bazi: {
@@ -217,8 +228,6 @@ export function InputPage({ mode = 'chart' }: { mode?: 'chart' | 'profile' }) {
   const config = tool ? CHART_TOOL_CONFIG[tool] : CHART_TOOL_CONFIG.bazi;
   // 合盘不再是单独工具入口：个人资料页内的开关，打开后追加“对方资料”
   const [compatMode, setCompatMode] = useState(config.compatibility);
-  const dailyHexagramLot = useMemo(() => getDailyHexagramLot(), []);
-  const dailyFortune = useMemo(() => getDailyFortune(dailyHexagramLot), [dailyHexagramLot]);
   const { cases, activeCaseId } = useActivePersonalCase();
   const routeCaseId = searchParams.get(CHART_RECORD_PARAM);
   const routeCase = useMemo(
@@ -706,7 +715,7 @@ export function InputPage({ mode = 'chart' }: { mode?: 'chart' | 'profile' }) {
               ? '岁庚'
               : config.label
         }
-        width={compatMode ? 'wide' : mode === 'profile' ? 'wide' : 'default'}
+        width="wide"
         action={
           <div className="workspace-input-page-actions">
             {instantType ? (
@@ -773,38 +782,37 @@ export function InputPage({ mode = 'chart' }: { mode?: 'chart' | 'profile' }) {
                 </div>
               </div>
             </div>
-            <aside className="profile-hexagram" aria-label="今日之卦">
-              <div className="profile-hexagram-main">
-                <span className="profile-hexagram-glyph" aria-hidden="true">{dailyHexagramLot.glyph}</span>
-                <div className="profile-hexagram-info">
-                  <span className="profile-hexagram-name">{dailyHexagramLot.name}卦</span>
-                  <span className="profile-hexagram-trigrams">{dailyHexagramLot.trigrams}</span>
-                  <span className="profile-hexagram-quote">{dailyHexagramLot.text}</span>
-                </div>
-              </div>
-              <div className="profile-hexagram-frame" aria-hidden="true" />
-              <div className="profile-hexagram-fortune">
-                <div className="profile-hexagram-fortune-head">
-                  <span>今日吉凶</span>
-                  <span className="profile-hexagram-verdict">{dailyFortune.verdict}</span>
-                </div>
-                <div className="profile-hexagram-fortune-body">
-                  <span className="profile-hexagram-fortune-text">{dailyFortune.detail}</span>
-                </div>
-              </div>
-            </aside>
+            <InkHexagramShowcase contextKey="profile" />
           </div>
-        ) : (
+        ) : compatMode ? (
           <>
             <PrivacyHint />
             {renderFormLayout()}
             {error ? <div className="workspace-ui-form-error">{error}</div> : null}
             <div className="workspace-ui-form-actions is-sticky-mobile">
               <WorkspaceButton variant="primary" size="large" block onClick={handleSubmit}>
-                {compatMode ? '查看合盘' : `查看完整${config.label}盘面`}
+                查看合盘
               </WorkspaceButton>
             </div>
           </>
+        ) : (
+          <div className="ink-split-stage">
+            <div className="ink-split-stage__main">
+              <PrivacyHint />
+              {renderFormLayout()}
+              {error ? <div className="workspace-ui-form-error">{error}</div> : null}
+              <div className="workspace-ui-form-actions is-sticky-mobile">
+                <WorkspaceButton variant="primary" size="large" block onClick={handleSubmit}>
+                  查看完整{config.label}盘面
+                </WorkspaceButton>
+              </div>
+            </div>
+            <InkHexagramAside
+              contextKey={tool ?? 'bazi'}
+              caption={CHART_TOOL_CAPTIONS[tool ?? 'bazi']}
+              showFortune
+            />
+          </div>
         )}
       </WorkspacePage>
 

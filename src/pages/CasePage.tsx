@@ -34,6 +34,7 @@ import { DropdownSelect } from '@/components/DropdownSelect';
 import { registerDismissLayer } from '@/lib/dismiss-layer';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { InkHexagramAside, InkHexagramEmpty } from '@/components/ink/InkHexagram';
 
 type CaseSortMode = 'recent' | 'name' | 'birth';
 
@@ -301,122 +302,137 @@ export function CasePage() {
           </WorkspaceButton>
         }
       >
-        <WorkspaceSurface variant="plain" className="case-page-section">
-          <div className="case-page-toolbar">
-            <Input
-              type="search"
-              value={searchText}
-              placeholder="搜索姓名、日期或出生地"
-              aria-label="搜索案例"
-              onChange={(event) => setSearchText(event.target.value)}
-            />
-            <DropdownSelect
-              value={sortMode}
-              ariaLabel="案例排序"
-              variant="field"
-              options={[
-                { value: 'recent', label: '最近使用' },
-                { value: 'name', label: '姓名顺序' },
-                { value: 'birth', label: '出生日期' },
-              ]}
-              onChange={setSortMode}
-            />
-          </div>
+        <div className="ink-split-stage">
+          <div className="ink-split-stage__main">
+            <WorkspaceSurface variant="plain" className="case-page-section">
+              <div className="case-page-toolbar">
+                <Input
+                  type="search"
+                  value={searchText}
+                  placeholder="搜索姓名、日期或出生地"
+                  aria-label="搜索案例"
+                  onChange={(event) => setSearchText(event.target.value)}
+                />
+                <DropdownSelect
+                  value={sortMode}
+                  ariaLabel="案例排序"
+                  variant="field"
+                  options={[
+                    { value: 'recent', label: '最近使用' },
+                    { value: 'name', label: '姓名顺序' },
+                    { value: 'birth', label: '出生日期' },
+                  ]}
+                  onChange={setSortMode}
+                />
+              </div>
 
-          {visibleCases.length ? (
-            <div className="case-card-grid">
-              {visibleCases.map((record) => (
-                <article
-                  className={`case-card${activeCaseId === record.id ? ' is-active' : ''}`}
-                  key={record.id}
-                >
-                  <Button
-                    type="button"
-                    className="case-card-open"
-                    onClick={() => openCase(record)}
-                    aria-label={`打开案例 ${record.name}，${record.birthText}`}
-                  >
-                    <div className="case-card-head">
-                      <div>
-                        <h2>{record.name}</h2>
-                        <span>{record.gender === 'male' ? '男' : '女'}</span>
-                      </div>
-                      <div className="case-card-status">
-                        {record.pinned ? <span>置顶</span> : null}
-                        {activeCaseId === record.id ? <span>当前</span> : null}
-                      </div>
-                    </div>
-                    <div className="case-card-meta">
-                      <span>
-                        {getPersonInputMode(record.input, 'self') === 'pillars'
-                          ? '四柱日期'
-                          : record.input.dateType === 'lunar'
-                            ? '农历'
-                            : '公历'}
-                      </span>
-                      <strong>{record.birthText}</strong>
-                      <span>{formatBirthTime(record)}</span>
-                      {record.input.birthPlace ? <span>{record.input.birthPlace}</span> : null}
-                    </div>
-                  </Button>
-                  <div className="case-card-menu" onClick={(event) => event.stopPropagation()}>
-                    <Button
-                      type="button"
-                      className="case-card-menu-trigger"
-                      aria-label={`管理案例 ${record.name}`}
-                      aria-haspopup="menu"
-                      aria-expanded={openMenuCaseId === record.id}
-                      onClick={() =>
-                        setOpenMenuCaseId((current) => (current === record.id ? null : record.id))
-                      }
+              {visibleCases.length ? (
+                <div className="case-card-grid">
+                  {visibleCases.map((record) => (
+                    <article
+                      className={`case-card${activeCaseId === record.id ? ' is-active' : ''}`}
+                      key={record.id}
                     >
-                      ···
-                    </Button>
-                    {openMenuCaseId === record.id ? (
-                      <div className="case-card-menu-popover" role="menu">
+                      <Button
+                        type="button"
+                        className="case-card-open"
+                        onClick={() => openCase(record)}
+                        aria-label={`打开案例 ${record.name}，${record.birthText}`}
+                      >
+                        <div className="case-card-head">
+                          <div>
+                            <h2>{record.name}</h2>
+                            <span>{record.gender === 'male' ? '男' : '女'}</span>
+                          </div>
+                          <div className="case-card-status">
+                            {record.pinned ? <span>置顶</span> : null}
+                            {activeCaseId === record.id ? <span>当前</span> : null}
+                          </div>
+                        </div>
+                        <div className="case-card-meta">
+                          <span>
+                            {getPersonInputMode(record.input, 'self') === 'pillars'
+                              ? '四柱日期'
+                              : record.input.dateType === 'lunar'
+                                ? '农历'
+                                : '公历'}
+                          </span>
+                          <strong>{record.birthText}</strong>
+                          <span>{formatBirthTime(record)}</span>
+                          {record.input.birthPlace ? <span>{record.input.birthPlace}</span> : null}
+                        </div>
+                      </Button>
+                      <div className="case-card-menu" onClick={(event) => event.stopPropagation()}>
                         <Button
                           type="button"
-                          role="menuitem"
-                          onClick={() => {
-                            setOpenMenuCaseId(null);
-                            openCaseEditor(record);
-                          }}
+                          className="case-card-menu-trigger"
+                          aria-label={`管理案例 ${record.name}`}
+                          aria-haspopup="menu"
+                          aria-expanded={openMenuCaseId === record.id}
+                          onClick={() =>
+                            setOpenMenuCaseId((current) => (current === record.id ? null : record.id))
+                          }
                         >
-                          编辑资料
+                          ···
                         </Button>
-                        <Button
-                          type="button"
-                          role="menuitem"
-                          onClick={() => {
-                            setOpenMenuCaseId(null);
-                            togglePersonalHistoryPin(record.id);
-                          }}
-                        >
-                          {record.pinned ? '取消置顶' : '置顶案例'}
-                        </Button>
-                        <Button
-                          type="button"
-                          role="menuitem"
-                          className="is-danger"
-                          onClick={() => {
-                            setOpenMenuCaseId(null);
-                            deleteCase(record);
-                          }}
-                        >
-                          删除案例
-                        </Button>
+                        {openMenuCaseId === record.id ? (
+                          <div className="case-card-menu-popover" role="menu">
+                            <Button
+                              type="button"
+                              role="menuitem"
+                              onClick={() => {
+                                setOpenMenuCaseId(null);
+                                openCaseEditor(record);
+                              }}
+                            >
+                              编辑资料
+                            </Button>
+                            <Button
+                              type="button"
+                              role="menuitem"
+                              onClick={() => {
+                                setOpenMenuCaseId(null);
+                                togglePersonalHistoryPin(record.id);
+                              }}
+                            >
+                              {record.pinned ? '取消置顶' : '置顶案例'}
+                            </Button>
+                            <Button
+                              type="button"
+                              role="menuitem"
+                              className="is-danger"
+                              onClick={() => {
+                                setOpenMenuCaseId(null);
+                                deleteCase(record);
+                              }}
+                            >
+                              删除案例
+                            </Button>
+                          </div>
+                        ) : null}
                       </div>
-                    ) : null}
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="workspace-ui-empty">
-              {cases.length ? '没有匹配的案例' : '还没有案例'}
-            </div>
-          )}
-        </WorkspaceSurface>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <InkHexagramEmpty
+                  contextKey="cases"
+                  title={cases.length ? '没有匹配的案例' : '还没有案例'}
+                  text={
+                    cases.length
+                      ? '换一个关键词试试，或清空搜索条件查看全部岁庚。'
+                      : '点击右上角「新建案例」，录入出生资料后可一键切换各类命盘。'
+                  }
+                />
+              )}
+            </WorkspaceSurface>
+          </div>
+          <InkHexagramAside
+            contextKey="cases"
+            caption="岁庚归档，常参常新"
+            showFortune
+          />
+        </div>
       </WorkspacePage>
 
       {isEditorOpen ? (
