@@ -1,15 +1,17 @@
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, type CSSProperties } from 'react';
 import {
   getContextHexagramLot,
-  getDailyFortune,
-  getDailyHexagramLot,
   getHexagramFullName,
   getHexagramLines,
-  getRandomHexagramLot,
   getShichenLabel,
   formatSolarDateLabel,
   type HexagramLot,
 } from '@/lib/hexagram-lot';
+import {
+  computeRealDailyAlmanac,
+  computeRealDailyHexagram,
+  getHexagramGuidance,
+} from '@/lib/daily-almanac-hexagram';
 
 const YANG_STROKES = [
   '/ink-hexagrams/yang-1.webp',
@@ -44,23 +46,19 @@ type InkHexagramProps = {
   size?: InkHexagramSize;
   tone?: InkHexagramTone;
   animate?: boolean;
-  interactive?: boolean;
-  onClick?: () => void;
   title?: string;
   className?: string;
 };
 
 /**
  * 水墨手绘卦象：由真实手绘墨迹爻线动态拼合全部六十四卦。
- * 每条爻线按卦序与爻位自动错落选用不同墨痕与轻微翻转，避免机械重复感。
+ * 每条爻线按卦序与爻位自动错落选用不同墨痕与轻微翻转，保持真实手绘墨韵。
  */
 export function InkHexagram({
   lot,
   size = 'md',
   tone = 'solid',
   animate = true,
-  interactive = false,
-  onClick,
   title,
   className = '',
 }: InkHexagramProps) {
@@ -75,9 +73,9 @@ export function InkHexagram({
       lines.map((yao, index) => {
         const pool = yao === 1 ? YANG_STROKES : YIN_STROKES;
         const variantIdx = (lot.no * 5 + index * 2 + (yao === 1 ? 1 : 0)) % pool.length;
-        const flipX = ((lot.no + index * 3) % 2) === 1;
-        const microRotate = (((lot.no * 7 + index * 11) % 9) - 4) * 0.11; // -0.44deg .. +0.44deg
-        const microShift = (((lot.no * 3 + index * 5) % 5) - 2) * 0.45; // -0.9% .. +0.9%
+        const flipX = (lot.no + index * 3) % 2 === 1;
+        const microRotate = (((lot.no * 7 + index * 11) % 9) - 4) * 0.11;
+        const microShift = (((lot.no * 3 + index * 5) % 5) - 2) * 0.45;
         return {
           src: pool[variantIdx],
           yao,
@@ -92,102 +90,52 @@ export function InkHexagram({
 
   const label = `${getHexagramFullName(lot)}（${lot.trigrams}）`;
 
-  const inner = (
-    <span
-      key={lot.no}
-      className={`ink-hexagram__stack${animate ? ' is-animated' : ''}`}
-      aria-hidden="true"
-    >
-      {strokeItems.map((item, index) => (
-        <span
-          key={`${lot.no}-${index}`}
-          className="ink-hexagram__line"
-          style={
-            {
-              '--ink-hex-delay': `${item.delayMs}ms`,
-              '--ink-hex-shift': `${item.microShift}%`,
-              '--ink-hex-rot': `${item.microRotate}deg`,
-              '--ink-hex-flip': item.flipX ? -1 : 1,
-            } as CSSProperties
-          }
-        >
-          <img
-            src={item.src}
-            alt=""
-            draggable={false}
-            decoding="async"
-            loading="eager"
-          />
-        </span>
-      ))}
-    </span>
-  );
-
   const classes = [
     'ink-hexagram',
     `ink-hexagram--${size}`,
     `ink-hexagram--${tone}`,
-    interactive ? 'is-interactive' : '',
     className,
   ]
     .filter(Boolean)
     .join(' ');
 
-  if (interactive && onClick) {
-    return (
-      <button
-        type="button"
-        className={classes}
-        onClick={onClick}
-        title={title ?? `${label} · 点击换一卦`}
-        aria-label={title ?? `${label}，点击换一卦`}
-      >
-        {inner}
-      </button>
-    );
-  }
-
   return (
     <span className={classes} role="img" aria-label={label} title={title ?? label}>
-      {inner}
+      <span
+        key={lot.no}
+        className={`ink-hexagram__stack${animate ? ' is-animated' : ''}`}
+        aria-hidden="true"
+      >
+        {strokeItems.map((item, index) => (
+          <span
+            key={`${lot.no}-${index}`}
+            className="ink-hexagram__line"
+            style={
+              {
+                '--ink-hex-delay': `${item.delayMs}ms`,
+                '--ink-hex-shift': `${item.microShift}%`,
+                '--ink-hex-rot': `${item.microRotate}deg`,
+                '--ink-hex-flip': item.flipX ? -1 : 1,
+              } as CSSProperties
+            }
+          >
+            <img src={item.src} alt="" draggable={false} decoding="async" loading="eager" />
+          </span>
+        ))}
+      </span>
     </span>
   );
 }
 
 /**
- * 岁庚页右侧主展示区：严格呼应设计稿布局——
- * 上方：左侧水墨大卦 + 右侧卦象笺框（卦名、上下卦、卦辞、换卦）
- * 下方：书法「今日吉凶」标题 + 运势宜忌长卡
+ * 岁庚页右侧主展示区：
+ * - 上方：真实《梅花易数》时间起卦（手绘水墨大卦 + 卦名、卦辞、白话卦义、本卦可做/不宜）
+ * - 下方：真实黄历择日「今日吉凶」（干支农历、建除十二神、黄道黑道、冲煞、黄历宜忌、彭祖百忌）
+ * 严格按当日天时与历法推算，绝不随机，不提供随意点换。
  */
-export function InkHexagramShowcase({
-  contextKey = 'profile',
-  className = '',
-}: {
-  contextKey?: string;
-  className?: string;
-}) {
-  const [mode, setMode] = useState<'daily' | 'cast'>('daily');
-  const [lot, setLot] = useState<HexagramLot>(() => getDailyHexagramLot());
-
-  useEffect(() => {
-    if (mode === 'daily') {
-      setLot(getDailyHexagramLot());
-    }
-  }, [contextKey, mode]);
-
-  const handleRecast = useCallback(() => {
-    setMode('cast');
-    setLot((current) => getRandomHexagramLot(current.no));
-  }, []);
-
-  const handleRestoreDaily = useCallback(() => {
-    setMode('daily');
-    setLot(getDailyHexagramLot());
-  }, []);
-
-  const fullName = useMemo(() => getHexagramFullName(lot), [lot]);
-  const fortune = useMemo(() => getDailyFortune(lot), [lot]);
-  const isAuspicious = fortune.verdict.includes('吉');
+export function InkHexagramShowcase({ className = '' }: { contextKey?: string; className?: string }) {
+  const dailyHex = useMemo(() => computeRealDailyHexagram(), []);
+  const almanac = useMemo(() => computeRealDailyAlmanac(), []);
 
   return (
     <aside
@@ -197,53 +145,51 @@ export function InkHexagramShowcase({
       <div className="ink-hex-showcase__top">
         <div className="ink-hex-showcase__art">
           <InkHexagram
-            lot={lot}
+            lot={dailyHex.lot}
             size="xl"
             tone="solid"
-            interactive
-            onClick={handleRecast}
-            title={`${fullName} · 点击随缘换一卦`}
+            title={`${dailyHex.fullName}（${dailyHex.lot.trigrams}）`}
           />
-          <span className="ink-hex-showcase__art-hint">轻点卦象可随缘变卦</span>
+          <span className="ink-hex-showcase__art-hint">
+            时间起卦 · {dailyHex.movingYaoName}动
+            {dailyHex.changedName ? ` · 变${dailyHex.changedName}` : ''}
+          </span>
         </div>
 
         <div className="ink-hex-showcase__scroll">
           <div className="ink-hex-showcase__scroll-head">
-            <span className="ink-hex-showcase__kicker">
-              {mode === 'daily' ? '今日之卦' : '随缘一卦'}
-            </span>
-            <span className="ink-hex-showcase__seal">第{lot.no}卦</span>
+            <span className="ink-hex-showcase__kicker">今日之卦 · 梅花时间起卦</span>
+            <span className="ink-hex-showcase__seal">第{dailyHex.lot.no}卦</span>
           </div>
 
           <div className="ink-hex-showcase__title-row">
-            <h3 className="ink-hex-showcase__name">{fullName}</h3>
-            <span className="ink-hex-showcase__trigrams">{lot.trigrams}</span>
+            <h3 className="ink-hex-showcase__name">{dailyHex.fullName}</h3>
+            <span className="ink-hex-showcase__trigrams">
+              {dailyHex.lot.trigrams}
+              {dailyHex.tiYongRelation ? ` · ${dailyHex.tiYongRelation}` : ''}
+            </span>
           </div>
 
-          <p className="ink-hex-showcase__quote">{lot.text}</p>
+          <p className="ink-hex-showcase__quote">《周易》：{dailyHex.lot.text}</p>
+
+          <p className="ink-hex-showcase__meaning">{dailyHex.guidance.plainMeaning}</p>
+
+          <div className="ink-hex-showcase__advice">
+            <div className="ink-hex-showcase__advice-row">
+              <span className="ink-hex-fortune__yiji-tag is-yi">宜</span>
+              <span>{dailyHex.guidance.suitable.join(' · ')}</span>
+            </div>
+            <div className="ink-hex-showcase__advice-row">
+              <span className="ink-hex-fortune__yiji-tag is-ji">忌</span>
+              <span>{dailyHex.guidance.avoid.join(' · ')}</span>
+            </div>
+          </div>
 
           <div className="ink-hex-showcase__scroll-foot">
             <span className="ink-hex-showcase__time">
-              {fortune.dateLabel} · {fortune.shichenLabel}
+              {almanac.lunarDate} · {dailyHex.shichenLabel}
+              {dailyHex.interName ? ` · 互卦${dailyHex.interName}` : ''}
             </span>
-            <div className="ink-hex-showcase__actions">
-              {mode === 'cast' ? (
-                <button
-                  type="button"
-                  className="ink-hex-action-btn"
-                  onClick={handleRestoreDaily}
-                >
-                  归今日卦
-                </button>
-              ) : null}
-              <button
-                type="button"
-                className="ink-hex-action-btn is-accent"
-                onClick={handleRecast}
-              >
-                换一卦
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -252,34 +198,67 @@ export function InkHexagramShowcase({
         <header className="ink-hex-fortune__header">
           <h3 className="ink-hex-fortune__heading">今日吉凶</h3>
           <span className="ink-hex-fortune__sub">
-            {fullName} · {fortune.shichenLabel}
+            {almanac.dateLabel} · {almanac.lunarDate} · {almanac.ganzhiLabel}
           </span>
         </header>
 
         <div className="ink-hex-fortune__card">
           <div className="ink-hex-fortune__lead">
             <span
-              className={`ink-hex-fortune__verdict${isAuspicious ? ' is-auspicious' : ''}`}
+              className={`ink-hex-fortune__verdict${almanac.isAuspicious ? ' is-auspicious' : ''}`}
             >
-              {fortune.verdict}
+              {almanac.verdict}
             </span>
-            <p className="ink-hex-fortune__detail">{fortune.detail}</p>
+            <div className="ink-hex-fortune__lead-copy">
+              <p className="ink-hex-fortune__basis">{almanac.basisSummary}</p>
+              <p className="ink-hex-fortune__detail">{almanac.detail}</p>
+            </div>
+          </div>
+
+          <div className="ink-hex-fortune__meta-grid">
+            <div className="ink-hex-fortune__meta-item">
+              <span>建除</span>
+              <strong>{almanac.dayOfficer}日</strong>
+            </div>
+            <div className="ink-hex-fortune__meta-item">
+              <span>值神</span>
+              <strong>
+                {almanac.twelveStar}（{almanac.isYellowRoad ? '黄道' : '黑道'}）
+              </strong>
+            </div>
+            <div className="ink-hex-fortune__meta-item">
+              <span>冲煞</span>
+              <strong>{almanac.clash}</strong>
+            </div>
+            {almanac.currentHour ? (
+              <div className="ink-hex-fortune__meta-item">
+                <span>当前{almanac.currentHour.name}</span>
+                <strong>
+                  {almanac.currentHour.ganzhi} · {almanac.currentHour.twelveStar}（
+                  {almanac.currentHour.isYellowRoad ? '黄道' : '黑道'}）
+                </strong>
+              </div>
+            ) : null}
           </div>
 
           <div className="ink-hex-fortune__yiji">
             <div className="ink-hex-fortune__yiji-group">
               <span className="ink-hex-fortune__yiji-tag is-yi">宜</span>
               <span className="ink-hex-fortune__yiji-list">
-                {fortune.suitable.join(' · ')}
+                {almanac.recommends.slice(0, 10).join(' · ')}
               </span>
             </div>
             <div className="ink-hex-fortune__yiji-group">
               <span className="ink-hex-fortune__yiji-tag is-ji">忌</span>
               <span className="ink-hex-fortune__yiji-list">
-                {fortune.avoid.join(' · ')}
+                {almanac.avoids.slice(0, 10).join(' · ')}
               </span>
             </div>
           </div>
+
+          {almanac.pengZu ? (
+            <p className="ink-hex-fortune__pengzu">彭祖百忌：{almanac.pengZu}</p>
+          ) : null}
         </div>
       </section>
     </aside>
@@ -287,8 +266,8 @@ export function InkHexagramShowcase({
 }
 
 /**
- * 桌面端右侧留白伴随组件（用于排盘输入、占问、账户、案例、排盘目录等页）：
- * 随当前页面语境、时辰自动流转卦象，支持点击变卦，轻墨不喧宾夺主。
+ * 桌面端右侧留白伴随组件（用于排盘输入、占问、排盘目录、账户、案例等页）：
+ * 按当前页面语境 + 时辰呈现确定性水墨卦象与白话卦义；开启 showFortune 时展示真实黄历今日吉凶。
  */
 export function InkHexagramAside({
   contextKey,
@@ -301,37 +280,15 @@ export function InkHexagramAside({
   showFortune?: boolean;
   className?: string;
 }) {
-  const [salt, setSalt] = useState(0);
-  const [customLot, setCustomLot] = useState<HexagramLot | null>(null);
-
-  // 路由或工具切换时，回到该语境的对应卦象并触发水墨过渡
-  useEffect(() => {
-    setCustomLot(null);
-    setSalt(0);
-  }, [contextKey]);
-
-  const lot = useMemo(
-    () => customLot ?? getContextHexagramLot(contextKey, { salt }),
-    [contextKey, customLot, salt],
-  );
+  const lot = useMemo(() => getContextHexagramLot(contextKey), [contextKey]);
   const fullName = useMemo(() => getHexagramFullName(lot), [lot]);
-  const fortune = useMemo(() => (showFortune ? getDailyFortune(lot) : null), [lot, showFortune]);
-
-  const handleCycle = useCallback(() => {
-    setCustomLot((current) => getRandomHexagramLot((current ?? lot).no));
-  }, [lot]);
+  const guidance = useMemo(() => getHexagramGuidance(lot), [lot]);
+  const almanac = useMemo(() => (showFortune ? computeRealDailyAlmanac() : null), [showFortune]);
 
   return (
     <aside className={`ink-hex-aside ${className}`.trim()} aria-label={`${fullName}水墨卦象`}>
       <div className="ink-hex-aside__art">
-        <InkHexagram
-          lot={lot}
-          size="lg"
-          tone="soft"
-          interactive
-          onClick={handleCycle}
-          title={`${fullName} · 点击换一卦`}
-        />
+        <InkHexagram lot={lot} size="lg" tone="soft" title={`${fullName}（${lot.trigrams}）`} />
       </div>
 
       <div className="ink-hex-aside__meta">
@@ -339,33 +296,32 @@ export function InkHexagramAside({
           <strong>{fullName}</strong>
           <span>{lot.trigrams}</span>
         </div>
-        <p className="ink-hex-aside__quote">{lot.text}</p>
+        <p className="ink-hex-aside__quote">{guidance.plainMeaning}</p>
         {caption ? <p className="ink-hex-aside__caption">{caption}</p> : null}
       </div>
 
-      {fortune ? (
+      {almanac ? (
         <div className="ink-hex-aside__fortune">
           <div className="ink-hex-aside__fortune-head">
-            <span>今日吉凶</span>
-            <strong className={fortune.verdict.includes('吉') ? 'is-auspicious' : ''}>
-              {fortune.verdict}
+            <span>今日黄历 · {almanac.dayOfficer}日</span>
+            <strong className={almanac.isAuspicious ? 'is-auspicious' : ''}>
+              {almanac.verdict}
             </strong>
           </div>
-          <p>{fortune.detail}</p>
+          <p>{almanac.basisSummary}</p>
           <div className="ink-hex-aside__fortune-tags">
-            <span>宜：{fortune.suitable.slice(0, 2).join('、')}</span>
-            <span>忌：{fortune.avoid[0]}</span>
+            <span>宜：{almanac.recommends.slice(0, 4).join('、')}</span>
+            <span>忌：{almanac.avoids.slice(0, 4).join('、')}</span>
           </div>
         </div>
       ) : null}
 
       <div className="ink-hex-aside__foot">
         <span>
-          {formatSolarDateLabel()} · {getShichenLabel()}
+          {almanac
+            ? `${almanac.lunarDate} · ${almanac.ganzhiLabel}`
+            : `${formatSolarDateLabel()} · ${getShichenLabel()}`}
         </span>
-        <button type="button" className="ink-hex-action-btn" onClick={handleCycle}>
-          换一卦
-        </button>
       </div>
     </aside>
   );
@@ -383,26 +339,16 @@ export function InkHexagramDivider({
   salt?: number;
   className?: string;
 }) {
-  const [lot, setLot] = useState<HexagramLot>(() => getContextHexagramLot(contextKey, { salt }));
-
-  useEffect(() => {
-    setLot(getContextHexagramLot(contextKey, { salt }));
-  }, [contextKey, salt]);
-
+  const lot = useMemo(() => getContextHexagramLot(contextKey, { salt }), [contextKey, salt]);
   const fullName = useMemo(() => getHexagramFullName(lot), [lot]);
 
   return (
     <div className={`ink-hex-divider ${className}`.trim()} aria-label={`分隔卦象 ${fullName}`}>
       <span className="ink-hex-divider__rule" aria-hidden="true" />
-      <button
-        type="button"
-        className="ink-hex-divider__center"
-        onClick={() => setLot((curr) => getRandomHexagramLot(curr.no))}
-        title={`${fullName} · 点击换一卦`}
-      >
+      <span className="ink-hex-divider__center">
         <InkHexagram lot={lot} size="xs" tone="soft" />
         <span className="ink-hex-divider__label">{fullName}</span>
-      </button>
+      </span>
       <span className="ink-hex-divider__rule" aria-hidden="true" />
     </div>
   );
@@ -422,24 +368,12 @@ export function InkHexagramEmpty({
   text: string;
   className?: string;
 }) {
-  const [lot, setLot] = useState<HexagramLot>(() => getContextHexagramLot(contextKey));
-
-  useEffect(() => {
-    setLot(getContextHexagramLot(contextKey));
-  }, [contextKey]);
-
+  const lot = useMemo(() => getContextHexagramLot(contextKey), [contextKey]);
   const fullName = useMemo(() => getHexagramFullName(lot), [lot]);
 
   return (
     <div className={`ink-hex-empty ${className}`.trim()}>
-      <InkHexagram
-        lot={lot}
-        size="md"
-        tone="soft"
-        interactive
-        onClick={() => setLot((curr) => getRandomHexagramLot(curr.no))}
-        title={`${fullName} · 点击换一卦`}
-      />
+      <InkHexagram lot={lot} size="md" tone="soft" title={`${fullName}（${lot.trigrams}）`} />
       <span className="ink-hex-empty__hex-name">
         {fullName} · {lot.trigrams}
       </span>

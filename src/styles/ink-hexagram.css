@@ -315,10 +315,35 @@
 .ink-hex-showcase__quote {
   margin: 0;
   font-family: var(--ink-font-reading, 'Songti SC', serif);
-  font-size: clamp(15px, 1.05vw, 17.5px);
-  line-height: 2.05;
-  letter-spacing: 0.06em;
+  font-size: 13.5px;
+  line-height: 1.85;
+  letter-spacing: 0.05em;
+  color: var(--ink-light, #8c887f);
+}
+
+.ink-hex-showcase__meaning {
+  margin: 0;
+  font-family: var(--ink-font-reading, 'Songti SC', serif);
+  font-size: clamp(14.5px, 1vw, 16px);
+  line-height: 1.9;
+  letter-spacing: 0.04em;
   color: var(--ink-strong, #2e2c28);
+}
+
+.ink-hex-showcase__advice {
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(24, 23, 21, 0.1);
+}
+
+.ink-hex-showcase__advice-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-medium, #4a4843);
 }
 
 .ink-hex-showcase__scroll-foot {
@@ -412,13 +437,66 @@
   background: rgba(158, 42, 43, 0.035);
 }
 
+.ink-hex-fortune__lead-copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ink-hex-fortune__basis {
+  margin: 0;
+  font-family: var(--ink-font-serif, serif);
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  color: var(--ink-light, #8c887f);
+}
+
 .ink-hex-fortune__detail {
-  margin: 4px 0 0;
+  margin: 0;
   font-family: var(--ink-font-reading, 'Songti SC', serif);
-  font-size: clamp(15px, 1.08vw, 18px);
-  line-height: 2;
-  letter-spacing: 0.05em;
+  font-size: clamp(14.5px, 1vw, 16.5px);
+  line-height: 1.9;
+  letter-spacing: 0.04em;
   color: var(--ink-strong, #2e2c28);
+}
+
+.ink-hex-fortune__meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px 18px;
+  padding: 14px 16px;
+  border-radius: 3px;
+  background: rgba(24, 23, 21, 0.025);
+  border: 1px solid rgba(24, 23, 21, 0.07);
+}
+
+.ink-hex-fortune__meta-item {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ink-hex-fortune__meta-item span {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--ink-light, #8c887f);
+}
+
+.ink-hex-fortune__meta-item strong {
+  font-family: var(--ink-font-serif, serif);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink-deep, #181715);
+  letter-spacing: 0.04em;
+}
+
+.ink-hex-fortune__pengzu {
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(24, 23, 21, 0.1);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--ink-light, #8c887f);
 }
 
 .ink-hex-fortune__yiji {
