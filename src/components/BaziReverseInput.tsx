@@ -141,9 +141,10 @@ export function BaziReverseInput({ onSelect, source, onInvalidate }: BaziReverse
 
       <div className="bazi-reverse-input-fields">
         {PILLAR_FIELDS.map((field) => (
-          <Label className="workspace-ui-field" key={field.key}>
+          <Label className="workspace-ui-field bazi-reverse-field" key={field.key}>
             <span>{field.label}</span>
             <select
+              className="bazi-reverse-select"
               value={pillars[field.key]}
               data-testid={`bazi-reverse-${field.key}`}
               disabled={
@@ -153,10 +154,10 @@ export function BaziReverseInput({ onSelect, source, onInvalidate }: BaziReverse
             >
               <option value="">
                 {field.key === 'month' && !pillars.year
-                  ? '请先选择年柱'
+                  ? '先选年柱'
                   : field.key === 'hour' && !pillars.day
-                    ? '请先选择日柱'
-                    : `请选择${field.label}`}
+                    ? '先选日柱'
+                    : `选择${field.label}`}
               </option>
               {getPillarOptions(field.key, pillars).map((option) => (
                 <option key={option} value={option}>
@@ -204,7 +205,12 @@ export function BaziReverseInput({ onSelect, source, onInvalidate }: BaziReverse
         </p>
       ) : null}
 
-      <WorkspaceButton variant="secondary" onClick={() => searchCandidates()} disabled={!canSearch}>
+      <WorkspaceButton
+        variant="outline"
+        className="bazi-reverse-search-btn"
+        onClick={() => searchCandidates()}
+        disabled={!canSearch}
+      >
         查找候选时段
       </WorkspaceButton>
 
