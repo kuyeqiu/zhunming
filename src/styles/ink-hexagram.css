@@ -228,30 +228,32 @@
   grid-template-columns: minmax(84px, 108px) minmax(68px, 86px) minmax(68px, 86px);
 }
 
-/* ---- 岁庚右侧展示区 (.ink-hex-showcase) ---- */
+/* ---- 岁庚右侧展示区 (.ink-hex-showcase)：左水墨大卦，右「今日之卦 + 今日吉凶」等宽纵排 ---- */
 .ink-hex-showcase {
   min-width: 0;
   width: 100%;
   display: grid;
-  gap: clamp(20px, 2.4vh, 34px);
-  align-content: start;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(24px, 3vw, 52px);
+  align-items: start;
   padding-top: 2px;
 }
 
-.ink-hex-showcase__top {
+.ink-hex-showcase__cards {
+  min-width: 0;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: clamp(24px, 3vw, 56px);
-  align-items: stretch;
+  gap: clamp(22px, 2.6vh, 34px);
 }
 
 .ink-hex-showcase__art {
+  position: sticky;
+  top: 92px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 2px 4px;
+  padding: 6px 4px;
 }
 
 .ink-hex-showcase__art-hint {
@@ -1122,15 +1124,21 @@
   }
 }
 
+@media (max-width: 820px) {
+  .ink-hex-showcase {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .ink-hex-showcase__art {
+    position: static;
+  }
+}
+
 @media (max-width: 680px) {
   .profile-ledger-side {
     padding-right: 0;
     border-right: 0;
-  }
-
-  .ink-hex-showcase__top {
-    grid-template-columns: 1fr;
-    gap: 18px;
   }
 
   .ink-hex-showcase__scroll {

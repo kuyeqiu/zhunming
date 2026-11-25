@@ -349,22 +349,22 @@ export function InkHexagramShowcase({ className = '' }: { contextKey?: string; c
       className={`ink-hex-showcase ${className}`.trim()}
       aria-label="今日之卦与今日吉凶"
     >
-      <div className="ink-hex-showcase__top">
-        <div className="ink-hex-showcase__art">
-          <InkHexagram
-            lot={dailyHex.lot}
-            size="xl"
-            tone="solid"
-            interactive
-            onClick={() => setIsDetailOpen(true)}
-            title={`${dailyHex.fullName}（${dailyHex.lot.trigrams}） · 点击查看卦象详解`}
-          />
-          <span className="ink-hex-showcase__art-hint">
-            时间起卦 · {dailyHex.movingYaoName}动
-            {dailyHex.changedName ? ` · 变${dailyHex.changedName}` : ''}
-          </span>
-        </div>
+      <div className="ink-hex-showcase__art">
+        <InkHexagram
+          lot={dailyHex.lot}
+          size="xl"
+          tone="solid"
+          interactive
+          onClick={() => setIsDetailOpen(true)}
+          title={`${dailyHex.fullName}（${dailyHex.lot.trigrams}） · 点击查看卦象详解`}
+        />
+        <span className="ink-hex-showcase__art-hint">
+          时间起卦 · {dailyHex.movingYaoName}动
+          {dailyHex.changedName ? ` · 变${dailyHex.changedName}` : ''}
+        </span>
+      </div>
 
+      <div className="ink-hex-showcase__cards">
         <div className="ink-hex-showcase__scroll">
           <div className="ink-hex-showcase__scroll-head">
             <span className="ink-hex-showcase__kicker">今日之卦 · 梅花时间起卦</span>
@@ -414,75 +414,75 @@ export function InkHexagramShowcase({ className = '' }: { contextKey?: string; c
             </button>
           </div>
         </div>
-      </div>
 
-      <section className="ink-hex-fortune" aria-label="今日吉凶">
-        <header className="ink-hex-fortune__header">
-          <h3 className="ink-hex-fortune__heading">今日吉凶</h3>
-          <span className="ink-hex-fortune__sub">
-            {almanac.dateLabel} · {almanac.lunarDate} · {almanac.ganzhiLabel}
-          </span>
-        </header>
-
-        <div className="ink-hex-fortune__card">
-          <div className="ink-hex-fortune__lead">
-            <span
-              className={`ink-hex-fortune__verdict${almanac.isAuspicious ? ' is-auspicious' : ''}`}
-            >
-              {almanac.verdict}
+        <section className="ink-hex-fortune" aria-label="今日吉凶">
+          <header className="ink-hex-fortune__header">
+            <h3 className="ink-hex-fortune__heading">今日吉凶</h3>
+            <span className="ink-hex-fortune__sub">
+              {almanac.dateLabel} · {almanac.lunarDate} · {almanac.ganzhiLabel}
             </span>
-            <div className="ink-hex-fortune__lead-copy">
-              <p className="ink-hex-fortune__basis">{almanac.basisSummary}</p>
-              <p className="ink-hex-fortune__detail">{almanac.detail}</p>
-            </div>
-          </div>
+          </header>
 
-          <div className="ink-hex-fortune__meta-grid">
-            <div className="ink-hex-fortune__meta-item">
-              <span>建除</span>
-              <strong>{almanac.dayOfficer}日</strong>
+          <div className="ink-hex-fortune__card">
+            <div className="ink-hex-fortune__lead">
+              <span
+                className={`ink-hex-fortune__verdict${almanac.isAuspicious ? ' is-auspicious' : ''}`}
+              >
+                {almanac.verdict}
+              </span>
+              <div className="ink-hex-fortune__lead-copy">
+                <p className="ink-hex-fortune__basis">{almanac.basisSummary}</p>
+                <p className="ink-hex-fortune__detail">{almanac.detail}</p>
+              </div>
             </div>
-            <div className="ink-hex-fortune__meta-item">
-              <span>值神</span>
-              <strong>
-                {almanac.twelveStar}（{almanac.isYellowRoad ? '黄道' : '黑道'}）
-              </strong>
-            </div>
-            <div className="ink-hex-fortune__meta-item">
-              <span>冲煞</span>
-              <strong>{almanac.clash}</strong>
-            </div>
-            {almanac.currentHour ? (
+
+            <div className="ink-hex-fortune__meta-grid">
               <div className="ink-hex-fortune__meta-item">
-                <span>当前{almanac.currentHour.name}</span>
+                <span>建除</span>
+                <strong>{almanac.dayOfficer}日</strong>
+              </div>
+              <div className="ink-hex-fortune__meta-item">
+                <span>值神</span>
                 <strong>
-                  {almanac.currentHour.ganzhi} · {almanac.currentHour.twelveStar}（
-                  {almanac.currentHour.isYellowRoad ? '黄道' : '黑道'}）
+                  {almanac.twelveStar}（{almanac.isYellowRoad ? '黄道' : '黑道'}）
                 </strong>
               </div>
+              <div className="ink-hex-fortune__meta-item">
+                <span>冲煞</span>
+                <strong>{almanac.clash}</strong>
+              </div>
+              {almanac.currentHour ? (
+                <div className="ink-hex-fortune__meta-item">
+                  <span>当前{almanac.currentHour.name}</span>
+                  <strong>
+                    {almanac.currentHour.ganzhi} · {almanac.currentHour.twelveStar}（
+                    {almanac.currentHour.isYellowRoad ? '黄道' : '黑道'}）
+                  </strong>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="ink-hex-fortune__yiji">
+              <div className="ink-hex-fortune__yiji-group">
+                <span className="ink-hex-fortune__yiji-tag is-yi">宜</span>
+                <span className="ink-hex-fortune__yiji-list">
+                  {almanac.recommends.slice(0, 10).join(' · ')}
+                </span>
+              </div>
+              <div className="ink-hex-fortune__yiji-group">
+                <span className="ink-hex-fortune__yiji-tag is-ji">忌</span>
+                <span className="ink-hex-fortune__yiji-list">
+                  {almanac.avoids.slice(0, 10).join(' · ')}
+                </span>
+              </div>
+            </div>
+
+            {almanac.pengZu ? (
+              <p className="ink-hex-fortune__pengzu">彭祖百忌：{almanac.pengZu}</p>
             ) : null}
           </div>
-
-          <div className="ink-hex-fortune__yiji">
-            <div className="ink-hex-fortune__yiji-group">
-              <span className="ink-hex-fortune__yiji-tag is-yi">宜</span>
-              <span className="ink-hex-fortune__yiji-list">
-                {almanac.recommends.slice(0, 10).join(' · ')}
-              </span>
-            </div>
-            <div className="ink-hex-fortune__yiji-group">
-              <span className="ink-hex-fortune__yiji-tag is-ji">忌</span>
-              <span className="ink-hex-fortune__yiji-list">
-                {almanac.avoids.slice(0, 10).join(' · ')}
-              </span>
-            </div>
-          </div>
-
-          {almanac.pengZu ? (
-            <p className="ink-hex-fortune__pengzu">彭祖百忌：{almanac.pengZu}</p>
-          ) : null}
-        </div>
-      </section>
+        </section>
+      </div>
 
       {isDetailOpen ? (
         <HexagramDetailModal
