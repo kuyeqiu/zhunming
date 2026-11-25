@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import {
   getContextHexagramLot,
   getHexagramFullName,
@@ -12,6 +12,8 @@ import {
   computeRealDailyHexagram,
   getHexagramGuidance,
 } from '@/lib/daily-almanac-hexagram';
+import { buildHexagramDetail } from '@/lib/hexagram-detail';
+import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
 
 const YANG_STROKES = [
   '/ink-hexagrams/yang-1.webp',
@@ -46,6 +48,8 @@ type InkHexagramProps = {
   size?: InkHexagramSize;
   tone?: InkHexagramTone;
   animate?: boolean;
+  interactive?: boolean;
+  onClick?: () => void;
   title?: string;
   className?: string;
 };
@@ -59,6 +63,8 @@ export function InkHexagram({
   size = 'md',
   tone = 'solid',
   animate = true,
+  interactive = false,
+  onClick,
   title,
   className = '',
 }: InkHexagramProps) {
@@ -94,48 +100,249 @@ export function InkHexagram({
     'ink-hexagram',
     `ink-hexagram--${size}`,
     `ink-hexagram--${tone}`,
+    interactive ? 'is-interactive' : '',
     className,
   ]
     .filter(Boolean)
     .join(' ');
 
+  const stack = (
+    <span
+      key={lot.no}
+      className={`ink-hexagram__stack${animate ? ' is-animated' : ''}`}
+      aria-hidden="true"
+    >
+      {strokeItems.map((item, index) => (
+        <span
+          key={`${lot.no}-${index}`}
+          className="ink-hexagram__line"
+          style={
+            {
+              '--ink-hex-delay': `${item.delayMs}ms`,
+              '--ink-hex-shift': `${item.microShift}%`,
+              '--ink-hex-rot': `${item.microRotate}deg`,
+              '--ink-hex-flip': item.flipX ? -1 : 1,
+            } as CSSProperties
+          }
+        >
+          <img src={item.src} alt="" draggable={false} decoding="async" loading="eager" />
+        </span>
+      ))}
+    </span>
+  );
+
+  if (interactive && onClick) {
+    return (
+      <button
+        type="button"
+        className={classes}
+        onClick={onClick}
+        title={title ?? `${label} · 查看卦象详解`}
+        aria-label={title ?? `${label}，点击查看卦象详解`}
+      >
+        {stack}
+      </button>
+    );
+  }
+
   return (
     <span className={classes} role="img" aria-label={label} title={title ?? label}>
-      <span
-        key={lot.no}
-        className={`ink-hexagram__stack${animate ? ' is-animated' : ''}`}
-        aria-hidden="true"
-      >
-        {strokeItems.map((item, index) => (
-          <span
-            key={`${lot.no}-${index}`}
-            className="ink-hexagram__line"
-            style={
-              {
-                '--ink-hex-delay': `${item.delayMs}ms`,
-                '--ink-hex-shift': `${item.microShift}%`,
-                '--ink-hex-rot': `${item.microRotate}deg`,
-                '--ink-hex-flip': item.flipX ? -1 : 1,
-              } as CSSProperties
-            }
-          >
-            <img src={item.src} alt="" draggable={false} decoding="async" loading="eager" />
-          </span>
-        ))}
-      </span>
+      {stack}
     </span>
   );
 }
 
 /**
+ * 卦象详解弹窗：原典经文（卦辞/大象/彖传/动爻）+ 白话解卦与哲学含义 + 传统诸事参看 + 六爻全辞
+ */
+function HexagramDetailModal({
+  lot,
+  movingYaoPosition,
+  movingYaoName,
+  interName,
+  changedName,
+  tiYongRelation,
+  onClose,
+}: {
+  lot: HexagramLot;
+  movingYaoPosition?: number;
+  movingYaoName?: string;
+  interName?: string | null;
+  changedName?: string | null;
+  tiYongRelation?: string;
+  onClose: () => void;
+}) {
+  const detail = useMemo(() => buildHexagramDetail(lot), [lot]);
+  const movingYaoEntry = useMemo(
+    () =>
+      movingYaoPosition
+        ? detail.yaos.find((item) => item.position === movingYaoPosition) ?? null
+        : null,
+    [detail.yaos, movingYaoPosition],
+  );
+
+  return (
+    <WorkspaceDialog
+      className="ink-hex-detail-dialog"
+      labelledBy="ink-hex-detail-title"
+      onClose={onClose}
+    >
+      <header className="workspace-ui-dialog-header ink-hex-detail__head">
+        <div className="ink-hex-detail__head-main">
+          <InkHexagram lot={lot} size="sm" tone="solid" animate={false} />
+          <div className="ink-hex-detail__head-copy">
+            <div className="ink-hex-detail__title-row">
+              <h2 id="ink-hex-detail-title">{detail.fullName}</h2>
+              <span className="ink-hex-showcase__seal">第{detail.no}卦</span>
+            </div>
+            <p className="ink-hex-detail__meta">
+              {detail.trigrams}
+              {detail.palace ? ` · ${detail.palace}` : ''}
+              {tiYongRelation ? ` · ${tiYongRelation}` : ''}
+              {movingYaoName ? ` · ${movingYaoName}动` : ''}
+              {interName ? ` · 互${interName}` : ''}
+              {changedName ? ` · 变${changedName}` : ''}
+            </p>
+          </div>
+        </div>
+        <WorkspaceButton variant="ghost" size="small" aria-label="关闭卦象详解" onClick={onClose}>
+          关闭
+        </WorkspaceButton>
+      </header>
+
+      <div className="workspace-ui-dialog-body ink-hex-detail__body">
+        <section className="ink-hex-detail__section">
+          <h3>原典经文</h3>
+          <div className="ink-hex-detail__classic-box">
+            <p className="ink-hex-detail__classic-line">
+              <strong>卦辞</strong>
+              <span>{detail.guaCi}</span>
+            </p>
+            {detail.daXiang ? (
+              <p className="ink-hex-detail__classic-line">
+                <strong>大象</strong>
+                <span>{detail.daXiang}</span>
+              </p>
+            ) : null}
+            {detail.tuanCi ? (
+              <p className="ink-hex-detail__classic-line">
+                <strong>彖传</strong>
+                <span>{detail.tuanCi}</span>
+              </p>
+            ) : null}
+          </div>
+
+          {movingYaoEntry ? (
+            <div className="ink-hex-detail__moving-box">
+              <span className="ink-hex-detail__moving-badge">
+                今日动爻 · {movingYaoName ?? movingYaoEntry.positionName}
+              </span>
+              <p className="ink-hex-detail__moving-text">{movingYaoEntry.yaoCi}</p>
+              {movingYaoEntry.xiaoXiang ? (
+                <p className="ink-hex-detail__moving-sub">{movingYaoEntry.xiaoXiang}</p>
+              ) : null}
+            </div>
+          ) : null}
+        </section>
+
+        <section className="ink-hex-detail__section">
+          <h3>白话解卦与象意哲理</h3>
+          <p className="ink-hex-detail__prose">{detail.vernacular}</p>
+          <p className="ink-hex-detail__prose">
+            <strong>大象：</strong>
+            {detail.grandImage}
+          </p>
+          <p className="ink-hex-detail__prose">
+            <strong>哲理启示：</strong>
+            {detail.philosophy}
+          </p>
+        </section>
+
+        <section className="ink-hex-detail__section">
+          <h3>传统解卦 · 诸事参看</h3>
+          <div className="ink-hex-detail__aspects">
+            <article className="ink-hex-detail__aspect">
+              <h4>运势</h4>
+              <p>{detail.aspects.fortune}</p>
+            </article>
+            <article className="ink-hex-detail__aspect">
+              <h4>事业</h4>
+              <p>{detail.aspects.career}</p>
+            </article>
+            <article className="ink-hex-detail__aspect">
+              <h4>经商求财</h4>
+              <p>{detail.aspects.business}</p>
+            </article>
+            <article className="ink-hex-detail__aspect">
+              <h4>婚恋家宅</h4>
+              <p>{detail.aspects.relationship}</p>
+            </article>
+            <article className="ink-hex-detail__aspect ink-hex-detail__aspect--wide">
+              <h4>决策建言</h4>
+              <p>{detail.aspects.decision}</p>
+            </article>
+          </div>
+        </section>
+
+        <section className="ink-hex-detail__section">
+          <h3>本卦行事宜忌</h3>
+          <div className="ink-hex-fortune__yiji">
+            <div className="ink-hex-fortune__yiji-group">
+              <span className="ink-hex-fortune__yiji-tag is-yi">宜</span>
+              <span className="ink-hex-fortune__yiji-list">{detail.suitable.join(' · ')}</span>
+            </div>
+            <div className="ink-hex-fortune__yiji-group">
+              <span className="ink-hex-fortune__yiji-tag is-ji">忌</span>
+              <span className="ink-hex-fortune__yiji-list">{detail.avoid.join(' · ')}</span>
+            </div>
+          </div>
+        </section>
+
+        {detail.yaos.length ? (
+          <details className="ink-hex-detail__yaos">
+            <summary>展开六爻全辞（初爻至上爻）</summary>
+            <ul>
+              {detail.yaos.map((yao) => (
+                <li
+                  key={yao.position}
+                  className={yao.position === movingYaoPosition ? 'is-moving' : ''}
+                >
+                  <strong>
+                    {yao.positionName}
+                    {yao.position === movingYaoPosition ? '（动）' : ''}
+                  </strong>
+                  <div>
+                    <p>{yao.yaoCi}</p>
+                    {yao.xiaoXiang ? <small>{yao.xiaoXiang}</small> : null}
+                  </div>
+                </li>
+              ))}
+              {detail.yongCi ? (
+                <li>
+                  <strong>用辞</strong>
+                  <div>
+                    <p>{detail.yongCi}</p>
+                  </div>
+                </li>
+              ) : null}
+            </ul>
+          </details>
+        ) : null}
+      </div>
+    </WorkspaceDialog>
+  );
+}
+
+/**
  * 岁庚页右侧主展示区：
- * - 上方：真实《梅花易数》时间起卦（手绘水墨大卦 + 卦名、卦辞、白话卦义、本卦可做/不宜）
+ * - 上方：真实《梅花易数》时间起卦（手绘水墨大卦 + 卦名、卦辞、《象曰》、白话卦义、本卦宜忌 + 详解弹窗）
  * - 下方：真实黄历择日「今日吉凶」（干支农历、建除十二神、黄道黑道、冲煞、黄历宜忌、彭祖百忌）
- * 严格按当日天时与历法推算，绝不随机，不提供随意点换。
  */
 export function InkHexagramShowcase({ className = '' }: { contextKey?: string; className?: string }) {
   const dailyHex = useMemo(() => computeRealDailyHexagram(), []);
   const almanac = useMemo(() => computeRealDailyAlmanac(), []);
+  const detail = useMemo(() => buildHexagramDetail(dailyHex.lot), [dailyHex.lot]);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   return (
     <aside
@@ -148,7 +355,9 @@ export function InkHexagramShowcase({ className = '' }: { contextKey?: string; c
             lot={dailyHex.lot}
             size="xl"
             tone="solid"
-            title={`${dailyHex.fullName}（${dailyHex.lot.trigrams}）`}
+            interactive
+            onClick={() => setIsDetailOpen(true)}
+            title={`${dailyHex.fullName}（${dailyHex.lot.trigrams}） · 点击查看卦象详解`}
           />
           <span className="ink-hex-showcase__art-hint">
             时间起卦 · {dailyHex.movingYaoName}动
@@ -166,11 +375,17 @@ export function InkHexagramShowcase({ className = '' }: { contextKey?: string; c
             <h3 className="ink-hex-showcase__name">{dailyHex.fullName}</h3>
             <span className="ink-hex-showcase__trigrams">
               {dailyHex.lot.trigrams}
+              {detail.palace ? ` · ${detail.palace}` : ''}
               {dailyHex.tiYongRelation ? ` · ${dailyHex.tiYongRelation}` : ''}
             </span>
           </div>
 
-          <p className="ink-hex-showcase__quote">《周易》：{dailyHex.lot.text}</p>
+          <div className="ink-hex-showcase__classics">
+            <p className="ink-hex-showcase__quote">《周易》：{dailyHex.lot.text}</p>
+            {detail.daXiang ? (
+              <p className="ink-hex-showcase__daxiang">{detail.daXiang}</p>
+            ) : null}
+          </div>
 
           <p className="ink-hex-showcase__meaning">{dailyHex.guidance.plainMeaning}</p>
 
@@ -190,6 +405,13 @@ export function InkHexagramShowcase({ className = '' }: { contextKey?: string; c
               {almanac.lunarDate} · {dailyHex.shichenLabel}
               {dailyHex.interName ? ` · 互卦${dailyHex.interName}` : ''}
             </span>
+            <button
+              type="button"
+              className="ink-hex-action-btn is-accent"
+              onClick={() => setIsDetailOpen(true)}
+            >
+              查看卦象详解 ›
+            </button>
           </div>
         </div>
       </div>
@@ -261,13 +483,25 @@ export function InkHexagramShowcase({ className = '' }: { contextKey?: string; c
           ) : null}
         </div>
       </section>
+
+      {isDetailOpen ? (
+        <HexagramDetailModal
+          lot={dailyHex.lot}
+          movingYaoPosition={dailyHex.movingYaoPosition}
+          movingYaoName={dailyHex.movingYaoName}
+          interName={dailyHex.interName}
+          changedName={dailyHex.changedName}
+          tiYongRelation={dailyHex.tiYongRelation}
+          onClose={() => setIsDetailOpen(false)}
+        />
+      ) : null}
     </aside>
   );
 }
 
 /**
  * 桌面端右侧留白伴随组件（用于排盘输入、占问、排盘目录、账户、案例等页）：
- * 按当前页面语境 + 时辰呈现确定性水墨卦象与白话卦义；开启 showFortune 时展示真实黄历今日吉凶。
+ * 按当前页面语境 + 时辰呈现确定性水墨卦象与白话卦义；支持点击查看完整卦象详解。
  */
 export function InkHexagramAside({
   contextKey,
@@ -284,11 +518,19 @@ export function InkHexagramAside({
   const fullName = useMemo(() => getHexagramFullName(lot), [lot]);
   const guidance = useMemo(() => getHexagramGuidance(lot), [lot]);
   const almanac = useMemo(() => (showFortune ? computeRealDailyAlmanac() : null), [showFortune]);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   return (
     <aside className={`ink-hex-aside ${className}`.trim()} aria-label={`${fullName}水墨卦象`}>
       <div className="ink-hex-aside__art">
-        <InkHexagram lot={lot} size="lg" tone="soft" title={`${fullName}（${lot.trigrams}）`} />
+        <InkHexagram
+          lot={lot}
+          size="lg"
+          tone="soft"
+          interactive
+          onClick={() => setIsDetailOpen(true)}
+          title={`${fullName}（${lot.trigrams}） · 点击查看卦象详解`}
+        />
       </div>
 
       <div className="ink-hex-aside__meta">
@@ -322,7 +564,18 @@ export function InkHexagramAside({
             ? `${almanac.lunarDate} · ${almanac.ganzhiLabel}`
             : `${formatSolarDateLabel()} · ${getShichenLabel()}`}
         </span>
+        <button
+          type="button"
+          className="ink-hex-action-btn is-accent"
+          onClick={() => setIsDetailOpen(true)}
+        >
+          详解 ›
+        </button>
       </div>
+
+      {isDetailOpen ? (
+        <HexagramDetailModal lot={lot} onClose={() => setIsDetailOpen(false)} />
+      ) : null}
     </aside>
   );
 }

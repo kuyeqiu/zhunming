@@ -358,6 +358,8 @@ export type RealDailyHexagram = {
   lot: HexagramLot;
   fullName: string;
   guidance: HexagramGuidance;
+  /** 梅花易数动爻序号 1-6 */
+  movingYaoPosition: number;
   /** 梅花易数动爻名称，如「九三」 */
   movingYaoName: string;
   /** 互卦名 */
@@ -452,6 +454,7 @@ export function computeRealDailyHexagram(date = new Date()): RealDailyHexagram {
     lot,
     fullName,
     guidance,
+    movingYaoPosition: meihua.movingYao.position,
     movingYaoName: meihua.movingYao.yaoName || `第${meihua.movingYao.position}爻`,
     interName: meihua.interHexagram?.name ?? null,
     changedName: meihua.changedHexagram?.name ?? null,
