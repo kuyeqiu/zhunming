@@ -127,6 +127,8 @@
 
 /* ---- 通用小操作按钮（换一卦 / 归今日卦） ---- */
 .ink-hex-action-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
   border: 0;
   background: transparent;
   padding: 2px 4px;
@@ -287,6 +289,8 @@
 }
 
 .ink-hex-showcase__seal {
+  flex: 0 0 auto;
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   padding: 2px 9px;
