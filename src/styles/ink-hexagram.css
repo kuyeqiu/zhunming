@@ -161,7 +161,8 @@
 .workspace-input-page .workspace-ui-screen.is-wide,
 .chart-menu-page.workspace-ui-screen,
 .workspace-case-page .workspace-ui-screen,
-.workspace-divination-page {
+.workspace-divination-page,
+.workspace-divination-page.is-almanac {
   width: 100%;
   max-width: none;
   margin-inline: 0;
@@ -727,18 +728,22 @@
   width: 100%;
   max-width: none;
   margin: 0;
-  grid-template-columns: minmax(0, 1.35fr) clamp(360px, 34vw, 520px);
-  gap: clamp(22px, 3vw, 48px);
+  grid-template-columns: minmax(0, 1.25fr) minmax(380px, 0.95fr);
+  gap: clamp(22px, 2.6vw, 40px);
   align-items: start;
+}
+
+.workspace-divination-page.is-almanac .ink-split-stage.divination-ai-split {
+  grid-template-columns: minmax(0, 1.48fr) minmax(420px, 1fr);
 }
 
 .divination-ai-sidebar {
   position: sticky;
-  top: 84px;
+  top: 76px;
   min-width: 0;
-  height: calc(100dvh - 124px);
-  min-height: 520px;
-  max-height: 860px;
+  height: calc(100dvh - 108px);
+  min-height: 540px;
+  max-height: 980px;
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(24, 23, 21, 0.12);
