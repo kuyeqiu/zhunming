@@ -3,14 +3,11 @@ import {
   getContextHexagramLot,
   getHexagramFullName,
   getHexagramLines,
-  getShichenLabel,
-  formatSolarDateLabel,
   type HexagramLot,
 } from '@/lib/hexagram-lot';
 import {
   computeRealDailyAlmanac,
   computeRealDailyHexagram,
-  getHexagramGuidance,
 } from '@/lib/daily-almanac-hexagram';
 import { buildHexagramDetail } from '@/lib/hexagram-detail';
 import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
@@ -500,49 +497,48 @@ export function InkHexagramShowcase({ className = '' }: { contextKey?: string; c
 }
 
 /**
- * 桌面端右侧留白伴随组件（用于排盘输入、占问、排盘目录、账户、案例等页）：
- * 按当前页面语境 + 时辰呈现确定性水墨卦象与白话卦义；支持点击查看完整卦象详解。
+ * 桌面端右侧留白伴随组件（用于排盘目录 /chart、排盘输入 /chart/:tool）：
+ * 与岁庚页完全一致，统一使用真实《梅花易数》时间起卦 + 真实黄历择日「今日吉凶」。
  */
 export function InkHexagramAside({
-  contextKey,
   caption,
-  showFortune = false,
+  showFortune = true,
   className = '',
 }: {
-  contextKey: string;
+  contextKey?: string;
   caption?: string;
   showFortune?: boolean;
   className?: string;
 }) {
-  const lot = useMemo(() => getContextHexagramLot(contextKey), [contextKey]);
-  const fullName = useMemo(() => getHexagramFullName(lot), [lot]);
-  const guidance = useMemo(() => getHexagramGuidance(lot), [lot]);
-  const almanac = useMemo(() => (showFortune ? computeRealDailyAlmanac() : null), [showFortune]);
+  const dailyHex = useMemo(() => computeRealDailyHexagram(), []);
+  const almanac = useMemo(() => computeRealDailyAlmanac(), []);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   return (
-    <aside className={`ink-hex-aside ${className}`.trim()} aria-label={`${fullName}水墨卦象`}>
+    <aside className={`ink-hex-aside ${className}`.trim()} aria-label={`${dailyHex.fullName}水墨卦象`}>
       <div className="ink-hex-aside__art">
         <InkHexagram
-          lot={lot}
+          lot={dailyHex.lot}
           size="lg"
-          tone="soft"
+          tone="solid"
           interactive
           onClick={() => setIsDetailOpen(true)}
-          title={`${fullName}（${lot.trigrams}） · 点击查看卦象详解`}
+          title={`${dailyHex.fullName}（${dailyHex.lot.trigrams}） · 点击查看卦象详解`}
         />
       </div>
 
       <div className="ink-hex-aside__meta">
         <div className="ink-hex-aside__title-line">
-          <strong>{fullName}</strong>
-          <span>{lot.trigrams}</span>
+          <strong>{dailyHex.fullName}</strong>
+          <span>
+            {dailyHex.lot.trigrams} · {dailyHex.movingYaoName}动
+          </span>
         </div>
-        <p className="ink-hex-aside__quote">{guidance.plainMeaning}</p>
+        <p className="ink-hex-aside__quote">{dailyHex.guidance.plainMeaning}</p>
         {caption ? <p className="ink-hex-aside__caption">{caption}</p> : null}
       </div>
 
-      {almanac ? (
+      {showFortune ? (
         <div className="ink-hex-aside__fortune">
           <div className="ink-hex-aside__fortune-head">
             <span>今日黄历 · {almanac.dayOfficer}日</span>
@@ -560,21 +556,27 @@ export function InkHexagramAside({
 
       <div className="ink-hex-aside__foot">
         <span>
-          {almanac
-            ? `${almanac.lunarDate} · ${almanac.ganzhiLabel}`
-            : `${formatSolarDateLabel()} · ${getShichenLabel()}`}
+          {almanac.lunarDate} · {dailyHex.shichenLabel}
         </span>
         <button
           type="button"
           className="ink-hex-action-btn is-accent"
           onClick={() => setIsDetailOpen(true)}
         >
-          详解 ›
+          查看详解 ›
         </button>
       </div>
 
       {isDetailOpen ? (
-        <HexagramDetailModal lot={lot} onClose={() => setIsDetailOpen(false)} />
+        <HexagramDetailModal
+          lot={dailyHex.lot}
+          movingYaoPosition={dailyHex.movingYaoPosition}
+          movingYaoName={dailyHex.movingYaoName}
+          interName={dailyHex.interName}
+          changedName={dailyHex.changedName}
+          tiYongRelation={dailyHex.tiYongRelation}
+          onClose={() => setIsDetailOpen(false)}
+        />
       ) : null}
     </aside>
   );

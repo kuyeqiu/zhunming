@@ -1,23 +1,17 @@
+import { useMemo } from 'react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { DivinationPanel } from '@/components/DivinationPanel';
 import { WorkspaceToolSwitcher } from '@/components/workspace/ToolSwitcher';
-import { InkHexagramAside } from '@/components/ink/InkHexagram';
-import { buildWorkspaceFeaturePath, isDivinationWorkspaceId } from '@/lib/workspace';
+import { AiChatPanel } from '@/components/AiChatPanel';
+import { useAiSettings } from '@/hooks/useAiSettings';
+import { buildAiRequestConfig } from '@/lib/ai/settings';
+import { computeRealDailyAlmanac } from '@/lib/daily-almanac-hexagram';
+import {
+  buildWorkspaceFeaturePath,
+  getWorkspaceFeature,
+  isDivinationWorkspaceId,
+} from '@/lib/workspace';
 import { readWorkspaceLaunchState } from '@/lib/workspace-launch';
-
-const DIVINATION_CAPTIONS: Record<string, string> = {
-  liuyao: '六爻动静，以察事机',
-  meihua: '观物起象，心易相感',
-  qimen: '奇门九宫，审时度势',
-  liuren: '大六壬课，明人事之终始',
-  xiaoliuren: '掌中六神，简明直断',
-  jinkoujue: '金口断诀，直指要害',
-  taiyi: '太乙神数，推气运之兴衰',
-  huangji: '皇极经世，观元会运世',
-  tarot: '以象映心，照见当下',
-  lenormand: '雷诺曼牌，叙事明晰',
-  almanac: '择日循时，趋吉避凶',
-};
 
 function useDivinationMethod() {
   const { method } = useParams();
@@ -29,6 +23,31 @@ export function DivinationPage() {
   const location = useLocation();
   const launchState = readWorkspaceLaunchState(location.state);
   const method = useDivinationMethod();
+  const [aiSettings] = useAiSettings();
+  const aiRequestConfig = useMemo(() => buildAiRequestConfig(aiSettings), [aiSettings]);
+  const almanac = useMemo(() => computeRealDailyAlmanac(), []);
+
+  const contextPrompt = useMemo(() => {
+    if (!method) return '';
+    if (method === 'almanac') {
+      return [
+        '你是一位精通《钦定协纪辨方书》与传统黄历择日的顾问。',
+        `当前日期：${almanac.date}（${almanac.dateLabel}），${almanac.lunarDate}，${almanac.ganzhiLabel}。`,
+        `今日黄历：建除「${almanac.dayOfficer}」日，值神「${almanac.twelveStar}」（${almanac.isYellowRoad ? '黄道' : '黑道'}），冲煞「${almanac.clash}」，综合判定「${almanac.verdict}」。`,
+        `今日宜：${almanac.recommends.join('、')}。`,
+        `今日忌：${almanac.avoids.join('、')}。`,
+        '请结合传统择日逻辑，简洁、务实、理性地回答用户的择日、吉时与黄历相关问题。',
+      ].join('\n');
+    }
+    const feature = getWorkspaceFeature(method);
+    return [
+      `你是一位精通东方术数与「${feature.label}」的问答顾问。`,
+      `当前日期：${almanac.date}（${almanac.lunarDate}，${almanac.ganzhiLabel}，${almanac.shichenLabel}）。`,
+      `用户当前处于「${feature.label}」占问页面，可以随时向你咨询如何提问、选择起卦方式、术数原理，或直接讨论所关心的事项。`,
+      '请保持理性、清晰、有条理地解答，不做夸大或宿命化断言。',
+    ].join('\n');
+  }, [almanac, method]);
+
   if (!method) {
     return <Navigate to="/divination/liuyao" replace />;
   }
@@ -40,14 +59,16 @@ export function DivinationPage() {
       {method !== 'almanac' ? (
         <WorkspaceToolSwitcher current={method} group="divination" ariaLabel="占问工具切换" />
       ) : null}
-      <div className="ink-split-stage">
+      <div className="ink-split-stage divination-ai-split">
         <div className="ink-split-stage__main">
           <DivinationPanel
             key={location.key}
             initialMethod={method}
             lockedMethod={method}
             displayMode="input"
-            initialQuestion={launchState.initialQuestion ?? new URLSearchParams(location.search).get('q') ?? ''}
+            initialQuestion={
+              launchState.initialQuestion ?? new URLSearchParams(location.search).get('q') ?? ''
+            }
             initialSupplementaryInfo={launchState.initialSupplementaryInfo}
             initialGender={launchState.initialGender}
             initialBirthYear={launchState.initialBirthYear}
@@ -57,11 +78,17 @@ export function DivinationPage() {
             }
           />
         </div>
-        <InkHexagramAside
-          contextKey={method}
-          caption={DIVINATION_CAPTIONS[method] ?? '心诚起卦，静观其变'}
-          showFortune={method === 'almanac'}
-        />
+        <aside className="divination-ai-sidebar" aria-label="AI 问答窗口">
+          <AiChatPanel
+            workspaceMode
+            contextPrompt={contextPrompt}
+            resetKey={`divination-sidebar:${method}`}
+            historyKey={`divination-sidebar:${method}`}
+            inputResetKey={`divination-sidebar:${method}`}
+            aiConfig={aiRequestConfig}
+            readingMethod={method}
+          />
+        </aside>
       </div>
     </div>
   );

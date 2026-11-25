@@ -91,8 +91,6 @@ export function TutorialPage() {
             ))}
           </div>
 
-          <InkHexagramDivider contextKey="tutorial" salt={0} />
-
           <div className="tutorial-section-heading">
             <h3>工具类型怎么选</h3>
           </div>
@@ -111,8 +109,6 @@ export function TutorialPage() {
             ))}
           </div>
 
-          <InkHexagramDivider contextKey="tutorial" salt={1} />
-
           <div className="tutorial-section-heading">
             <h3>提示词怎么发</h3>
           </div>
@@ -124,8 +120,6 @@ export function TutorialPage() {
               ))}
             </ul>
           </article>
-
-          <InkHexagramDivider contextKey="tutorial" salt={2} />
 
           <div className="tutorial-section-heading">
             <h3>常见问题</h3>
@@ -145,4 +139,3 @@ export function TutorialPage() {
   );
 }
 import { WorkspacePage, WorkspaceSurface } from '@/components/workspace/WorkspaceUI';
-import { InkHexagramDivider } from '@/components/ink/InkHexagram';

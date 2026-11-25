@@ -723,12 +723,53 @@
   gap: 14px;
 }
 
-.workspace-divination-page .ink-split-stage {
+.workspace-divination-page .ink-split-stage.divination-ai-split {
   width: 100%;
   max-width: none;
   margin: 0;
-  grid-template-columns: minmax(0, 1.4fr) clamp(320px, 33vw, 520px);
-  gap: clamp(28px, 4.2vw, 76px);
+  grid-template-columns: minmax(0, 1.35fr) clamp(360px, 34vw, 520px);
+  gap: clamp(22px, 3vw, 48px);
+  align-items: start;
+}
+
+.divination-ai-sidebar {
+  position: sticky;
+  top: 84px;
+  min-width: 0;
+  height: calc(100dvh - 124px);
+  min-height: 520px;
+  max-height: 860px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(24, 23, 21, 0.12);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(24, 23, 21, 0.04);
+  overflow: hidden;
+}
+
+.divination-ai-sidebar > .panel,
+.divination-ai-sidebar .panel-ai-chat {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+@media (max-width: 1040px) {
+  .workspace-divination-page .ink-split-stage.divination-ai-split {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .divination-ai-sidebar {
+    position: static;
+    height: 560px;
+    min-height: 460px;
+  }
 }
 
 /* 账户页登录态全屏双栏（表单左 + 水墨卦象右） */
