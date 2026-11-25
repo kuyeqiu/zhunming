@@ -186,6 +186,41 @@ export async function handleAuthRoute(
     return true;
   }
 
+  if (route === 'profile' && method === 'POST') {
+    if (!context.user) {
+      sendError(response, 401, '请先登录。');
+      return true;
+    }
+    const body = await safeBody(request, response);
+    if (!body) return true;
+    if (typeof body.displayName !== 'string') {
+      sendError(response, 400, '称呼格式不正确。');
+      return true;
+    }
+    const trimmed = body.displayName.trim();
+    if (trimmed.length > 40) {
+      sendError(response, 400, '称呼最多 40 个字。');
+      return true;
+    }
+    const nextName = trimmed || null;
+    const db = getDb();
+    db.prepare(`UPDATE users SET display_name = ?, updated_at = ? WHERE id = ?`).run(
+      nextName,
+      nowIso(),
+      context.user.id,
+    );
+    sendJson(response, 200, {
+      ok: true,
+      user: publicUser({
+        id: context.user.id,
+        email: context.user.email,
+        role: context.user.role,
+        display_name: nextName,
+      }),
+    });
+    return true;
+  }
+
   if (route === 'password' && method === 'POST') {
     if (!context.user) {
       sendError(response, 401, '请先登录。');

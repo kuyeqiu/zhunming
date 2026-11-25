@@ -25,10 +25,12 @@ function AccessPanel({
   onDone,
   login,
   register,
+  notice,
 }: {
   onDone: () => void;
   login: (email: string, password: string) => Promise<unknown>;
   register: (email: string, password: string, displayName?: string) => Promise<unknown>;
+  notice?: string | null;
 }) {
   const [mode, setMode] = useState<Mode>('login');
   const [email, setEmail] = useState('');
@@ -60,6 +62,7 @@ function AccessPanel({
       </div>
       <h1 className="ink-acct__title">入 册</h1>
       <p className="ink-acct__lead">账号用于保存解读记录与已购权益，排盘始终免费。</p>
+      {notice ? <p className="ink-acct__ok">{notice}</p> : null}
 
       <div className="ink-motif-switch ink-acct__tabs" role="tablist" aria-label="登录或注册">
         <Button variant="outline" size="sm" type="button" aria-pressed={mode === 'login'} onClick={() => setMode('login')}>
@@ -133,11 +136,15 @@ function AccountView({
   summary,
   access,
   onChanged,
+  onProfileUpdated,
+  onPasswordChanged,
   onLogout,
 }: {
   summary: AppSummary;
   access: AppAccess | null;
   onChanged: () => void;
+  onProfileUpdated: () => void;
+  onPasswordChanged: () => void;
   onLogout: () => void;
 }) {
   const [code, setCode] = useState('');
@@ -145,10 +152,68 @@ function AccountView({
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
+  const [displayName, setDisplayName] = useState(summary.user.displayName ?? '');
+  const [profilePending, setProfilePending] = useState(false);
+  const [profileMessage, setProfileMessage] = useState<string | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordPending, setPasswordPending] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setDisplayName(summary.user.displayName ?? '');
+  }, [summary.user.displayName]);
+
   const activeEntitlements = useMemo(
     () => summary.entitlements.filter((item) => item.active),
     [summary.entitlements],
   );
+
+  const saveProfile = async (event: FormEvent) => {
+    event.preventDefault();
+    if (profilePending) return;
+    setProfilePending(true);
+    setProfileError(null);
+    setProfileMessage(null);
+    try {
+      await appApi.updateProfile({ displayName: displayName.trim() });
+      setProfileMessage('称呼已更新。');
+      onProfileUpdated();
+    } catch (saveError) {
+      setProfileError(isApiError(saveError) ? saveError.message : '保存失败，请稍后再试。');
+    } finally {
+      setProfilePending(false);
+    }
+  };
+
+  const savePassword = async (event: FormEvent) => {
+    event.preventDefault();
+    if (passwordPending) return;
+    setPasswordError(null);
+    if (newPassword.length < 8) {
+      setPasswordError('新密码至少需要 8 位字符。');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError('两次输入的新密码不一致。');
+      return;
+    }
+    setPasswordPending(true);
+    try {
+      await appApi.changePassword({ currentPassword, newPassword });
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      onPasswordChanged();
+    } catch (pwError) {
+      setPasswordError(isApiError(pwError) ? pwError.message : '修改密码失败，请稍后再试。');
+    } finally {
+      setPasswordPending(false);
+    }
+  };
 
   const redeem = async (event: FormEvent) => {
     event.preventDefault();
@@ -214,6 +279,101 @@ function AccountView({
           <strong className="ink-acct__stat-value">
             {access ? (access.tier === 'member' ? '无限' : `${access.remaining}/${access.limit}`) : '—'}
           </strong>
+        </div>
+      </div>
+
+      <div className="ink-divider ink-divider--left">
+        <h2>账 户 设 置</h2>
+        <p>修改个人称呼与登录密码</p>
+      </div>
+
+      <div className="ink-acct__settings-grid">
+        <div className="ink-acct__card">
+          <div className="ink-acct__card-head">
+            <h3>基本资料</h3>
+            <p>称呼将显示在账户主页与顶部标识</p>
+          </div>
+          <form className="ink-acct__card-form" onSubmit={saveProfile}>
+            <Label className="ink-field">
+              <span className="ink-field__label">登录邮箱</span>
+              <Input type="email" value={summary.user.email} disabled readOnly />
+            </Label>
+            <Label className="ink-field">
+              <span className="ink-field__label">姓名 / 称呼</span>
+              <Input
+                type="text"
+                maxLength={40}
+                value={displayName}
+                onChange={(event) => setDisplayName(event.target.value)}
+                placeholder="输入你的称呼（最多 40 字）"
+              />
+            </Label>
+            {profileMessage ? <p className="ink-acct__ok">{profileMessage}</p> : null}
+            {profileError ? (
+              <p className="ink-acct__error" role="alert">
+                {profileError}
+              </p>
+            ) : null}
+            <div className="ink-acct__card-actions">
+              <Button type="submit" className="ink-btn" disabled={profilePending}>
+                {profilePending ? '保存中…' : '保存资料'}
+              </Button>
+            </div>
+          </form>
+        </div>
+
+        <div className="ink-acct__card">
+          <div className="ink-acct__card-head">
+            <h3>修改密码</h3>
+            <p>改密后需使用新密码重新登录</p>
+          </div>
+          <form className="ink-acct__card-form" onSubmit={savePassword}>
+            <Label className="ink-field">
+              <span className="ink-field__label">当前密码</span>
+              <Input
+                type="password"
+                autoComplete="current-password"
+                required
+                value={currentPassword}
+                onChange={(event) => setCurrentPassword(event.target.value)}
+                placeholder="请输入当前密码"
+              />
+            </Label>
+            <Label className="ink-field">
+              <span className="ink-field__label">新密码</span>
+              <Input
+                type="password"
+                autoComplete="new-password"
+                required
+                minLength={8}
+                value={newPassword}
+                onChange={(event) => setNewPassword(event.target.value)}
+                placeholder="至少 8 位字符"
+              />
+            </Label>
+            <Label className="ink-field">
+              <span className="ink-field__label">确认新密码</span>
+              <Input
+                type="password"
+                autoComplete="new-password"
+                required
+                minLength={8}
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                placeholder="再次输入新密码"
+              />
+            </Label>
+            {passwordError ? (
+              <p className="ink-acct__error" role="alert">
+                {passwordError}
+              </p>
+            ) : null}
+            <div className="ink-acct__card-actions">
+              <Button type="submit" className="ink-btn" disabled={passwordPending}>
+                {passwordPending ? '提交中…' : '更新密码'}
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
 
@@ -290,6 +450,7 @@ export function AccountPage() {
   const [summary, setSummary] = useState<AppSummary | null>(null);
   const [access, setAccess] = useState<AppAccess | null>(null);
   const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [authNotice, setAuthNotice] = useState<string | null>(null);
 
   const loadSummary = () => {
     void appApi
@@ -342,16 +503,29 @@ export function AccountPage() {
             summary={summary}
             access={access}
             onChanged={loadSummary}
-            onLogout={() => void logout()}
+            onProfileUpdated={() => {
+              void refresh();
+              loadSummary();
+            }}
+            onPasswordChanged={() => {
+              setAuthNotice('密码已修改，请使用新密码重新登录。');
+              void refresh();
+            }}
+            onLogout={() => {
+              setAuthNotice(null);
+              void logout();
+            }}
           />
         ) : (
           <p className="ink-acct__empty">{summaryError ?? '正在读取账户…'}</p>
         )
       ) : (
         <AccessPanel
+          notice={authNotice}
           login={login}
           register={register}
           onDone={() => {
+            setAuthNotice(null);
             void refresh();
           }}
         />

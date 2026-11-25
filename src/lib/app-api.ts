@@ -116,6 +116,21 @@ export const appApi = {
     await request('/api/app/auth/logout', { method: 'POST' });
   },
 
+  async updateProfile(input: { displayName: string }): Promise<AppUser> {
+    const data = await request<{ ok: boolean; user: AppUser }>('/api/app/auth/profile', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+    return data.user;
+  },
+
+  async changePassword(input: { currentPassword: string; newPassword: string }): Promise<void> {
+    await request('/api/app/auth/password', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+
   async products(): Promise<AppProduct[]> {
     const data = await request<{ ok: boolean; products: AppProduct[] }>('/api/app/products');
     return data.products ?? [];
