@@ -575,11 +575,14 @@ export function DivinationForm({
     return (
       <>
         <section className="workspace-ui-form-surface divination-form-card">
-          {showHeading ? (
-            <div className="workspace-ui-form-heading">
-              <h2>{formHeading}</h2>
-            </div>
-          ) : null}
+          <div className="almanac-top-bar">
+            {showHeading ? (
+              <div className="workspace-ui-form-heading almanac-top-bar__heading">
+                <h2>{formHeading}</h2>
+              </div>
+            ) : null}
+            <PromptSelectionFields draft={draft} updateDraft={updateDraft} />
+          </div>
 
           {!isMethodLocked ? (
             <div className="divination-method-grid">
@@ -597,8 +600,6 @@ export function DivinationForm({
               ))}
             </div>
           ) : null}
-
-          <PromptSelectionFields draft={draft} updateDraft={updateDraft} />
 
           <AlmanacForm
             draft={draft}

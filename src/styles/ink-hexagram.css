@@ -728,13 +728,152 @@
   width: 100%;
   max-width: none;
   margin: 0;
-  grid-template-columns: minmax(0, 1.25fr) minmax(380px, 0.95fr);
-  gap: clamp(22px, 2.6vw, 40px);
+  grid-template-columns: minmax(0, 1fr) 16px var(--ai-sidebar-width, clamp(380px, 38vw, 680px));
+  gap: 0;
   align-items: start;
 }
 
 .workspace-divination-page.is-almanac .ink-split-stage.divination-ai-split {
-  grid-template-columns: minmax(0, 1.48fr) minmax(420px, 1fr);
+  grid-template-columns: minmax(0, 1fr) 18px var(--ai-sidebar-width, clamp(420px, 36vw, 720px));
+}
+
+/* 可拖拽分隔条 */
+.divination-split-resizer {
+  position: sticky;
+  top: 0;
+  height: calc(100dvh - 110px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.divination-split-resizer::before {
+  content: '';
+  width: 2px;
+  height: 56px;
+  border-radius: 999px;
+  background: rgba(24, 23, 21, 0.14);
+  transition: background-color 160ms ease, height 160ms ease, width 160ms ease;
+}
+
+.divination-split-resizer:hover::before,
+.divination-ai-split.is-resizing .divination-split-resizer::before {
+  width: 3px;
+  height: 112px;
+  background: var(--cinnabar, #9e2a2b);
+}
+
+body.is-resizing-split,
+body.is-resizing-split * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+/* 择日页顶部紧凑单行栏：黄历择日标题 + 解读方法 + 解读主题 合并到同一行 */
+.workspace-divination-page.is-almanac .almanac-top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding-bottom: 14px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(24, 23, 21, 0.08);
+}
+
+.workspace-divination-page.is-almanac .almanac-top-bar__heading {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  flex: 0 0 auto;
+}
+
+.workspace-divination-page.is-almanac .almanac-top-bar__heading h2 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.workspace-divination-page.is-almanac .almanac-top-bar .divination-prompt-selection {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.workspace-divination-page.is-almanac .almanac-top-bar .divination-prompt-selection-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding-left: 14px;
+  border-left: 1px solid rgba(24, 23, 21, 0.14);
+  font-size: 12.5px;
+  color: var(--ink-light, #8c887f);
+}
+
+.workspace-divination-page.is-almanac .almanac-top-bar .divination-prompt-selection-head strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-strong, #2e2c28);
+}
+
+.workspace-divination-page.is-almanac .almanac-top-bar .divination-prompt-selection-grid {
+  width: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin: 0;
+}
+
+.workspace-divination-page.is-almanac .almanac-top-bar .divination-prompt-selection-grid .form-item {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.workspace-divination-page.is-almanac .almanac-top-bar .divination-prompt-selection-grid .form-item > label {
+  margin: 0;
+  white-space: nowrap;
+  font-size: 12.5px;
+  color: var(--ink-light, #8c887f);
+}
+
+.workspace-divination-page.is-almanac .almanac-top-bar .divination-prompt-selection-grid .workspace-ui-dropdown-trigger {
+  min-width: 128px;
+  min-height: 32px;
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+/* 统一修正 AI 顶栏与参与人操作按钮的配色（避免深灰底深黑字） */
+.divination-ai-sidebar .ai-chat-head-actions button,
+.almanac-participant-actions button:not(.workspace-ui-dropdown-trigger) {
+  background: #ffffff;
+  border: 1px solid rgba(24, 23, 21, 0.16);
+  color: var(--ink-strong, #2e2c28);
+  font-weight: 500;
+  box-shadow: none;
+}
+
+.divination-ai-sidebar .ai-chat-head-actions button:hover:not(:disabled),
+.almanac-participant-actions button:not(.workspace-ui-dropdown-trigger):hover:not(:disabled) {
+  background: #f5f3ee;
+  border-color: rgba(24, 23, 21, 0.3);
+  color: var(--ink-deep, #181715);
 }
 
 @media (max-width: 1520px) {
@@ -771,9 +910,14 @@
 }
 
 @media (max-width: 1040px) {
-  .workspace-divination-page .ink-split-stage.divination-ai-split {
+  .workspace-divination-page .ink-split-stage.divination-ai-split,
+  .workspace-divination-page.is-almanac .ink-split-stage.divination-ai-split {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+
+  .divination-split-resizer {
+    display: none;
   }
 
   .divination-ai-sidebar {

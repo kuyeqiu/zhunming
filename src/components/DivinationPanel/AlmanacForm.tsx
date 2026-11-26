@@ -410,7 +410,7 @@ export function AlmanacForm({
                 onChange={addCaseParticipant}
               />
             ) : null}
-            <WorkspaceButton size="small" onClick={addParticipant}>
+            <WorkspaceButton variant="outline" size="small" onClick={addParticipant}>
               手动添加
             </WorkspaceButton>
           </div>

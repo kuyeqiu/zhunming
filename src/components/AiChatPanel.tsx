@@ -555,6 +555,7 @@ function AiChatPanelImpl({
         <div className="ai-chat-head-actions">
           <div className="ai-chat-history-anchor">
             <WorkspaceButton
+              variant="outline"
               size="small"
               onClick={() => setIsHistoryOpen((open) => !open)}
               aria-expanded={isHistoryOpen}
@@ -632,7 +633,7 @@ function AiChatPanelImpl({
             ) : null}
           </div>
           {hasStarted || activeSessionId ? (
-            <WorkspaceButton size="small" onClick={handleNewChat} disabled={isBusy}>
+            <WorkspaceButton variant="outline" size="small" onClick={handleNewChat} disabled={isBusy}>
               新对话
             </WorkspaceButton>
           ) : null}

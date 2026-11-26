@@ -1,4 +1,12 @@
-import { useMemo } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { DivinationPanel } from '@/components/DivinationPanel';
 import { WorkspaceToolSwitcher } from '@/components/workspace/ToolSwitcher';
@@ -13,6 +21,25 @@ import {
 } from '@/lib/workspace';
 import { readWorkspaceLaunchState } from '@/lib/workspace-launch';
 
+const AI_SIDEBAR_WIDTH_STORAGE_KEY = 'mingyu.divination.aiSidebarWidth';
+const AI_SIDEBAR_MIN_WIDTH = 340;
+const AI_SIDEBAR_MAX_WIDTH = 960;
+
+function readSavedSidebarWidth(): number | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(AI_SIDEBAR_WIDTH_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = Number(raw);
+    if (Number.isFinite(parsed) && parsed >= AI_SIDEBAR_MIN_WIDTH && parsed <= AI_SIDEBAR_MAX_WIDTH) {
+      return parsed;
+    }
+  } catch {
+    // ignore storage read error
+  }
+  return null;
+}
+
 function useDivinationMethod() {
   const { method } = useParams();
   return isDivinationWorkspaceId(method) ? method : null;
@@ -26,6 +53,66 @@ export function DivinationPage() {
   const [aiSettings] = useAiSettings();
   const aiRequestConfig = useMemo(() => buildAiRequestConfig(aiSettings), [aiSettings]);
   const almanac = useMemo(() => computeRealDailyAlmanac(), []);
+  const splitRef = useRef<HTMLDivElement | null>(null);
+  const [aiSidebarWidth, setAiSidebarWidth] = useState<number | null>(() => readSavedSidebarWidth());
+  const [isResizing, setIsResizing] = useState(false);
+
+  const clampSidebarWidth = useCallback((candidate: number) => {
+    const containerWidth = splitRef.current?.getBoundingClientRect().width ?? window.innerWidth;
+    const maxAllowed = Math.min(AI_SIDEBAR_MAX_WIDTH, Math.max(AI_SIDEBAR_MIN_WIDTH, containerWidth * 0.56));
+    return Math.round(Math.min(maxAllowed, Math.max(AI_SIDEBAR_MIN_WIDTH, candidate)));
+  }, []);
+
+  const handleResizeStart = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      const splitEl = splitRef.current;
+      if (!splitEl) return;
+      const splitRect = splitEl.getBoundingClientRect();
+      setIsResizing(true);
+
+      const handlePointerMove = (moveEvent: PointerEvent) => {
+        const nextWidth = clampSidebarWidth(splitRect.right - moveEvent.clientX);
+        setAiSidebarWidth(nextWidth);
+      };
+
+      const handlePointerUp = () => {
+        setIsResizing(false);
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('pointerup', handlePointerUp);
+        window.removeEventListener('pointercancel', handlePointerUp);
+      };
+
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
+      window.addEventListener('pointercancel', handlePointerUp);
+    },
+    [clampSidebarWidth],
+  );
+
+  useEffect(() => {
+    if (isResizing) {
+      document.body.classList.add('is-resizing-split');
+      return () => {
+        document.body.classList.remove('is-resizing-split');
+      };
+    }
+    try {
+      if (aiSidebarWidth === null) {
+        window.localStorage.removeItem(AI_SIDEBAR_WIDTH_STORAGE_KEY);
+      } else {
+        window.localStorage.setItem(AI_SIDEBAR_WIDTH_STORAGE_KEY, String(aiSidebarWidth));
+      }
+    } catch {
+      // ignore storage write error
+    }
+  }, [aiSidebarWidth, isResizing]);
+
+  const splitStyle = useMemo<CSSProperties | undefined>(() => {
+    if (aiSidebarWidth === null) return undefined;
+    return { ['--ai-sidebar-width' as string]: `${aiSidebarWidth}px` };
+  }, [aiSidebarWidth]);
 
   const contextPrompt = useMemo(() => {
     if (!method) return '';
@@ -59,7 +146,11 @@ export function DivinationPage() {
       {method !== 'almanac' ? (
         <WorkspaceToolSwitcher current={method} group="divination" ariaLabel="占问工具切换" />
       ) : null}
-      <div className="ink-split-stage divination-ai-split">
+      <div
+        ref={splitRef}
+        className={`ink-split-stage divination-ai-split${isResizing ? ' is-resizing' : ''}`}
+        style={splitStyle}
+      >
         <div className="ink-split-stage__main">
           <DivinationPanel
             key={location.key}
@@ -78,6 +169,15 @@ export function DivinationPage() {
             }
           />
         </div>
+        <div
+          className="divination-split-resizer"
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="拖动调整 AI 问答窗口宽度"
+          title="左右拖动调整 AI 问答窗口宽度，双击恢复默认"
+          onPointerDown={handleResizeStart}
+          onDoubleClick={() => setAiSidebarWidth(null)}
+        />
         <aside className="divination-ai-sidebar" aria-label="AI 问答窗口">
           <AiChatPanel
             workspaceMode
