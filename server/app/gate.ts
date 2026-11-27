@@ -91,6 +91,21 @@ export function checkAiAccess(request: IncomingMessage): AiGateVerdict {
   const limit = freeDailyLimit();
   const used = usedToday(identity);
   if (used >= limit) {
+    // 免费额度用完后，若登录用户账户有剩余提问次数（balances.credits），自动扣减 1 次放行
+    if (user) {
+      const bal = getDb()
+        .prepare(`SELECT credits FROM balances WHERE user_id = ?`)
+        .get(user.id) as { credits: number } | undefined;
+      if (bal && bal.credits > 0) {
+        const updated = getDb()
+          .prepare(`UPDATE balances SET credits = credits - 1, updated_at = ? WHERE user_id = ? AND credits > 0`)
+          .run(nowIso(), user.id);
+        if (updated.changes > 0) {
+          recordUsage(identity, user.id);
+          return { allowed: true, identity, tier: 'free', remaining: Math.max(0, bal.credits - 1) };
+        }
+      }
+    }
     return {
       allowed: false,
       identity,
@@ -99,8 +114,8 @@ export function checkAiAccess(request: IncomingMessage): AiGateVerdict {
       limit,
       message:
         limit === 0
-          ? 'AI 解读需要开通会员后使用。'
-          : `今日免费解读已用完（${used}/${limit}）。开通会员可无限次解读。`,
+          ? 'AI 解读需要开通会员或充值次数后使用。'
+          : `今日免费解读已用完（${used}/${limit}）。开通会员或补充提问次数后可继续解读。`,
     };
   }
 

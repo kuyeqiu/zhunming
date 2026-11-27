@@ -80,6 +80,28 @@ export function AdminPage() {
   const [query, setQuery] = useState('');
   const [codes, setCodes] = useState<string[]>([]);
 
+  // 用户管理编辑弹窗状态
+  const [editingUser, setEditingUser] = useState<AdminUserRow | null>(null);
+  const [editDisplayName, setEditDisplayName] = useState('');
+  const [editRole, setEditRole] = useState<'user' | 'admin'>('user');
+  const [editStatus, setEditStatus] = useState<'active' | 'disabled'>('active');
+  const [editCredits, setEditCredits] = useState(0);
+  const [editNewPassword, setEditNewPassword] = useState('');
+  const [editCustomDays, setEditCustomDays] = useState(30);
+  const [userSaving, setUserSaving] = useState(false);
+  const [userModalError, setUserModalError] = useState<string | null>(null);
+
+  const openUserModal = (row: AdminUserRow) => {
+    setEditingUser(row);
+    setEditDisplayName(row.displayName ?? '');
+    setEditRole(row.role);
+    setEditStatus(row.status);
+    setEditCredits(row.credits);
+    setEditNewPassword('');
+    setEditCustomDays(30);
+    setUserModalError(null);
+  };
+
   // AI 模型与密钥配置状态
   const [aiConfig, setAiConfig] = useState<AdminAiConfig | null>(null);
   const [aiBuiltinEnabled, setAiBuiltinEnabled] = useState(true);
@@ -179,6 +201,60 @@ export function AdminPage() {
       setError(testError instanceof Error ? testError.message : '测试请求失败');
     } finally {
       setAiTesting(false);
+    }
+  };
+
+  const refreshEditingUser = async (userId: string) => {
+    const res = await adminApi.users(query);
+    setUsers(res.users);
+    const updated = res.users.find((item) => item.id === userId) ?? null;
+    if (updated) {
+      setEditingUser(updated);
+      setEditDisplayName(updated.displayName ?? '');
+      setEditRole(updated.role);
+      setEditStatus(updated.status);
+      setEditCredits(updated.credits);
+    }
+  };
+
+  const handleSaveUserBasic = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!editingUser || userSaving) return;
+    setUserSaving(true);
+    setUserModalError(null);
+    try {
+      await adminApi.updateUser(editingUser.id, {
+        displayName: editDisplayName.trim(),
+        role: editRole,
+        status: editStatus,
+        credits: Math.max(0, Math.floor(Number(editCredits) || 0)),
+        ...(editNewPassword.trim() ? { newPassword: editNewPassword.trim() } : {}),
+      });
+      setEditNewPassword('');
+      setNotice(`已更新用户 ${editingUser.email}`);
+      await refreshEditingUser(editingUser.id);
+    } catch (saveError) {
+      setUserModalError(saveError instanceof Error ? saveError.message : '保存失败');
+    } finally {
+      setUserSaving(false);
+    }
+  };
+
+  const handleQuickUserAction = async (
+    patch: Parameters<typeof adminApi.updateUser>[1],
+    okMessage: string,
+  ) => {
+    if (!editingUser || userSaving) return;
+    setUserSaving(true);
+    setUserModalError(null);
+    try {
+      await adminApi.updateUser(editingUser.id, patch);
+      setNotice(okMessage);
+      await refreshEditingUser(editingUser.id);
+    } catch (actionError) {
+      setUserModalError(actionError instanceof Error ? actionError.message : '操作失败');
+    } finally {
+      setUserSaving(false);
     }
   };
 
@@ -466,10 +542,10 @@ export function AdminPage() {
                     <th>邮箱</th>
                     <th>称呼</th>
                     <th>角色</th>
+                    <th>会员状态</th>
+                    <th className="num">剩余次数</th>
+                    <th className="num">今日已用</th>
                     <th>状态</th>
-                    <th className="num">余额</th>
-                    <th className="num">权益</th>
-                    <th className="num">消费</th>
                     <th>注册</th>
                     <th>操作</th>
                   </tr>
@@ -480,32 +556,36 @@ export function AdminPage() {
                       <td>{row.email}</td>
                       <td>{row.displayName ?? '—'}</td>
                       <td>
-                        <span className={`admin-tag admin-tag--${row.role}`}>{row.role}</span>
+                        <span className={`admin-tag admin-tag--${row.role}`}>
+                          {row.role === 'admin' ? '管理员' : '普通'}
+                        </span>
                       </td>
                       <td>
-                        <span className={`admin-tag admin-tag--${row.status}`}>{row.status}</span>
+                        {row.memberStatus === 'lifetime' ? (
+                          <span className="admin-tag admin-tag--admin">永久会员</span>
+                        ) : row.memberStatus === 'timed' ? (
+                          <span className="admin-tag admin-tag--active">
+                            会员至 {day(row.memberExpiresAt)}
+                          </span>
+                        ) : (
+                          <span className="admin-tag admin-tag--disabled">非会员</span>
+                        )}
                       </td>
                       <td className="num">{row.credits}</td>
-                      <td className="num">{row.entitlements}</td>
-                      <td className="num">{money(row.spentCents)}</td>
+                      <td className="num">{row.usedToday}</td>
+                      <td>
+                        <span className={`admin-tag admin-tag--${row.status}`}>
+                          {row.status === 'active' ? '正常' : '停用'}
+                        </span>
+                      </td>
                       <td>{day(row.createdAt)}</td>
                       <td className="admin-row-actions">
                         <button
                           type="button"
-                          className="admin-btn admin-btn--sm"
-                          onClick={async () => {
-                            try {
-                              await adminApi.updateUser(row.id, {
-                                role: row.role === 'admin' ? 'user' : 'admin',
-                              });
-                              setNotice(`${row.email} 角色已更新`);
-                              void load('users');
-                            } catch (updateError) {
-                              setError(updateError instanceof Error ? updateError.message : '更新失败');
-                            }
-                          }}
+                          className="admin-btn admin-btn--sm admin-btn--primary"
+                          onClick={() => openUserModal(row)}
                         >
-                          {row.role === 'admin' ? '降为用户' : '设为管理'}
+                          编辑 / 权益
                         </button>
                         <button
                           type="button"
@@ -537,6 +617,253 @@ export function AdminPage() {
                 </tbody>
               </table>
             </div>
+
+            {editingUser ? (
+              <div className="admin-modal-backdrop" onClick={() => setEditingUser(null)}>
+                <div
+                  className="admin-modal"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="admin-user-modal-title"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <div className="admin-modal__head">
+                    <div>
+                      <h2 id="admin-user-modal-title">管理用户</h2>
+                      <p>{editingUser.email}</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn--sm"
+                      onClick={() => setEditingUser(null)}
+                    >
+                      关闭
+                    </button>
+                  </div>
+
+                  {userModalError ? <p className="admin-error">{userModalError}</p> : null}
+
+                  <div className="admin-modal__section">
+                    <div className="admin-modal__section-head">
+                      <h3>会员权益</h3>
+                      {editingUser.memberStatus === 'lifetime' ? (
+                        <span className="admin-tag admin-tag--admin">当前：永久会员</span>
+                      ) : editingUser.memberStatus === 'timed' ? (
+                        <span className="admin-tag admin-tag--active">
+                          当前到期：{day(editingUser.memberExpiresAt)}
+                        </span>
+                      ) : (
+                        <span className="admin-tag admin-tag--disabled">当前：非会员</span>
+                      )}
+                    </div>
+                    <div className="admin-quick-bar">
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm"
+                        disabled={userSaving}
+                        onClick={() =>
+                          void handleQuickUserAction(
+                            { membershipAction: 'extend_days', membershipDays: 30 },
+                            `已为 ${editingUser.email} 开通/续期 30 天会员`,
+                          )
+                        }
+                      >
+                        +30 天会员
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm"
+                        disabled={userSaving}
+                        onClick={() =>
+                          void handleQuickUserAction(
+                            { membershipAction: 'extend_days', membershipDays: 365 },
+                            `已为 ${editingUser.email} 开通/续期 365 天会员`,
+                          )
+                        }
+                      >
+                        +1 年会员
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm"
+                        disabled={userSaving}
+                        onClick={() =>
+                          void handleQuickUserAction(
+                            { membershipAction: 'lifetime' },
+                            `已将 ${editingUser.email} 设为永久会员`,
+                          )
+                        }
+                      >
+                        设为永久会员
+                      </button>
+                      {editingUser.memberStatus !== 'none' ? (
+                        <button
+                          type="button"
+                          className="admin-btn admin-btn--sm admin-btn--danger"
+                          disabled={userSaving}
+                          onClick={() =>
+                            void handleQuickUserAction(
+                              { membershipAction: 'revoke' },
+                              `已取消 ${editingUser.email} 的会员权益`,
+                            )
+                          }
+                        >
+                          取消会员
+                        </button>
+                      ) : null}
+                    </div>
+                    <div className="admin-inline-days">
+                      <Input
+                        type="number"
+                        min="1"
+                        max="3650"
+                        value={editCustomDays}
+                        onChange={(event) => setEditCustomDays(Number(event.target.value))}
+                      />
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm"
+                        disabled={userSaving}
+                        onClick={() =>
+                          void handleQuickUserAction(
+                            {
+                              membershipAction: 'extend_days',
+                              membershipDays: Math.max(1, Math.floor(Number(editCustomDays) || 1)),
+                            },
+                            `已为 ${editingUser.email} 增加 ${Math.max(1, Math.floor(Number(editCustomDays) || 1))} 天会员`,
+                          )
+                        }
+                      >
+                        按自定义天数续期
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="admin-modal__section">
+                    <div className="admin-modal__section-head">
+                      <h3>AI 提问次数与今日用量</h3>
+                      <span className="admin-meta-time">今日已用：{editingUser.usedToday} 次</span>
+                    </div>
+                    <div className="admin-quick-bar">
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm"
+                        disabled={userSaving}
+                        onClick={() => setEditCredits((c) => c + 10)}
+                      >
+                        +10 次
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm"
+                        disabled={userSaving}
+                        onClick={() => setEditCredits((c) => c + 50)}
+                      >
+                        +50 次
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm"
+                        disabled={userSaving}
+                        onClick={() => setEditCredits((c) => c + 100)}
+                      >
+                        +100 次
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm"
+                        disabled={userSaving || editingUser.usedToday === 0}
+                        onClick={() =>
+                          void handleQuickUserAction(
+                            { resetTodayUsage: true },
+                            `已重置 ${editingUser.email} 今日 AI 已用次数`,
+                          )
+                        }
+                      >
+                        重置今日已用
+                      </button>
+                    </div>
+                  </div>
+
+                  <form className="admin-modal__form" onSubmit={handleSaveUserBasic}>
+                    <div className="admin-form-grid">
+                      <Label className="admin-field">
+                        <span>称呼 / 姓名</span>
+                        <Input
+                          value={editDisplayName}
+                          maxLength={40}
+                          onChange={(event) => setEditDisplayName(event.target.value)}
+                          placeholder="可留空"
+                        />
+                      </Label>
+                      <Label className="admin-field">
+                        <span>额外提问次数 / 余额</span>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="999999"
+                          value={editCredits}
+                          onChange={(event) => setEditCredits(Number(event.target.value))}
+                        />
+                      </Label>
+                      <Label className="admin-field">
+                        <span>角色</span>
+                        <select
+                          className="admin-select"
+                          value={editRole}
+                          onChange={(event) =>
+                            setEditRole(event.target.value === 'admin' ? 'admin' : 'user')
+                          }
+                        >
+                          <option value="user">普通用户</option>
+                          <option value="admin">管理员</option>
+                        </select>
+                      </Label>
+                      <Label className="admin-field">
+                        <span>账号状态</span>
+                        <select
+                          className="admin-select"
+                          value={editStatus}
+                          onChange={(event) =>
+                            setEditStatus(event.target.value === 'disabled' ? 'disabled' : 'active')
+                          }
+                        >
+                          <option value="active">正常</option>
+                          <option value="disabled">停用</option>
+                        </select>
+                      </Label>
+                      <Label className="admin-field admin-field--wide">
+                        <span>重置登录密码（可选，留空不修改）</span>
+                        <Input
+                          type="password"
+                          autoComplete="new-password"
+                          minLength={8}
+                          value={editNewPassword}
+                          onChange={(event) => setEditNewPassword(event.target.value)}
+                          placeholder="至少 8 位字符，留空则保持原密码"
+                        />
+                      </Label>
+                    </div>
+                    <div className="admin-card__actions">
+                      <button
+                        type="button"
+                        className="admin-btn"
+                        onClick={() => setEditingUser(null)}
+                      >
+                        取消
+                      </button>
+                      <button
+                        type="submit"
+                        className="admin-btn admin-btn--primary"
+                        disabled={userSaving}
+                      >
+                        {userSaving ? '保存中…' : '保存修改'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            ) : null}
           </>
         ) : null}
 

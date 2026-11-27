@@ -25,6 +25,20 @@ export type AdminUserRow = {
   credits: number;
   entitlements: number;
   spentCents: number;
+  usedToday: number;
+  memberStatus: 'none' | 'timed' | 'lifetime';
+  memberExpiresAt: string | null;
+};
+
+export type AdminUserUpdatePatch = {
+  displayName?: string;
+  role?: 'user' | 'admin';
+  status?: 'active' | 'disabled';
+  credits?: number;
+  membershipAction?: 'extend_days' | 'lifetime' | 'revoke';
+  membershipDays?: number;
+  resetTodayUsage?: boolean;
+  newPassword?: string;
 };
 
 export type AdminOrderRow = {
@@ -118,7 +132,7 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
 export const adminApi = {
   overview: () => call<{ overview: AdminOverview }>('overview'),
   users: (q = '') => call<{ users: AdminUserRow[] }>(`users?q=${encodeURIComponent(q)}`),
-  updateUser: (id: string, patch: { role?: string; status?: string }) =>
+  updateUser: (id: string, patch: AdminUserUpdatePatch) =>
     call<{ ok: boolean }>(`users/${id}`, { method: 'POST', body: JSON.stringify(patch) }),
   orders: () => call<{ orders: AdminOrderRow[] }>('orders'),
   products: () => call<{ products: AdminProductRow[] }>('products'),

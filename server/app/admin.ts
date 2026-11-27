@@ -4,7 +4,7 @@ import { listAudit, recordAudit } from './audit';
 import { listProducts, upsertProduct } from './billing';
 import { getDb, withTransaction } from './db';
 import { readJsonBody, sendError, sendJson } from './http';
-import { newId, nowIso } from './security';
+import { describePasswordProblem, hashPassword, newId, nowIso } from './security';
 import type { SessionUser } from './session';
 import { getAdminAiConfigView, saveAdminAiConfig, testAdminAiConnection } from './settings';
 
@@ -83,6 +83,10 @@ export async function handleAdminRoute(
   if (route === 'users' && method === 'GET') {
     const q = (url.searchParams.get('q') ?? '').trim().toLowerCase();
     const limit = Math.min(200, Number(url.searchParams.get('limit') ?? 50) || 50);
+    const now = nowIso();
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayStartIso = todayStart.toISOString();
     const rows = db
       .prepare(
         `SELECT u.id, u.email, u.display_name, u.role, u.status, u.created_at,
@@ -90,12 +94,18 @@ export async function handleAdminRoute(
                 (SELECT count(*) FROM entitlements e WHERE e.user_id = u.id
                    AND e.quota > 0 AND (e.expires_at IS NULL OR e.expires_at > ?)) AS entitlements,
                 (SELECT COALESCE(SUM(amount_cents), 0) FROM orders o
-                   WHERE o.user_id = u.id AND o.status = 'paid') AS spent
+                   WHERE o.user_id = u.id AND o.status = 'paid') AS spent,
+                (SELECT count(*) FROM ai_usage a
+                   WHERE a.identity = ('usr:' || u.id) AND a.kind = 'ai.analyze' AND a.created_at >= ?) AS used_today,
+                (SELECT count(*) FROM entitlements e
+                   WHERE e.user_id = u.id AND e.kind = 'membership' AND e.quota > 0 AND e.expires_at IS NULL) AS lifetime_memberships,
+                (SELECT MAX(e.expires_at) FROM entitlements e
+                   WHERE e.user_id = u.id AND e.kind = 'membership' AND e.quota > 0 AND e.expires_at > ?) AS member_expires_at
            FROM users u LEFT JOIN balances b ON b.user_id = u.id
           WHERE (? = '' OR lower(u.email) LIKE ? OR lower(COALESCE(u.display_name, '')) LIKE ?)
           ORDER BY u.created_at DESC LIMIT ?`,
       )
-      .all(nowIso(), q, `%${q}%`, `%${q}%`, limit) as Array<{
+      .all(now, todayStartIso, now, q, `%${q}%`, `%${q}%`, limit) as Array<{
       id: string;
       email: string;
       display_name: string | null;
@@ -105,6 +115,9 @@ export async function handleAdminRoute(
       credits: number;
       entitlements: number;
       spent: number;
+      used_today: number;
+      lifetime_memberships: number;
+      member_expires_at: string | null;
     }>;
     sendJson(response, 200, {
       ok: true,
@@ -118,6 +131,10 @@ export async function handleAdminRoute(
         credits: row.credits,
         entitlements: row.entitlements,
         spentCents: row.spent,
+        usedToday: row.used_today,
+        memberStatus:
+          row.lifetime_memberships > 0 ? 'lifetime' : row.member_expires_at ? 'timed' : 'none',
+        memberExpiresAt: row.lifetime_memberships > 0 ? null : row.member_expires_at,
       })),
     });
     return true;
@@ -135,9 +152,35 @@ export async function handleAdminRoute(
       sendError(response, 404, '用户不存在。');
       return true;
     }
+
     const role = body.role === 'admin' || body.role === 'user' ? body.role : null;
     const status = body.status === 'active' || body.status === 'disabled' ? body.status : null;
-    if (!role && !status) {
+    const hasDisplayName = typeof body.displayName === 'string';
+    const nextDisplayName = hasDisplayName ? String(body.displayName).trim().slice(0, 40) || null : undefined;
+    const hasCredits =
+      (typeof body.credits === 'number' || typeof body.credits === 'string') &&
+      String(body.credits).trim() !== '' &&
+      Number.isFinite(Number(body.credits));
+    const nextCredits = hasCredits ? Math.max(0, Math.min(999_999, Math.floor(Number(body.credits)))) : undefined;
+    const membershipAction =
+      body.membershipAction === 'extend_days' ||
+      body.membershipAction === 'lifetime' ||
+      body.membershipAction === 'revoke'
+        ? body.membershipAction
+        : null;
+    const membershipDays = Math.max(1, Math.min(3650, Math.floor(Number(body.membershipDays) || 30)));
+    const resetTodayUsage = body.resetTodayUsage === true;
+    const newPassword = typeof body.newPassword === 'string' && body.newPassword.length > 0 ? body.newPassword : null;
+
+    if (
+      !role &&
+      !status &&
+      !hasDisplayName &&
+      !hasCredits &&
+      !membershipAction &&
+      !resetTodayUsage &&
+      !newPassword
+    ) {
       sendError(response, 400, '没有可更新的字段。');
       return true;
     }
@@ -145,21 +188,108 @@ export async function handleAdminRoute(
       sendError(response, 400, '不能取消自己的管理员权限。');
       return true;
     }
-    if (role) db.prepare(`UPDATE users SET role = ?, updated_at = ? WHERE id = ?`).run(role, nowIso(), target.id);
-    if (status) {
-      db.prepare(`UPDATE users SET status = ?, updated_at = ? WHERE id = ?`).run(status, nowIso(), target.id);
-      if (status === 'disabled') {
-        db.prepare(`UPDATE sessions SET revoked_at = ? WHERE user_id = ? AND revoked_at IS NULL`).run(
-          nowIso(),
+    if (newPassword) {
+      const problem = describePasswordProblem(newPassword);
+      if (problem) {
+        sendError(response, 400, problem);
+        return true;
+      }
+    }
+
+    const now = nowIso();
+    const hashedPassword = newPassword ? await hashPassword(newPassword) : null;
+
+    withTransaction((tx) => {
+      if (role) {
+        tx.prepare(`UPDATE users SET role = ?, updated_at = ? WHERE id = ?`).run(role, now, target.id);
+      }
+      if (hasDisplayName) {
+        tx.prepare(`UPDATE users SET display_name = ?, updated_at = ? WHERE id = ?`).run(
+          nextDisplayName ?? null,
+          now,
           target.id,
         );
       }
-    }
+      if (status) {
+        tx.prepare(`UPDATE users SET status = ?, updated_at = ? WHERE id = ?`).run(status, now, target.id);
+        if (status === 'disabled') {
+          tx.prepare(`UPDATE sessions SET revoked_at = ? WHERE user_id = ? AND revoked_at IS NULL`).run(
+            now,
+            target.id,
+          );
+        }
+      }
+      if (hashedPassword) {
+        tx.prepare(`UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?`).run(
+          hashedPassword,
+          now,
+          target.id,
+        );
+        tx.prepare(`UPDATE sessions SET revoked_at = ? WHERE user_id = ? AND revoked_at IS NULL`).run(
+          now,
+          target.id,
+        );
+      }
+      if (nextCredits !== undefined) {
+        tx.prepare(
+          `INSERT INTO balances (user_id, credits, updated_at) VALUES (?, ?, ?)
+           ON CONFLICT(user_id) DO UPDATE SET credits = excluded.credits, updated_at = excluded.updated_at`,
+        ).run(target.id, nextCredits, now);
+      }
+      if (membershipAction === 'revoke') {
+        tx.prepare(
+          `UPDATE entitlements SET quota = 0 WHERE user_id = ? AND kind = 'membership' AND quota > 0`,
+        ).run(target.id);
+      } else if (membershipAction === 'lifetime') {
+        tx.prepare(
+          `UPDATE entitlements SET quota = 0 WHERE user_id = ? AND kind = 'membership' AND quota > 0`,
+        ).run(target.id);
+        tx.prepare(
+          `INSERT INTO entitlements (id, user_id, product_id, kind, quota, expires_at, created_at)
+           VALUES (?, ?, NULL, 'membership', 999999, NULL, ?)`,
+        ).run(newId('ent'), target.id, now);
+      } else if (membershipAction === 'extend_days') {
+        const current = tx
+          .prepare(
+            `SELECT MAX(expires_at) AS max_exp FROM entitlements
+              WHERE user_id = ? AND kind = 'membership' AND quota > 0 AND expires_at > ?`,
+          )
+          .get(target.id, now) as { max_exp: string | null } | undefined;
+        const baseMs = current?.max_exp ? Math.max(Date.now(), Date.parse(current.max_exp)) : Date.now();
+        const nextExpiresAt = new Date(baseMs + membershipDays * 86400_000).toISOString();
+        tx.prepare(
+          `UPDATE entitlements SET quota = 0 WHERE user_id = ? AND kind = 'membership' AND quota > 0`,
+        ).run(target.id);
+        tx.prepare(
+          `INSERT INTO entitlements (id, user_id, product_id, kind, quota, expires_at, created_at)
+           VALUES (?, ?, NULL, 'membership', 999999, ?, ?)`,
+        ).run(newId('ent'), target.id, nextExpiresAt, now);
+      }
+      if (resetTodayUsage) {
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        tx.prepare(
+          `DELETE FROM ai_usage WHERE identity = ? AND kind = 'ai.analyze' AND created_at >= ?`,
+        ).run(`usr:${target.id}`, todayStart.toISOString());
+      }
+    });
+
     recordAudit({
       actorId: admin.id,
       action: 'user.update',
       target: target.id,
-      payload: { role, status, email: target.email },
+      payload: {
+        email: target.email,
+        ...(role ? { role } : {}),
+        ...(status ? { status } : {}),
+        ...(hasDisplayName ? { displayName: nextDisplayName } : {}),
+        ...(nextCredits !== undefined ? { credits: nextCredits } : {}),
+        ...(membershipAction
+          ? { membershipAction, ...(membershipAction === 'extend_days' ? { membershipDays } : {}) }
+          : {}),
+        ...(resetTodayUsage ? { resetTodayUsage: true } : {}),
+        ...(newPassword ? { passwordReset: true } : {}),
+      },
     });
     sendJson(response, 200, { ok: true });
     return true;
