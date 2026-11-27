@@ -162,7 +162,8 @@
 .chart-menu-page.workspace-ui-screen,
 .workspace-case-page .workspace-ui-screen,
 .workspace-divination-page,
-.workspace-divination-page.is-almanac {
+.workspace-divination-page.is-almanac,
+.workspace-divination-result-page {
   width: 100%;
   max-width: none;
   margin-inline: 0;
@@ -1238,6 +1239,29 @@ body.is-resizing-split * {
     height: 100%;
     min-height: 0;
     max-height: none;
+  }
+}
+
+/* 占问结果页 (/divination/:method/result)：全宽舒展、左右严格等高齐平、去掉左上角粉色渐变 */
+.workspace-divination-result-page .traditional-board {
+  margin-top: 0;
+  min-height: 100%;
+  align-content: start;
+  background: #ffffff;
+  border: 1px solid rgba(24, 23, 21, 0.12);
+}
+
+.workspace-divination-result-page .divination-ai-card > .panel-ai-chat {
+  background: #ffffff;
+  border: 1px solid rgba(24, 23, 21, 0.12);
+  border-radius: 14px;
+}
+
+@media (min-width: 980px) {
+  .workspace-divination-result-page .divination-result-workspace.is-split .divination-result-stage {
+    grid-template-columns: minmax(0, 1.35fr) minmax(420px, 1fr);
+    gap: clamp(18px, 2vw, 32px);
+    align-items: stretch;
   }
 }
 
