@@ -737,6 +737,176 @@
   grid-template-columns: minmax(0, 1fr) 18px var(--ai-sidebar-width, clamp(420px, 36vw, 720px));
 }
 
+/* 占问页三栏结构：最左术数简介 + 中间起卦表单 + 右侧 AI 问答 */
+.divination-main-columns {
+  display: grid;
+  grid-template-columns: minmax(270px, 0.72fr) minmax(0, 1.28fr);
+  gap: 20px;
+  align-items: start;
+  min-width: 0;
+}
+
+.divination-form-column {
+  min-width: 0;
+}
+
+.divination-method-guide {
+  position: sticky;
+  top: 0;
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+  padding: 22px 22px 20px;
+  border: 1px solid rgba(24, 23, 21, 0.1);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(24, 23, 21, 0.03);
+}
+
+.divination-method-guide__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(24, 23, 21, 0.08);
+}
+
+.divination-method-guide__seal {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--cinnabar, #9e2a2b);
+  border-radius: 6px;
+  color: var(--cinnabar, #9e2a2b);
+  font-family: var(--ink-font-serif, 'Noto Serif SC', 'Songti SC', serif);
+  font-size: 18px;
+  font-weight: 600;
+  background: rgba(158, 42, 43, 0.04);
+}
+
+.divination-method-guide__head h2 {
+  margin: 0;
+  font-family: var(--ink-font-serif, 'Noto Serif SC', 'Songti SC', serif);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ink-deep, #181715);
+  line-height: 1.25;
+}
+
+.divination-method-guide__head p {
+  margin: 3px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-light, #8c887f);
+}
+
+.divination-method-guide__tagline {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 2.5px solid var(--cinnabar, #9e2a2b);
+  border-radius: 0 6px 6px 0;
+  background: rgba(158, 42, 43, 0.035);
+  font-family: var(--ink-font-reading, 'Songti SC', serif);
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-strong, #2e2c28);
+}
+
+.divination-method-guide__section {
+  display: grid;
+  gap: 7px;
+}
+
+.divination-method-guide__section h3 {
+  margin: 0;
+  font-family: var(--ink-font-serif, 'Noto Serif SC', 'Songti SC', serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--ink-deep, #181715);
+}
+
+.divination-method-guide__section p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--ink-medium, #4a4843);
+}
+
+.divination-method-guide__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.divination-method-guide__tags span {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(24, 23, 21, 0.1);
+  background: #faf9f6;
+  font-size: 11.5px;
+  color: var(--ink-strong, #2e2c28);
+}
+
+.divination-method-guide__steps {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink-medium, #4a4843);
+}
+
+.divination-method-guide__steps li::marker {
+  color: var(--cinnabar, #9e2a2b);
+  font-weight: 600;
+}
+
+.divination-method-guide__quote {
+  margin: 2px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(24, 23, 21, 0.12);
+  display: grid;
+  gap: 4px;
+}
+
+.divination-method-guide__quote p {
+  margin: 0;
+  font-family: var(--ink-font-reading, 'Songti SC', serif);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink-light, #8c887f);
+}
+
+.divination-method-guide__quote cite {
+  font-style: normal;
+  font-size: 11.5px;
+  text-align: right;
+  color: var(--ink-faint, #b4b0a6);
+}
+
+@media (max-width: 1360px) {
+  .divination-main-columns {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .divination-method-guide {
+    position: static;
+    order: 2;
+  }
+
+  .divination-form-column {
+    order: 1;
+  }
+}
+
 /* 可拖拽分隔条 */
 .divination-split-resizer {
   position: sticky;

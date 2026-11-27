@@ -14,6 +14,7 @@ import { AiChatPanel } from '@/components/AiChatPanel';
 import { useAiSettings } from '@/hooks/useAiSettings';
 import { buildAiRequestConfig } from '@/lib/ai/settings';
 import { computeRealDailyAlmanac } from '@/lib/daily-almanac-hexagram';
+import { DIVINATION_METHOD_GUIDES } from '@/lib/divination-method-guides';
 import {
   buildWorkspaceFeaturePath,
   getWorkspaceFeature,
@@ -152,22 +153,92 @@ export function DivinationPage() {
         style={splitStyle}
       >
         <div className="ink-split-stage__main">
-          <DivinationPanel
-            key={location.key}
-            initialMethod={method}
-            lockedMethod={method}
-            displayMode="input"
-            initialQuestion={
-              launchState.initialQuestion ?? new URLSearchParams(location.search).get('q') ?? ''
-            }
-            initialSupplementaryInfo={launchState.initialSupplementaryInfo}
-            initialGender={launchState.initialGender}
-            initialBirthYear={launchState.initialBirthYear}
-            autoSubmit={launchState.autoSubmit}
-            onGenerated={(recordId, requestedMethod) =>
-              navigate(`/divination/${requestedMethod}/result?record=${encodeURIComponent(recordId)}`)
-            }
-          />
+          {method !== 'almanac' ? (
+            <div className="divination-main-columns">
+              <aside className="divination-method-guide" aria-label={`${DIVINATION_METHOD_GUIDES[method].title}简介`}>
+                <div className="divination-method-guide__head">
+                  <span className="divination-method-guide__seal" aria-hidden="true">
+                    {DIVINATION_METHOD_GUIDES[method].mark}
+                  </span>
+                  <div>
+                    <h2>{DIVINATION_METHOD_GUIDES[method].title}</h2>
+                    <p>{DIVINATION_METHOD_GUIDES[method].alias}</p>
+                  </div>
+                </div>
+                <p className="divination-method-guide__tagline">
+                  {DIVINATION_METHOD_GUIDES[method].tagline}
+                </p>
+
+                <section className="divination-method-guide__section">
+                  <h3>这是什么</h3>
+                  <p>{DIVINATION_METHOD_GUIDES[method].whatIs}</p>
+                </section>
+
+                <section className="divination-method-guide__section">
+                  <h3>擅长问事</h3>
+                  <div className="divination-method-guide__tags">
+                    {DIVINATION_METHOD_GUIDES[method].bestFor.map((tag) => (
+                      <span key={tag}>{tag}</span>
+                    ))}
+                  </div>
+                </section>
+
+                <section className="divination-method-guide__section">
+                  <h3>怎么使用</h3>
+                  <ol className="divination-method-guide__steps">
+                    {DIVINATION_METHOD_GUIDES[method].howToUse.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+
+                <section className="divination-method-guide__section">
+                  <h3>历史渊源</h3>
+                  <p>{DIVINATION_METHOD_GUIDES[method].history}</p>
+                </section>
+
+                <blockquote className="divination-method-guide__quote">
+                  <p>{DIVINATION_METHOD_GUIDES[method].classicQuote}</p>
+                  <cite>—— {DIVINATION_METHOD_GUIDES[method].classicSource}</cite>
+                </blockquote>
+              </aside>
+              <div className="divination-form-column">
+                <DivinationPanel
+                  key={location.key}
+                  initialMethod={method}
+                  lockedMethod={method}
+                  displayMode="input"
+                  initialQuestion={
+                    launchState.initialQuestion ?? new URLSearchParams(location.search).get('q') ?? ''
+                  }
+                  initialSupplementaryInfo={launchState.initialSupplementaryInfo}
+                  initialGender={launchState.initialGender}
+                  initialBirthYear={launchState.initialBirthYear}
+                  autoSubmit={launchState.autoSubmit}
+                  onGenerated={(recordId, requestedMethod) =>
+                    navigate(`/divination/${requestedMethod}/result?record=${encodeURIComponent(recordId)}`)
+                  }
+                />
+              </div>
+            </div>
+          ) : (
+            <DivinationPanel
+              key={location.key}
+              initialMethod={method}
+              lockedMethod={method}
+              displayMode="input"
+              initialQuestion={
+                launchState.initialQuestion ?? new URLSearchParams(location.search).get('q') ?? ''
+              }
+              initialSupplementaryInfo={launchState.initialSupplementaryInfo}
+              initialGender={launchState.initialGender}
+              initialBirthYear={launchState.initialBirthYear}
+              autoSubmit={launchState.autoSubmit}
+              onGenerated={(recordId, requestedMethod) =>
+                navigate(`/divination/${requestedMethod}/result?record=${encodeURIComponent(recordId)}`)
+              }
+            />
+          )}
         </div>
         <div
           className="divination-split-resizer"
