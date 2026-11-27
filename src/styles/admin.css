@@ -1,10 +1,7 @@
 /* ===========================================================================
    admin.css — 管理后台样式
    ---------------------------------------------------------------------------
-   刻意与 C 端分家：
-   - 前缀一律 admin-，不继承 .ink-* 与 .workspace-*，避免两套视觉互相污染；
-   - 语言是「密、平、快」：紧行距、等宽数字、1px 边框、无圆角无阴影；
-   - 纸色作为背景，但内容区是白色面板——后台的对比度服务于扫读，不服务于诗意。
+   独立命名空间 admin-*：清晰层次、等宽数字、克制留白、防表格与侧栏截断
    =========================================================================== */
 
 .admin-shell {
@@ -13,15 +10,15 @@
   --admin-line: #e3e0d8;
   --admin-line-strong: #c9c5ba;
   --admin-text: #1d1c19;
-  --admin-text-soft: #6b675f;
-  --admin-text-faint: #98938a;
+  --admin-text-soft: #5f5b53;
+  --admin-text-faint: #8e8980;
   --admin-accent: #9e2a2b;
   --admin-ok: #2f6b46;
   --admin-warn: #8a6a1f;
   --admin-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 
   display: grid;
-  grid-template-columns: 224px minmax(0, 1fr);
+  grid-template-columns: 232px minmax(0, 1fr);
   min-height: 100vh;
   background: var(--admin-bg);
   color: var(--admin-text);
@@ -47,31 +44,37 @@
 
 /* ---------- 侧栏 ---------- */
 .admin-nav {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   padding: 20px 14px;
   border-right: 1px solid var(--admin-line);
   background: var(--admin-panel);
+  overflow-y: auto;
 }
 
 .admin-brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 4px 16px;
+  padding: 0 6px 16px;
   border-bottom: 1px solid var(--admin-line);
 }
 
 .admin-brand__mark {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
+  border-radius: 6px;
   background: var(--admin-accent);
   color: #fff;
   font-size: 14px;
   font-weight: 600;
+  flex: 0 0 auto;
 }
 
 .admin-brand__text {
@@ -79,56 +82,77 @@
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.06em;
+  line-height: 1.25;
 }
 
 .admin-brand__text small {
   font-family: var(--admin-mono);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 400;
   letter-spacing: 0.04em;
   color: var(--admin-text-faint);
 }
 
 .admin-nav nav {
-  display: grid;
-  gap: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.admin-nav nav button {
-  display: grid;
-  gap: 1px;
-  padding: 8px 10px;
+.admin-nav__item {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  padding: 9px 12px;
   border: 0;
-  border-left: 2px solid transparent;
+  border-left: 3px solid transparent;
+  border-radius: 0 8px 8px 0;
   background: transparent;
   color: var(--admin-text-soft);
   font: inherit;
   text-align: left;
   cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
 }
 
-.admin-nav nav button small {
-  font-size: 10px;
+.admin-nav__label {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.admin-nav__hint {
+  font-size: 11px;
+  line-height: 1.25;
   color: var(--admin-text-faint);
 }
 
-.admin-nav nav button:hover {
-  background: #faf9f6;
+.admin-nav__item:hover {
+  background: #f8f7f3;
   color: var(--admin-text);
 }
 
-.admin-nav nav button.is-active {
+.admin-nav__item.is-active {
   border-left-color: var(--admin-accent);
-  background: #fbf7f6;
+  background: #fbf4f3;
   color: var(--admin-text);
+}
+
+.admin-nav__item.is-active .admin-nav__label {
   font-weight: 600;
+  color: var(--admin-accent);
 }
 
 .admin-nav__back {
   margin-top: auto;
-  padding: 8px 10px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--admin-line);
   color: var(--admin-text-soft);
-  font-size: 12px;
+  font-size: 12.5px;
   text-decoration: none;
 }
 
@@ -139,7 +163,7 @@
 /* ---------- 主区 ---------- */
 .admin-main {
   min-width: 0;
-  padding: 20px 24px 60px;
+  padding: 24px 32px 64px;
 }
 
 .admin-head {
@@ -153,9 +177,9 @@
 
 .admin-head h1 {
   margin: 0;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .admin-head__actions {
@@ -164,100 +188,308 @@
   gap: 12px;
 }
 
-.admin-head button,
-.admin-toolbar button,
-.admin-form button,
-.admin-row-actions button {
-  padding: 5px 12px;
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 14px;
   border: 1px solid var(--admin-line-strong);
+  border-radius: 7px;
   background: var(--admin-panel);
   color: var(--admin-text);
   font: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
   cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
 }
 
-.admin-head button:hover,
-.admin-toolbar button:hover,
-.admin-form button:hover,
-.admin-row-actions button:hover {
+.admin-btn:hover:not(:disabled) {
   border-color: var(--admin-accent);
   color: var(--admin-accent);
+  background: #fdfbfa;
 }
 
-.admin-head button:disabled {
-  color: var(--admin-text-faint);
+.admin-btn:disabled {
+  opacity: 0.55;
   cursor: default;
+}
+
+.admin-btn--sm {
+  height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.admin-btn--subtle {
+  height: 28px;
+  padding: 0 11px;
+  font-size: 12px;
+  border-color: var(--admin-line);
+  background: #faf9f6;
+}
+
+.admin-btn--primary {
+  border-color: var(--admin-text);
+  background: var(--admin-text);
+  color: #ffffff;
+}
+
+.admin-btn--primary:hover:not(:disabled) {
+  border-color: var(--admin-accent);
+  background: var(--admin-accent);
+  color: #ffffff;
 }
 
 .admin-notice {
   color: var(--admin-ok);
-  font-size: 12px;
+  font-size: 12.5px;
+  font-weight: 500;
 }
 
 .admin-error {
-  margin: 12px 0 0;
-  padding: 8px 10px;
-  border-left: 2px solid var(--admin-accent);
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  border-left: 3px solid var(--admin-accent);
+  border-radius: 0 6px 6px 0;
   background: #fdf6f5;
   color: var(--admin-accent);
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
 /* ---------- 概览 ---------- */
 .admin-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
-  gap: 1px;
-  margin-top: 18px;
-  border: 1px solid var(--admin-line);
-  background: var(--admin-line);
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .admin-stat {
   display: grid;
   gap: 6px;
-  padding: 14px 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--admin-line);
+  border-radius: 10px;
   background: var(--admin-panel);
 }
 
 .admin-stat span {
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
   color: var(--admin-text-faint);
 }
 
 .admin-stat strong {
   font-family: var(--admin-mono);
-  font-size: 22px;
-  font-weight: 500;
+  font-size: 24px;
+  font-weight: 600;
   letter-spacing: -0.01em;
 }
 
+/* ---------- AI 模型与密钥面板 ---------- */
+.admin-ai-layout {
+  display: grid;
+  gap: 18px;
+  margin-top: 20px;
+  max-width: 980px;
+}
+
+.admin-card {
+  display: grid;
+  gap: 16px;
+  padding: 20px 22px;
+  border: 1px solid var(--admin-line);
+  border-radius: 10px;
+  background: var(--admin-panel);
+}
+
+.admin-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--admin-line);
+}
+
+.admin-card__head h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.admin-card__head p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--admin-text-soft);
+}
+
+.admin-meta-time {
+  font-family: var(--admin-mono);
+  font-size: 11.5px;
+  color: var(--admin-text-faint);
+}
+
+.admin-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-presets__label {
+  font-size: 12px;
+  color: var(--admin-text-soft);
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+}
+
+.admin-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.admin-field > span,
+.admin-field > label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--admin-text-soft);
+}
+
+.admin-field--wide {
+  grid-column: 1 / -1;
+}
+
+.admin-secret-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin-checkbox-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--admin-text-soft);
+  cursor: pointer;
+}
+
+.admin-switch-list {
+  display: grid;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.admin-switch-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  background: #faf9f6;
+  cursor: pointer;
+}
+
+.admin-switch-row input[type='checkbox'] {
+  margin-top: 3px;
+  width: 15px;
+  height: 15px;
+  accent-color: var(--admin-accent);
+  cursor: pointer;
+}
+
+.admin-switch-row span {
+  display: grid;
+  gap: 2px;
+}
+
+.admin-switch-row strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.admin-switch-row small {
+  font-size: 12px;
+  color: var(--admin-text-soft);
+}
+
+.admin-test-result {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+}
+
+.admin-test-result.is-ok {
+  border: 1px solid rgba(47, 107, 70, 0.28);
+  background: #f2f9f4;
+  color: var(--admin-ok);
+}
+
+.admin-test-result.is-fail {
+  border: 1px solid rgba(158, 42, 43, 0.28);
+  background: #fdf5f5;
+  color: var(--admin-accent);
+}
+
+.admin-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--admin-line);
+}
+
 /* ---------- 表格 ---------- */
+.admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 16px;
+  border: 1px solid var(--admin-line);
+  border-radius: 10px;
+  background: var(--admin-panel);
+}
+
 .admin-table {
   width: 100%;
-  margin-top: 16px;
   border-collapse: collapse;
   background: var(--admin-panel);
-  border: 1px solid var(--admin-line);
 }
 
 .admin-table th,
 .admin-table td {
-  padding: 7px 10px;
+  padding: 10px 14px;
   border-bottom: 1px solid var(--admin-line);
   text-align: left;
-  vertical-align: top;
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 .admin-table th {
-  position: sticky;
-  top: 0;
   background: #faf9f6;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--admin-text-soft);
   white-space: nowrap;
 }
@@ -275,17 +507,17 @@
 .admin-table code,
 .admin-payload {
   font-family: var(--admin-mono);
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--admin-text-soft);
   word-break: break-all;
 }
 
 .admin-payload {
-  max-width: 420px;
+  max-width: 440px;
 }
 
 .admin-empty {
-  padding: 22px 10px;
+  padding: 28px 12px;
   text-align: center;
   color: var(--admin-text-faint);
 }
@@ -297,34 +529,41 @@
 }
 
 .admin-tag {
-  display: inline-block;
-  padding: 1px 6px;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
   border: 1px solid var(--admin-line-strong);
+  border-radius: 999px;
   font-family: var(--admin-mono);
-  font-size: 10px;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  letter-spacing: 0.03em;
   color: var(--admin-text-soft);
+  white-space: nowrap;
 }
 
 .admin-tag--admin {
   border-color: var(--admin-accent);
   color: var(--admin-accent);
+  background: #fdf6f5;
 }
 
 .admin-tag--paid,
 .admin-tag--active {
   border-color: var(--admin-ok);
   color: var(--admin-ok);
+  background: #f3faf5;
 }
 
 .admin-tag--disabled {
   border-color: var(--admin-line-strong);
   color: var(--admin-text-faint);
+  background: #f8f7f4;
 }
 
 /* ---------- 工具条与表单 ---------- */
 .admin-toolbar {
   display: flex;
+  align-items: center;
   gap: 8px;
   margin-top: 16px;
 }
@@ -332,59 +571,55 @@
 .admin-toolbar input {
   flex: 1 1 auto;
   max-width: 320px;
-  padding: 6px 10px;
-  border: 1px solid var(--admin-line-strong);
-  background: var(--admin-panel);
-  font: inherit;
-  font-size: 12px;
 }
 
 .admin-form {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px 14px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px 16px;
   margin-top: 20px;
-  padding: 16px;
+  padding: 18px 20px;
   border: 1px solid var(--admin-line);
+  border-radius: 10px;
   background: var(--admin-panel);
 }
 
 .admin-form h2 {
   grid-column: 1 / -1;
   margin: 0;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--admin-text-soft);
+  color: var(--admin-text);
 }
 
 .admin-form label {
   display: grid;
-  gap: 4px;
-  font-size: 11px;
-  color: var(--admin-text-faint);
+  gap: 5px;
+  font-size: 12px;
+  color: var(--admin-text-soft);
 }
 
-.admin-form input,
 .admin-form select {
-  padding: 6px 8px;
+  height: 32px;
+  padding: 0 8px;
   border: 1px solid var(--admin-line-strong);
+  border-radius: 6px;
   background: #fff;
   font: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--admin-text);
 }
 
-.admin-form button {
+.admin-form .admin-btn {
   align-self: end;
   justify-self: start;
-  padding: 7px 18px;
 }
 
 .admin-codes {
   margin-top: 14px;
   padding: 12px 14px;
   border: 1px dashed var(--admin-line-strong);
+  border-radius: 8px;
   background: var(--admin-panel);
   font-family: var(--admin-mono);
   font-size: 12px;
@@ -399,15 +634,34 @@
   }
 
   .admin-nav {
+    position: static;
+    height: auto;
     border-right: 0;
     border-bottom: 1px solid var(--admin-line);
   }
 
   .admin-nav nav {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 6px;
+  }
+
+  .admin-nav__item {
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 6px;
+  }
+
+  .admin-nav__item.is-active {
+    border-left-color: transparent;
+    border-bottom-color: var(--admin-accent);
   }
 
   .admin-main {
     padding: 16px 14px 40px;
+  }
+
+  .admin-form-grid {
+    grid-template-columns: 1fr;
   }
 }

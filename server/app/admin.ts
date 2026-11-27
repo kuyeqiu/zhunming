@@ -6,6 +6,7 @@ import { getDb, withTransaction } from './db';
 import { readJsonBody, sendError, sendJson } from './http';
 import { newId, nowIso } from './security';
 import type { SessionUser } from './session';
+import { getAdminAiConfigView, saveAdminAiConfig, testAdminAiConnection } from './settings';
 
 /**
  * 管理后台 API。
@@ -311,6 +312,63 @@ export async function handleAdminRoute(
   if (route === 'audit' && method === 'GET') {
     const limit = Number(url.searchParams.get('limit') ?? 100) || 100;
     sendJson(response, 200, { ok: true, entries: listAudit(limit) });
+    return true;
+  }
+
+  if (route === 'ai-config' && method === 'GET') {
+    sendJson(response, 200, { ok: true, config: getAdminAiConfigView() });
+    return true;
+  }
+
+  if (route === 'ai-config' && method === 'POST') {
+    const body = await safeBody(request, response);
+    if (!body) return true;
+    const baseUrl = typeof body.baseUrl === 'string' ? body.baseUrl.trim() : undefined;
+    if (baseUrl && !/^https?:\/\//i.test(baseUrl)) {
+      sendError(response, 400, 'API Base URL 必须以 http:// 或 https:// 开头。');
+      return true;
+    }
+    const updated = saveAdminAiConfig({
+      builtinEnabled: typeof body.builtinEnabled === 'boolean' ? body.builtinEnabled : undefined,
+      providerName: typeof body.providerName === 'string' ? body.providerName : undefined,
+      baseUrl,
+      model: typeof body.model === 'string' ? body.model : undefined,
+      apiKey: typeof body.apiKey === 'string' ? body.apiKey : undefined,
+      clearApiKey: body.clearApiKey === true,
+      paywallEnabled: typeof body.paywallEnabled === 'boolean' ? body.paywallEnabled : undefined,
+      freeAiDaily:
+        typeof body.freeAiDaily === 'number' || typeof body.freeAiDaily === 'string'
+          ? Number(body.freeAiDaily)
+          : undefined,
+    });
+    recordAudit({
+      actorId: admin.id,
+      action: 'ai.config.update',
+      target: 'app_settings',
+      payload: {
+        builtinEnabled: updated.builtinEnabled,
+        providerName: updated.providerName,
+        baseUrl: updated.baseUrl,
+        model: updated.model,
+        apiKeyUpdated: Boolean(typeof body.apiKey === 'string' && body.apiKey.trim()),
+        apiKeyCleared: body.clearApiKey === true,
+        paywallEnabled: updated.paywallEnabled,
+        freeAiDaily: updated.freeAiDaily,
+      },
+    });
+    sendJson(response, 200, { ok: true, config: updated });
+    return true;
+  }
+
+  if (route === 'ai-config/test' && method === 'POST') {
+    const body = await safeBody(request, response);
+    if (!body) return true;
+    const result = await testAdminAiConnection({
+      baseUrl: typeof body.baseUrl === 'string' ? body.baseUrl : undefined,
+      model: typeof body.model === 'string' ? body.model : undefined,
+      apiKey: typeof body.apiKey === 'string' ? body.apiKey : undefined,
+    });
+    sendJson(response, 200, { ok: true, result });
     return true;
   }
 

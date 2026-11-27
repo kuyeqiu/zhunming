@@ -4,6 +4,7 @@ import { getDb } from './db';
 import { getClientIp } from './http';
 import { newId, nowIso } from './security';
 import { resolveSession } from './session';
+import { getEffectiveSetting } from './settings';
 
 /**
  * 付费墙。
@@ -30,13 +31,13 @@ export type AiGateVerdict =
     };
 
 function freeDailyLimit(): number {
-  const raw = Number(process.env.MINGYU_FREE_AI_DAILY ?? 3);
+  const raw = Number(getEffectiveSetting('MINGYU_FREE_AI_DAILY') ?? 3);
   if (!Number.isFinite(raw) || raw < 0) return 3;
   return Math.floor(raw);
 }
 
 export function paywallEnabled(): boolean {
-  return (process.env.MINGYU_PAYWALL_ENABLED ?? 'true') !== 'false';
+  return (getEffectiveSetting('MINGYU_PAYWALL_ENABLED') ?? 'true') !== 'false';
 }
 
 function hashIp(ip: string): string {

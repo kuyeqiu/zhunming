@@ -67,6 +67,27 @@ export type AdminAuditRow = {
   createdAt: string;
 };
 
+export type AdminAiConfig = {
+  builtinEnabled: boolean;
+  providerName: string;
+  baseUrl: string;
+  model: string;
+  hasApiKey: boolean;
+  apiKeyMasked: string;
+  keySource: 'db' | 'env' | 'empty';
+  paywallEnabled: boolean;
+  freeAiDaily: number;
+  updatedAt: string | null;
+};
+
+export type AdminAiTestResult = {
+  ok: boolean;
+  latencyMs: number;
+  model: string;
+  replyPreview?: string;
+  error?: string;
+};
+
 export class AdminForbiddenError extends Error {}
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
@@ -119,4 +140,20 @@ export const adminApi = {
     expiresDays?: number;
   }) => call<{ batchId: string; codes: string[] }>('cdk/batches', { method: 'POST', body: JSON.stringify(input) }),
   audit: (limit = 100) => call<{ entries: AdminAuditRow[] }>(`audit?limit=${limit}`),
+  aiConfig: () => call<{ config: AdminAiConfig }>('ai-config'),
+  saveAiConfig: (input: {
+    builtinEnabled?: boolean;
+    providerName?: string;
+    baseUrl?: string;
+    model?: string;
+    apiKey?: string;
+    clearApiKey?: boolean;
+    paywallEnabled?: boolean;
+    freeAiDaily?: number;
+  }) => call<{ ok: boolean; config: AdminAiConfig }>('ai-config', { method: 'POST', body: JSON.stringify(input) }),
+  testAiConfig: (input: { baseUrl?: string; model?: string; apiKey?: string }) =>
+    call<{ ok: boolean; result: AdminAiTestResult }>('ai-config/test', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    }),
 };

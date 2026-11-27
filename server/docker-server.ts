@@ -8,6 +8,7 @@ import { handlePublicApiRequest, isPublicApiRequestPath } from '../src/lib/publi
 import { handleMcpRequest } from '../src/lib/mcp/handler';
 import { handleAppRequest } from './app/index';
 import { checkAiAccess } from './app/gate';
+import { getEffectiveAiEnv } from './app/settings';
 import { onRequest as handleLegacySseRequest } from '../functions/sse';
 import { getPublicApiManifestForRequest } from '../src/lib/public-api/metadata';
 import type { AiEnv } from '../src/lib/ai/proxy';
@@ -172,7 +173,7 @@ async function handleApiRequest(request: IncomingMessage, response: ServerRespon
       body,
     }),
     undefined,
-    process.env as AiEnv,
+    getEffectiveAiEnv(),
     undefined,
     { preset: readRuntimePreset(process.env.MINGYU_API_PRESET) },
   );
@@ -368,7 +369,7 @@ async function handleStaticRequest(
     sendText(
       response,
       200,
-      method === 'HEAD' ? '' : getAiRuntimeConfigScript(process.env),
+      method === 'HEAD' ? '' : getAiRuntimeConfigScript(getEffectiveAiEnv()),
       'text/javascript; charset=utf-8',
       RUNTIME_CONFIG_HEADERS,
     );

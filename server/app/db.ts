@@ -33,7 +33,7 @@ export function getDbFilePath(): string {
   return DB_FILE;
 }
 
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 
 function migrate(db: DatabaseSync) {
   db.exec(`
@@ -160,6 +160,15 @@ function migrate(db: DatabaseSync) {
   // v2：AI 用量按身份记账（登录用户按 user_id，未登录按 IP 哈希）
   ensureColumn(db, 'ai_usage', 'identity', 'TEXT');
   db.exec(`CREATE INDEX IF NOT EXISTS idx_ai_usage_identity ON ai_usage(identity, created_at)`);
+
+  // v3：后台热更新系统配置（AI 模型、API Key、付费墙与免费额度）
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+  `);
 
   db.prepare(
     `INSERT INTO schema_meta(key, value) VALUES ('version', ?)
