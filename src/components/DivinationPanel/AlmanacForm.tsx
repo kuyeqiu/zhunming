@@ -406,32 +406,28 @@ export function AlmanacForm({
           onClose={onCloseParticipantsModal}
         >
           <div className="almanac-participants-dialog__head">
-            <div>
-              <h3 id="almanac-participants-dialog-title">参与人</h3>
-              <p>用于核对生肖、日柱关系和可用时辰，修改后月历即时更新</p>
-            </div>
-            <WorkspaceButton
-              variant="outline"
-              size="small"
-              onClick={onCloseParticipantsModal}
-              aria-label="关闭参与人设置"
-            >
-              完成
-            </WorkspaceButton>
-          </div>
-
-          <div className="almanac-participants-dialog__toolbar">
-            <div className="almanac-participant-actions">
-              {availableCases.length ? (
-                <DropdownSelect
-                  value=""
-                  options={caseOptions}
-                  ariaLabel="从案例添加参与人"
-                  onChange={addCaseParticipant}
-                />
-              ) : null}
-              <WorkspaceButton variant="outline" size="small" onClick={addParticipant}>
-                手动添加
+            <h3 id="almanac-participants-dialog-title">参与人</h3>
+            <div className="almanac-participants-dialog__head-actions">
+              <div className="almanac-participant-actions">
+                {availableCases.length ? (
+                  <DropdownSelect
+                    value=""
+                    options={caseOptions}
+                    ariaLabel="从案例添加参与人"
+                    onChange={addCaseParticipant}
+                  />
+                ) : null}
+                <WorkspaceButton variant="outline" size="small" onClick={addParticipant}>
+                  手动添加
+                </WorkspaceButton>
+              </div>
+              <WorkspaceButton
+                variant="outline"
+                size="small"
+                onClick={onCloseParticipantsModal}
+                aria-label="关闭参与人设置"
+              >
+                完成
               </WorkspaceButton>
             </div>
           </div>
