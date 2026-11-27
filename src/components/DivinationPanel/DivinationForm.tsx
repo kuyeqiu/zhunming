@@ -211,7 +211,8 @@ interface DivinationFormProps {
 function PromptSelectionFields({
   draft,
   updateDraft,
-}: Pick<DivinationFormProps, 'draft' | 'updateDraft'>) {
+  extraControls,
+}: Pick<DivinationFormProps, 'draft' | 'updateDraft'> & { extraControls?: React.ReactNode }) {
   if (draft.method === 'ssgw') return null;
   const methodId =
     draft.method === 'huangji'
@@ -255,6 +256,7 @@ function PromptSelectionFields({
         </strong>
       </div>
       <div className="divination-prompt-selection-grid">
+        {extraControls}
         <div className="form-item">
           <Label htmlFor="divination-prompt-topic-select">解读主题</Label>
           <div >
@@ -331,6 +333,7 @@ export function DivinationForm({
   showHeading = true,
 }: DivinationFormProps) {
   const [isSupplementaryInfoModalOpen, setIsSupplementaryInfoModalOpen] = useState(false);
+  const [isParticipantsModalOpen, setIsParticipantsModalOpen] = useState(false);
   const isMethodLocked = Boolean(lockedMethod);
   const lockedMethodOption = DIVINATION_METHOD_OPTIONS.find((item) => item.value === lockedMethod);
   const formHeading = lockedMethodOption?.label ?? '传统起卦';
@@ -581,7 +584,27 @@ export function DivinationForm({
                 <h2>{formHeading}</h2>
               </div>
             ) : null}
-            <PromptSelectionFields draft={draft} updateDraft={updateDraft} />
+            <PromptSelectionFields
+              draft={draft}
+              updateDraft={updateDraft}
+              extraControls={
+                <div className="form-item almanac-participants-bar-item">
+                  <WorkspaceButton
+                    variant="outline"
+                    size="small"
+                    className="almanac-participants-trigger"
+                    onClick={() => setIsParticipantsModalOpen(true)}
+                  >
+                    <span>参与人</span>
+                    {draft.almanacParticipants.length > 0 ? (
+                      <span className="almanac-participants-trigger__badge">
+                        {draft.almanacParticipants.length}
+                      </span>
+                    ) : null}
+                  </WorkspaceButton>
+                </div>
+              }
+            />
           </div>
 
           {!isMethodLocked ? (
@@ -607,6 +630,8 @@ export function DivinationForm({
             updateDraft={updateDraft}
             supplementaryInfoCount={supplementaryInfoCount}
             onOpenSupplementaryInfo={() => setIsSupplementaryInfoModalOpen(true)}
+            participantsModalOpen={isParticipantsModalOpen}
+            onCloseParticipantsModal={() => setIsParticipantsModalOpen(false)}
           />
         </section>
 

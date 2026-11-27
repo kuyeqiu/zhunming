@@ -859,9 +859,88 @@ body.is-resizing-split * {
   font-size: 13px;
 }
 
-/* 统一修正 AI 顶栏与参与人操作按钮的配色（避免深灰底深黑字） */
+/* 统一修正 AI 顶栏、参与人触发按钮与弹窗操作按钮的配色（避免深灰底深黑字） */
+.almanac-participants-trigger {
+  height: 32px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(24, 23, 21, 0.16);
+  color: var(--ink-strong, #2e2c28);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: none;
+}
+
+.almanac-participants-trigger:hover:not(:disabled) {
+  background: #f5f3ee;
+  border-color: rgba(24, 23, 21, 0.3);
+  color: var(--ink-deep, #181715);
+}
+
+.almanac-participants-trigger__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: rgba(158, 42, 43, 0.12);
+  color: var(--cinnabar, #9e2a2b);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.almanac-participants-dialog {
+  width: min(640px, calc(100vw - 32px));
+  max-height: min(84vh, 760px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.almanac-participants-dialog__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(24, 23, 21, 0.08);
+}
+
+.almanac-participants-dialog__head h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink-deep, #181715);
+}
+
+.almanac-participants-dialog__head p {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-light, #8c887f);
+}
+
+.almanac-participants-dialog__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.almanac-participants-dialog__body {
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 2px;
+}
+
 .divination-ai-sidebar .ai-chat-head-actions button,
-.almanac-participant-actions button:not(.workspace-ui-dropdown-trigger) {
+.almanac-participant-actions button:not(.workspace-ui-dropdown-trigger),
+.almanac-participants-dialog__head button {
   background: #ffffff;
   border: 1px solid rgba(24, 23, 21, 0.16);
   color: var(--ink-strong, #2e2c28);
@@ -870,7 +949,8 @@ body.is-resizing-split * {
 }
 
 .divination-ai-sidebar .ai-chat-head-actions button:hover:not(:disabled),
-.almanac-participant-actions button:not(.workspace-ui-dropdown-trigger):hover:not(:disabled) {
+.almanac-participant-actions button:not(.workspace-ui-dropdown-trigger):hover:not(:disabled),
+.almanac-participants-dialog__head button:hover:not(:disabled) {
   background: #f5f3ee;
   border-color: rgba(24, 23, 21, 0.3);
   color: var(--ink-deep, #181715);

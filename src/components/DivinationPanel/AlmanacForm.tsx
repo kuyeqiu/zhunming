@@ -3,7 +3,7 @@ import { DropdownSelect } from '@/components/DropdownSelect';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { WorkspaceButton } from '@/components/workspace/WorkspaceUI';
+import { WorkspaceButton, WorkspaceDialog } from '@/components/workspace/WorkspaceUI';
 import type { DivinationDraft } from '@/lib/divination/engine';
 import type { PersonalHistoryRecord } from '@/lib/history-records';
 import { createSecureId } from '@/lib/secure-id';
@@ -66,6 +66,8 @@ type AlmanacFormProps = {
   updateDraft: <K extends keyof DivinationDraft>(key: K, value: DivinationDraft[K]) => void;
   supplementaryInfoCount: number;
   onOpenSupplementaryInfo: () => void;
+  participantsModalOpen?: boolean;
+  onCloseParticipantsModal?: () => void;
 };
 
 function formatDate(date: Date) {
@@ -157,6 +159,8 @@ export function AlmanacForm({
   updateDraft,
   supplementaryInfoCount,
   onOpenSupplementaryInfo,
+  participantsModalOpen = false,
+  onCloseParticipantsModal,
 }: AlmanacFormProps) {
   const participantCaseIds = new Set(
     draft.almanacParticipants.map(getParticipantCaseId).filter(Boolean),
@@ -383,7 +387,7 @@ export function AlmanacForm({
         <div className="almanac-form-section-head">
           <div>
             <strong>个人黄历</strong>
-            <span>月格和详情沿用下方参与人的择日关系事实</span>
+            <span>月格和详情沿用顶部「参与人」的择日关系事实</span>
           </div>
           <small>点击日期带入择日范围</small>
         </div>
@@ -395,152 +399,171 @@ export function AlmanacForm({
         />
       </section>
 
-      <section className="almanac-form-section">
-        <div className="almanac-form-section-head">
-          <div>
-            <strong>参与人</strong>
-            <span>用于核对生肖、日柱关系和可用时辰</span>
-          </div>
-          <div className="almanac-participant-actions">
-            {availableCases.length ? (
-              <DropdownSelect
-                value=""
-                options={caseOptions}
-                ariaLabel="从案例添加参与人"
-                onChange={addCaseParticipant}
-              />
-            ) : null}
-            <WorkspaceButton variant="outline" size="small" onClick={addParticipant}>
-              手动添加
+      {participantsModalOpen ? (
+        <WorkspaceDialog
+          className="almanac-participants-dialog"
+          labelledBy="almanac-participants-dialog-title"
+          onClose={onCloseParticipantsModal}
+        >
+          <div className="almanac-participants-dialog__head">
+            <div>
+              <h3 id="almanac-participants-dialog-title">参与人</h3>
+              <p>用于核对生肖、日柱关系和可用时辰，修改后月历即时更新</p>
+            </div>
+            <WorkspaceButton
+              variant="outline"
+              size="small"
+              onClick={onCloseParticipantsModal}
+              aria-label="关闭参与人设置"
+            >
+              完成
             </WorkspaceButton>
           </div>
-        </div>
 
-        {draft.almanacParticipants.length ? (
-          <div className="almanac-participant-list">
-            {draft.almanacParticipants.map((participant, index) => (
-              <details className="almanac-participant-item" key={participant.id}>
-                <summary>
-                  <span className="almanac-participant-index">{index + 1}</span>
-                  <span className="almanac-participant-summary">
-                    <strong>{participant.name || `参与人${index + 1}`}</strong>
-                    <small>{getParticipantSummary(participant)}</small>
-                  </span>
-                  <span className="almanac-participant-edit">编辑</span>
-                </summary>
-                <div className="almanac-participant-editor">
-                  <div className="form-row-flex">
-                    <div className="form-item">
-                      <Label htmlFor={`${participant.id}-name-input`}>称呼</Label>
-                      <Input
-                        id={`${participant.id}-name-input`}
-                       
-                        value={participant.name}
-                        placeholder="例如：本人"
-                        onChange={(event) =>
-                          updateParticipant(participant.id, 'name', event.target.value)
-                        }
-                      />
-                    </div>
-                    <div className="form-item">
-                      <Label htmlFor={`${participant.id}-gender-select`}>性别</Label>
-                      <DropdownSelect
-                        id={`${participant.id}-gender-select`}
-                        value={participant.gender}
-                        options={OPTIONAL_GENDER_OPTIONS}
-                        variant="field"
-                        onChange={(value) => updateParticipant(participant.id, 'gender', value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="form-row-flex">
-                    <div className="form-item">
-                      <Label htmlFor={`${participant.id}-input-mode-select`}>日期方式</Label>
-                      <DropdownSelect
-                        id={`${participant.id}-input-mode-select`}
-                        value={getAlmanacParticipantInputMode(participant)}
-                        options={PARTICIPANT_INPUT_MODE_OPTIONS}
-                        variant="field"
-                        onChange={(value) =>
-                          updateParticipantInputMode(
-                            participant.id,
-                            value as AlmanacParticipantInputMode,
-                          )
-                        }
-                      />
-                    </div>
-                    {getAlmanacParticipantInputMode(participant) !== 'pillars' ? (
-                      <div className="form-item">
-                        <Label htmlFor={`${participant.id}-time-select`}>时辰</Label>
-                        <DropdownSelect
-                          id={`${participant.id}-time-select`}
-                          value={participant.timeIndex}
-                          options={BIRTH_TIME_OPTIONS}
-                          variant="field"
-                          onChange={(value) =>
-                            updateParticipant(participant.id, 'timeIndex', value)
-                          }
-                        />
-                      </div>
-                    ) : null}
-                  </div>
-                  {getAlmanacParticipantInputMode(participant) === 'pillars' ? (
-                    <>
-                      <BaziReverseInput
-                        key={getParticipantReverseInputKey(participant)}
-                        source={participant.reverseSource ?? null}
-                        onInvalidate={() =>
-                          updateParticipant(participant.id, 'reverseSource', null)
-                        }
-                        onSelect={(selection) =>
-                          selectParticipantReverseDate(participant.id, selection)
-                        }
-                      />
-                      {isBaziReverseSource(participant.reverseSource) ? (
-                        <div className="workspace-ui-field-hint">
-                          {formatBirthTimeInterval(participant.reverseSource, '候选时间')}
-                        </div>
-                      ) : null}
-                    </>
-                  ) : (
-                    <div className="form-row-flex has-third-item">
-                      {(['year', 'month', 'day'] as const).map((key) => (
-                        <div className="form-item" key={key}>
-                          <Label htmlFor={`${participant.id}-${key}-input`}>
-                            {key === 'year' ? '年' : key === 'month' ? '月' : '日'}
-                          </Label>
+          <div className="almanac-participants-dialog__toolbar">
+            <div className="almanac-participant-actions">
+              {availableCases.length ? (
+                <DropdownSelect
+                  value=""
+                  options={caseOptions}
+                  ariaLabel="从案例添加参与人"
+                  onChange={addCaseParticipant}
+                />
+              ) : null}
+              <WorkspaceButton variant="outline" size="small" onClick={addParticipant}>
+                手动添加
+              </WorkspaceButton>
+            </div>
+          </div>
+
+          <div className="almanac-participants-dialog__body">
+            {draft.almanacParticipants.length ? (
+              <div className="almanac-participant-list">
+                {draft.almanacParticipants.map((participant, index) => (
+                  <details className="almanac-participant-item" key={participant.id} open={draft.almanacParticipants.length === 1}>
+                    <summary>
+                      <span className="almanac-participant-index">{index + 1}</span>
+                      <span className="almanac-participant-summary">
+                        <strong>{participant.name || `参与人${index + 1}`}</strong>
+                        <small>{getParticipantSummary(participant)}</small>
+                      </span>
+                      <span className="almanac-participant-edit">编辑</span>
+                    </summary>
+                    <div className="almanac-participant-editor">
+                      <div className="form-row-flex">
+                        <div className="form-item">
+                          <Label htmlFor={`${participant.id}-name-input`}>称呼</Label>
                           <Input
-                            id={`${participant.id}-${key}-input`}
-                           
-                            inputMode="numeric"
-                            value={participant[key]}
+                            id={`${participant.id}-name-input`}
+                            value={participant.name}
+                            placeholder="例如：本人"
                             onChange={(event) =>
-                              updateParticipant(
+                              updateParticipant(participant.id, 'name', event.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="form-item">
+                          <Label htmlFor={`${participant.id}-gender-select`}>性别</Label>
+                          <DropdownSelect
+                            id={`${participant.id}-gender-select`}
+                            value={participant.gender}
+                            options={OPTIONAL_GENDER_OPTIONS}
+                            variant="field"
+                            onChange={(value) => updateParticipant(participant.id, 'gender', value)}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row-flex">
+                        <div className="form-item">
+                          <Label htmlFor={`${participant.id}-input-mode-select`}>日期方式</Label>
+                          <DropdownSelect
+                            id={`${participant.id}-input-mode-select`}
+                            value={getAlmanacParticipantInputMode(participant)}
+                            options={PARTICIPANT_INPUT_MODE_OPTIONS}
+                            variant="field"
+                            onChange={(value) =>
+                              updateParticipantInputMode(
                                 participant.id,
-                                key,
-                                event.target.value.replace(/[^\d]/g, ''),
+                                value as AlmanacParticipantInputMode,
                               )
                             }
                           />
                         </div>
-                      ))}
+                        {getAlmanacParticipantInputMode(participant) !== 'pillars' ? (
+                          <div className="form-item">
+                            <Label htmlFor={`${participant.id}-time-select`}>时辰</Label>
+                            <DropdownSelect
+                              id={`${participant.id}-time-select`}
+                              value={participant.timeIndex}
+                              options={BIRTH_TIME_OPTIONS}
+                              variant="field"
+                              onChange={(value) =>
+                                updateParticipant(participant.id, 'timeIndex', value)
+                              }
+                            />
+                          </div>
+                        ) : null}
+                      </div>
+                      {getAlmanacParticipantInputMode(participant) === 'pillars' ? (
+                        <>
+                          <BaziReverseInput
+                            key={getParticipantReverseInputKey(participant)}
+                            source={participant.reverseSource ?? null}
+                            onInvalidate={() =>
+                              updateParticipant(participant.id, 'reverseSource', null)
+                            }
+                            onSelect={(selection) =>
+                              selectParticipantReverseDate(participant.id, selection)
+                            }
+                          />
+                          {isBaziReverseSource(participant.reverseSource) ? (
+                            <div className="workspace-ui-field-hint">
+                              {formatBirthTimeInterval(participant.reverseSource, '候选时间')}
+                            </div>
+                          ) : null}
+                        </>
+                      ) : (
+                        <div className="form-row-flex has-third-item">
+                          {(['year', 'month', 'day'] as const).map((key) => (
+                            <div className="form-item" key={key}>
+                              <Label htmlFor={`${participant.id}-${key}-input`}>
+                                {key === 'year' ? '年' : key === 'month' ? '月' : '日'}
+                              </Label>
+                              <Input
+                                id={`${participant.id}-${key}-input`}
+                                inputMode="numeric"
+                                value={participant[key]}
+                                onChange={(event) =>
+                                  updateParticipant(
+                                    participant.id,
+                                    key,
+                                    event.target.value.replace(/[^\d]/g, ''),
+                                  )
+                                }
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <Button
+                        type="button"
+                        className="almanac-participant-remove"
+                        onClick={() => removeParticipant(participant.id)}
+                      >
+                        移除此人
+                      </Button>
                     </div>
-                  )}
-                  <Button
-                    type="button"
-                    className="almanac-participant-remove"
-                    onClick={() => removeParticipant(participant.id)}
-                  >
-                    移除此人
-                  </Button>
-                </div>
-              </details>
-            ))}
+                  </details>
+                ))}
+              </div>
+            ) : (
+              <p className="almanac-participant-empty">
+                当前未指定参与人。点击上方「从案例添加」或「手动添加」后，月历将自动标注冲合关系。
+              </p>
+            )}
           </div>
-        ) : (
-          <p className="almanac-participant-empty">不指定参与人时，将只按事项和日期比较。</p>
-        )}
-      </section>
+        </WorkspaceDialog>
+      ) : null}
     </div>
   );
 }
