@@ -632,22 +632,12 @@ export function DivinationForm({
             onOpenSupplementaryInfo={() => setIsSupplementaryInfoModalOpen(true)}
             participantsModalOpen={isParticipantsModalOpen}
             onCloseParticipantsModal={() => setIsParticipantsModalOpen(false)}
+            submitError={error}
+            isSubmitting={isSubmitting}
+            submitButtonText={submitButtonText}
+            onSubmit={onSubmit}
           />
         </section>
-
-        {error ? <div className="workspace-ui-form-error">{error}</div> : null}
-
-        <div className="workspace-ui-form-actions is-sticky-mobile">
-          <WorkspaceButton
-            variant="primary"
-            size="large"
-            block
-            disabled={isSubmitting}
-            onClick={onSubmit}
-          >
-            {submitButtonText}
-          </WorkspaceButton>
-        </div>
         {supplementaryInfoModal}
       </>
     );

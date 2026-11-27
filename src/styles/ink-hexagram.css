@@ -939,6 +939,47 @@ body.is-resizing-split * {
   padding-right: 2px;
 }
 
+/* 择日页：个人黄历置顶，择日事项 + 日期范围 + 开始择日收纳到月历下方空区 */
+.workspace-divination-page.is-almanac .almanac-form-flow.almanac-form-flow--calendar-first {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.workspace-divination-page.is-almanac .almanac-form-flow--calendar-first > .almanac-calendar-section {
+  grid-column: 1 / -1;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.almanac-board-footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(24, 23, 21, 0.08);
+  display: grid;
+  gap: 16px;
+}
+
+.almanac-board-footer .almanac-board-section {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.almanac-board-footer .almanac-date-section {
+  padding-top: 14px;
+  border-top: 1px solid rgba(24, 23, 21, 0.06);
+}
+
+.almanac-board-submit {
+  margin-top: 2px;
+}
+
+.almanac-board-submit button {
+  height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  border-radius: 10px;
+}
+
 .divination-ai-sidebar .ai-chat-head-actions button,
 .almanac-participant-actions button:not(.workspace-ui-dropdown-trigger),
 .almanac-participants-dialog__head button {

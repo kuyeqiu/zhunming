@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   getBeijingTodayKey,
   getDefaultGanzhiCalendarMonth,
@@ -273,6 +273,7 @@ export type GanzhiCalendarPanelProps = {
   selectedDate?: string;
   onSelectDate?: (dateKey: string) => void;
   embedded?: boolean;
+  boardFooter?: ReactNode;
 };
 
 function isDateKey(value: string | undefined): value is string {
@@ -290,6 +291,7 @@ export function GanzhiCalendarPanel({
   selectedDate: selectedDateProp,
   onSelectDate,
   embedded = false,
+  boardFooter,
 }: GanzhiCalendarPanelProps) {
   const todayKey = useMemo(() => getBeijingTodayKey(), []);
   const todayMonth = useMemo(() => getDefaultGanzhiCalendarMonth(), []);
@@ -442,6 +444,7 @@ export function GanzhiCalendarPanel({
                   );
                 })}
             </div>
+            {boardFooter}
           </section>
           <DayDetail detail={detail} />
         </div>

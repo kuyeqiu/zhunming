@@ -68,6 +68,10 @@ type AlmanacFormProps = {
   onOpenSupplementaryInfo: () => void;
   participantsModalOpen?: boolean;
   onCloseParticipantsModal?: () => void;
+  submitError?: string;
+  isSubmitting?: boolean;
+  submitButtonText?: string;
+  onSubmit?: () => void | Promise<void>;
 };
 
 function formatDate(date: Date) {
@@ -161,6 +165,10 @@ export function AlmanacForm({
   onOpenSupplementaryInfo,
   participantsModalOpen = false,
   onCloseParticipantsModal,
+  submitError = '',
+  isSubmitting = false,
+  submitButtonText = '开始择日',
+  onSubmit,
 }: AlmanacFormProps) {
   const participantCaseIds = new Set(
     draft.almanacParticipants.map(getParticipantCaseId).filter(Boolean),
@@ -275,9 +283,9 @@ export function AlmanacForm({
     }
   }
 
-  return (
-    <div className="almanac-form-flow">
-      <section className="almanac-form-section">
+  const boardFooter = (
+    <div className="almanac-board-footer">
+      <section className="almanac-form-section almanac-board-section">
         <div className="almanac-form-section-head">
           <strong>择日事项</strong>
           <Button
@@ -304,7 +312,7 @@ export function AlmanacForm({
         </div>
       </section>
 
-      <section className="almanac-form-section almanac-date-section">
+      <section className="almanac-form-section almanac-date-section almanac-board-section">
         <div className="almanac-form-section-head">
           <strong>日期范围</strong>
           <div className="almanac-quick-ranges" role="group" aria-label="快速选择日期范围">
@@ -331,7 +339,6 @@ export function AlmanacForm({
             <Input
               id="almanac-start-date-input"
               type="date"
-             
               value={draft.almanacStartDate}
               onChange={(event) => setStartDate(event.target.value)}
             />
@@ -342,7 +349,6 @@ export function AlmanacForm({
             <Input
               id="almanac-end-date-input"
               type="date"
-             
               min={draft.almanacStartDate || undefined}
               value={draft.almanacEndDate}
               onChange={(event) => updateDraft('almanacEndDate', event.target.value)}
@@ -383,6 +389,26 @@ export function AlmanacForm({
         </div>
       </section>
 
+      {submitError ? <div className="workspace-ui-form-error">{submitError}</div> : null}
+
+      {onSubmit ? (
+        <div className="almanac-board-submit">
+          <WorkspaceButton
+            variant="primary"
+            size="large"
+            block
+            disabled={isSubmitting}
+            onClick={onSubmit}
+          >
+            {submitButtonText}
+          </WorkspaceButton>
+        </div>
+      ) : null}
+    </div>
+  );
+
+  return (
+    <div className="almanac-form-flow almanac-form-flow--calendar-first">
       <section className="almanac-form-section almanac-calendar-section">
         <div className="almanac-form-section-head">
           <div>
@@ -396,6 +422,7 @@ export function AlmanacForm({
           participants={draft.almanacParticipants}
           selectedDate={draft.almanacStartDate}
           onSelectDate={selectCalendarDate}
+          boardFooter={boardFooter}
         />
       </section>
 
