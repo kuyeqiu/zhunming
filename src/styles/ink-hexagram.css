@@ -162,11 +162,16 @@
 .chart-menu-page.workspace-ui-screen,
 .workspace-case-page .workspace-ui-screen,
 .workspace-divination-page,
-.workspace-divination-page.is-almanac,
-.workspace-divination-result-page {
+.workspace-divination-page.is-almanac {
   width: 100%;
   max-width: none;
   margin-inline: 0;
+}
+
+.workspace-divination-result-page {
+  width: min(1720px, 100%);
+  max-width: 1720px;
+  margin-inline: auto;
 }
 
 /* ===========================================================================
